@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fast Read MVP</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+  </head>
+  <body data-theme="light">
+    <main class="layout">
+      <div class="utility-row">
+        <button id="themeToggle" class="ghost" type="button" aria-label="Toggle theme">Dark Theme</button>
+      </div>
+
+      <section id="setupSection" class="card intro-card">
+        <p class="kicker">PDF speed-reading session</p>
+        <h1>Read one word at a time</h1>
+        <p class="muted">Upload a PDF, set speed in words per minute, and run a focused reading session.</p>
+
+        <div class="grid-2">
+          <label class="field">
+            <span>PDF File</span>
+            <input id="pdfInput" type="file" accept="application/pdf" />
+          </label>
+
+          <label class="field">
+            <span>Speed (words per minute)</span>
+            <input id="speedInput" type="number" min="1" max="1000" value="100" />
+          </label>
+        </div>
+
+        <div class="actions">
+          <button id="loadPdfBtn" type="button">Load PDF</button>
+          <button id="startBtn" type="button" disabled>Start Reading</button>
+        </div>
+
+        <p id="setupStatus" class="status" aria-live="polite"></p>
+      </section>
+
+      <section id="countdownSection" class="center-screen hidden" aria-live="polite">
+        <div id="countdownNumber" class="countdown-number">3</div>
+      </section>
+
+      <section id="readerSection" class="center-screen hidden" aria-live="polite">
+        <div class="reader-meta card subtle-card">
+          <span id="readerFileName">-</span>
+          <span id="readerProgress">0%</span>
+        </div>
+        <div id="focusText" class="focus-text">Ready</div>
+        <div id="pauseOverlay" class="pause-overlay hidden">Break: 3</div>
+      </section>
+
+      <section id="feedbackSection" class="card hidden">
+        <h2>Session Feedback</h2>
+        <p class="muted">Please complete all 3 steps.</p>
+
+        <form id="feedbackForm">
+          <div class="step" data-step="1">
+            <label class="field">
+              <span>Nickname</span>
+              <input id="nicknameInput" type="text" required />
+            </label>
+
+            <label class="field">
+              <span>Email</span>
+              <input id="emailInput" type="email" required />
+            </label>
+
+            <div class="actions">
+              <button class="next-btn" type="button" data-next="2">Next →</button>
+            </div>
+          </div>
+
+          <div class="step hidden" data-step="2">
+            <fieldset class="field">
+              <legend>How did the reading speed feel?</legend>
+              <label><input type="radio" name="speedFeeling" value="too_slow" required /> Too slow</label>
+              <label><input type="radio" name="speedFeeling" value="normal" /> Normal</label>
+              <label><input type="radio" name="speedFeeling" value="too_fast" /> Too fast</label>
+              <label><input type="radio" name="speedFeeling" value="custom" /> Custom</label>
+            </fieldset>
+
+            <label id="customFeelingWrap" class="field hidden">
+              <span>Custom speed feeling</span>
+              <input id="speedFeelingCustomInput" type="text" />
+            </label>
+
+            <div class="actions">
+              <button class="back-btn ghost" type="button" data-back="1">← Back</button>
+              <button class="next-btn" type="button" data-next="3">Next →</button>
+            </div>
+          </div>
+
+          <div class="step hidden" data-step="3">
+            <label class="field">
+              <span>General feedback</span>
+              <textarea id="feedbackInput" rows="5" required></textarea>
+            </label>
+
+            <div class="actions">
+              <button class="back-btn ghost" type="button" data-back="2">← Back</button>
+              <button id="submitFeedbackBtn" type="submit">Submit</button>
+            </div>
+          </div>
+        </form>
+
+        <p id="feedbackStatus" class="status" aria-live="polite"></p>
+      </section>
+
+      <section id="thankYouSection" class="card hidden">
+        <h2>Спасибо за уделенное время</h2>
+        <p class="muted">Your feedback is saved.</p>
+
+        <table class="thanks-table" aria-label="Submission summary">
+          <tbody>
+            <tr>
+              <th>Record ID</th>
+              <td id="thanksRecordId">-</td>
+            </tr>
+            <tr>
+              <th>Nickname</th>
+              <td id="thanksNickname">-</td>
+            </tr>
+            <tr>
+              <th>Email</th>
+              <td id="thanksEmail">-</td>
+            </tr>
+            <tr>
+              <th>Speed (WPM)</th>
+              <td id="thanksSpeed">-</td>
+            </tr>
+            <tr>
+              <th>Speed Feeling</th>
+              <td id="thanksFeeling">-</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="actions">
+          <button id="newSessionBtn" type="button">Start New Session</button>
+        </div>
+      </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+  </body>
+</html>
