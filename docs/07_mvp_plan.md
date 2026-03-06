@@ -1,29 +1,29 @@
-# План MVP
+# MVP Plan
 
 ## Milestones
-1. Подготовка базового UI: загрузка PDF, выбор скорости, тема.
-2. Реализация движка показа текста по словам (WPM) и обратного отсчета 3..1.
-3. Добавление автопаузы 3 секунды каждую минуту.
-4. Реализация формы обратной связи (3 шага).
-5. Сохранение данных формы в папку проекта и экран thank-you с таблицей итогов.
-6. Базовое тестирование и проверка английского языка во всех UI- и code-артефактах.
+1. Build base UI: PDF upload, speed selection, theme.
+2. Implement word-based playback engine (WPM) and `3..1` countdown.
+3. Add automatic 3-second pause every minute.
+4. Implement 3-step feedback form.
+5. Save form data in project folder and show thank-you summary table.
+6. Run basic testing and verify English across UI and code artifacts.
 
-## Порядок поставки
-1. P0 функции чтения (upload, parse, speed, playback).
-2. P0 функции сбора фидбека и сохранения.
-3. P1 надежность и валидации.
-4. P2 аналитические улучшения.
+## Delivery Order
+1. P0 reading flow functions (upload, parse, speed, playback).
+2. P0 feedback collection and storage.
+3. P1 reliability and validation.
+4. P2 analytics improvements.
 
-## Зависимости и блокеры
-- Выбор библиотеки/подхода для извлечения текста из PDF.
-- Финальное определение диапазона допустимых скоростей WPM.
-- Решение по формату хранения данных фидбека.
+## Dependencies And Blockers
+- Choose a library/approach for PDF text extraction.
+- Finalize acceptable WPM range.
+- Decide feedback storage format.
 
-## Командные предположения
-- `Assumption:` MVP может реализовать 1 full-stack разработчик.
-- `Assumption:` Дизайн минималистичного интерфейса выполняется без отдельного дизайн-спринта.
+## Team Assumptions
+- `Assumption:` MVP can be implemented by one full-stack developer.
+- `Assumption:` Minimalist UI design can be implemented without a separate design sprint.
 
-## Правило по README после правок
-- После каждой правки в проекте обязательно проверить, нужно ли исправить `README.md`.
-- В `README.md` вносить только необходимые исправления.
-- Ничего нового в `README.md` не добавлять без отдельного запроса от пользователя.
+## README Rule After Changes
+- After every project change, check whether `README.md` needs corrections.
+- Apply only necessary corrections in `README.md`.
+- Do not add new README content without a separate user request.

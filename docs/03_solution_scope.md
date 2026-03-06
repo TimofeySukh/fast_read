@@ -1,29 +1,29 @@
-# Объем решения
+# Solution Scope
 
-## Предлагаемое решение
-- Сделать веб-сайт с двумя основными стадиями: быстрый показ текста из PDF и пост-сессионный сбор обратной связи.
+## Proposed Solution
+- Build a website with two main stages: fast text playback from PDF and post-session feedback collection.
 
 ## In Scope
-- Загрузка PDF.
-- Выбор скорости показа текста в `WPM` (default: `100`).
-- Переключатель light/dark theme.
-- Экран обратного отсчета 3..1 в минималистичном стиле перед началом.
-- Показ текста по одному слову до ближайшего пробела с выбранной скоростью.
-- Автопауза 3 секунды каждую 1 минуту времени воспроизведения.
-- Форма после завершения чтения:
+- PDF upload.
+- Text playback speed selection in `WPM` (default: `100`).
+- Light/dark theme switch.
+- Minimal `3..1` countdown screen before playback starts.
+- One-word-at-a-time text playback up to the nearest whitespace boundary.
+- Automatic 3-second pause every 1 minute of active playback.
+- Post-reading form:
   - nickname + email;
-  - оценка скорости (too slow / normal / too fast / custom);
-  - свободный feedback.
-- Сохранение ответов пользователя в файловом хранилище проекта.
-- Экран «Спасибо за уделенное время» с таблицей сохраненных полей после отправки формы.
+  - speed rating (too slow / normal / too fast / custom);
+  - free-text feedback.
+- Saving user responses in project-local file storage.
+- `Thank you for your time` screen with a summary table after form submission.
 
 ## Out Of Scope
-- Авторизация пользователей.
-- Личный кабинет и история сессий в UI.
-- Продвинутая аналитика или дашборды.
-- Мобильные приложения.
+- User authentication.
+- Personal account and session history in UI.
+- Advanced analytics or dashboards.
+- Mobile apps.
 
-## Критерии успеха первого релиза
-- Пользователь может пройти полный цикл: загрузка PDF -> чтение -> отправка формы.
-- Все обязательные данные обратной связи сохраняются и доступны для анализа.
-- После отправки пользователь видит подтверждение в виде thank-you таблицы.
+## First-Release Success Criteria
+- The user can complete the full cycle: PDF upload -> reading -> form submission.
+- All required feedback fields are saved and available for analysis.
+- After submission, the user sees a confirmation in the form of a thank-you summary table.

@@ -1,14 +1,14 @@
-# Краткое описание проекта
+# Project Summary
 
-## Ценностное предложение
-- Веб-приложение для ускоренного чтения текста из PDF в формате последовательного показа, чтобы читать быстрее, чем при обычном чтении по строкам/страницам.
+## Value Proposition
+- A web app for speed-reading PDF text in a single-focus sequential display, so users can read faster than with traditional line/page layouts.
 
-## Ключевые результаты
-- Пользователь загружает PDF и запускает режим быстрого показа текста.
-- Пользователь управляет скоростью в `словах в минуту (WPM)`, по умолчанию `100`.
-- Интерфейс поддерживает светлую и темную темы.
-- Перед стартом чтения отображается минималистичный обратный отсчет 3..1.
-- Во время чтения на экране показывается одно слово за раз (граница слова по пробелу).
-- Во время чтения автоматически делается пауза 3 секунды каждую минуту.
-- После чтения собирается структурированная обратная связь о скорости и качестве продукта.
-- После отправки формы показывается экран благодарности с таблицей итогов отправки.
+## Key Outcomes
+- The user uploads a PDF and starts a fast-reading session.
+- The user controls speed in `words per minute (WPM)`, with a default of `100`.
+- The interface supports light and dark themes.
+- A minimal `3..1` countdown is shown before reading starts.
+- During reading, one word is shown at a time (word boundary = whitespace).
+- During reading, an automatic 3-second pause is triggered every minute.
+- After reading, structured feedback is collected about speed and product quality.
+- After form submission, a thank-you screen with a submission summary table is shown.

@@ -1,16 +1,16 @@
-# Проблема и пользователи
+# Problem And Users
 
-## Формулировка проблемы
-- Есть гипотеза: люди читают быстрее, когда текст подается в одном фокусном месте, а не как классический макет по строкам или страницам.
+## Problem Statement
+- Hypothesis: people read faster when text is presented in a single focal area rather than in a traditional line/page layout.
 
-## Почему это важно
-- Чтение длинных материалов в PDF часто медленное из-за постоянного перемещения фокуса по странице.
-- Нужен простой инструмент для проверки и практики ускоренного чтения.
+## Why It Matters
+- Reading long PDF materials is often slow because visual focus constantly shifts across the page.
+- A simple tool is needed to test and practice speed reading.
 
-## Целевые пользователи
-- Люди, которые читают PDF и хотят увеличить скорость чтения.
-- Пользователи, готовые дать обратную связь по комфортной скорости показа текста.
+## Target Users
+- People who read PDFs and want to increase reading speed.
+- Users willing to provide feedback on comfortable playback speed.
 
-## Болевые точки и текущие альтернативы
-- Традиционные PDF-ридеры не оптимизированы под режим последовательного ускоренного показа.
-- Пользователю сложно подобрать персональную скорость без явного цикла тестирования и обратной связи.
+## Pain Points And Current Alternatives
+- Traditional PDF readers are not optimized for sequential speed-reading mode.
+- It is hard for users to find a personal comfortable speed without an explicit test-and-feedback loop.

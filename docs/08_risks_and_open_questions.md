@@ -1,20 +1,20 @@
-# Риски и открытые вопросы
+# Risks And Open Questions
 
-## Риски
-- Неверно подобранный диапазон WPM приведет к некорректному UX и недостоверному фидбеку.
-- Качество извлечения текста из PDF может быть нестабильным (сложная верстка, сканы).
-- Хранение в локальных файлах может быть неудобным при росте объема данных.
+## Risks
+- A poorly chosen WPM range can lead to incorrect UX and unreliable feedback.
+- PDF text extraction quality may be unstable (complex layout, scanned pages).
+- Local file storage may become inconvenient as data volume grows.
 
 ## Open Questions
-- Какой диапазон скоростей и какой шаг изменения?
+- What WPM range and step size should be used?
   - Suggested owner: Product + UX.
-- Нужна ли валидация email как обязательная на MVP?
+- Should email validation be mandatory for MVP?
   - Suggested owner: Product.
-- Какой формат хранения выбрать для ответов: JSON, CSV или SQLite?
+- Which response storage format should be chosen: JSON, CSV, or SQLite?
   - Suggested owner: Backend.
-- Нужна ли защита персональных данных (nickname/email) и каков срок хранения?
+- Is personal-data handling required for nickname/email, and what is the retention period?
   - Suggested owner: Product + Legal/Compliance.
 
 ## Assumptions
-- `Assumption:` Пользовательский сценарий строится вокруг одного прохода чтения одного PDF за сессию.
-- `Assumption:` Фидбек после каждого завершенного текста обязателен для отправки результатов.
+- `Assumption:` User flow is based on one pass through one PDF per session.
+- `Assumption:` Feedback submission is required after each completed text session.

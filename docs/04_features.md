@@ -1,26 +1,26 @@
-# Функции
+# Features
 
 ## P0
-- Загрузка PDF и извлечение текста для показа.
-- Выбор скорости воспроизведения в `словах в минуту`.
-- Значение скорости по умолчанию: `100 WPM`.
-- Переключение светлой/темной темы.
-- Обратный отсчет 3..1 перед стартом чтения.
-- Последовательный показ текста по одному слову (разделитель слов: пробел).
-- Пауза 3 секунды каждую минуту.
-- Форма обратной связи после завершения текста.
-- Сохранение результатов формы в папку проекта.
-- Экран благодарности с таблицей отправленных данных.
+- Upload PDF and extract text for playback.
+- Select playback speed in `words per minute`.
+- Default speed value: `100 WPM`.
+- Toggle light/dark theme.
+- `3..1` countdown before reading starts.
+- Sequential one-word display (word delimiter: whitespace).
+- 3-second pause every minute.
+- Feedback form after reading completes.
+- Save form results into a project folder.
+- Thank-you screen with submitted-data summary table.
 
 ## P1
-- Валидация email и обязательных полей формы.
-- Явное сообщение об успешном сохранении ответа.
-- Обработка ошибок загрузки/парсинга PDF.
+- Email and required-form-field validation.
+- Explicit success message after saving feedback.
+- Error handling for PDF upload/parsing.
 
 ## P2
-- Базовая аналитика по распределению комфортных скоростей.
-- Экспорт собранного фидбека в CSV.
+- Basic analytics for comfortable-speed distribution.
+- Export collected feedback to CSV.
 
 ## Acceptance Notes
-- Поля сохранения: nickname, email, `speedWpm`, оценка скорости (или custom-ответ), общий feedback, wordCount.
-- Скорость влияет на интервал смены слов, а не на длину строки/число символов на экране.
+- Saved fields: nickname, email, `speedWpm`, speed rating (or custom answer), general feedback, wordCount.
+- Speed changes the interval between words, not line length or number of characters on screen.

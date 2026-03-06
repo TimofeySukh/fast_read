@@ -1,22 +1,22 @@
-# Техстек и интеграции
+# Tech Stack And Integrations
 
-## Предпочтения по стеку
-- Формат продукта: веб-приложение.
-- Язык интерфейса: только английский.
-- Язык кода, комментариев, тестов и технических пометок: английский.
+## Stack Preferences
+- Product format: web application.
+- Interface language: English only.
+- Code language (comments, tests, technical notes): English.
 
-## Интеграции
-- Парсинг PDF для извлечения текста.
-- Файловое сохранение ответов пользователей в директорию проекта (локальное хранилище на старте).
+## Integrations
+- PDF parsing for text extraction.
+- File-based storage of user responses in the project directory (local storage for MVP).
 
-## Ограничения
-- `Assumption:` MVP запускается без внешней БД, на файловом хранении.
-- Нужна поддержка минимум light/dark themes.
-- Единица скорости фиксирована: `words per minute (WPM)`.
-- Значение по умолчанию: `100 WPM`.
-- Показ текста должен идти по словам, где слово определяется границей пробела.
+## Constraints
+- `Assumption:` MVP runs without an external DB, using local file storage.
+- Support for at least light/dark themes is required.
+- Speed unit is fixed: `words per minute (WPM)`.
+- Default value: `100 WPM`.
+- Text playback must be word-based, where a word is determined by whitespace boundary.
 
 ## TBD
-- Конкретный frontend framework.
-- Конкретный backend/runtime.
-- Формат хранения ответов (JSON/CSV/SQLite).
+- Specific frontend framework.
+- Specific backend/runtime choice.
+- Response storage format (JSON/CSV/SQLite).
