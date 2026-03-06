@@ -1,13 +1,14 @@
 # fast_read
 
-Read PDF text one word at a time with configurable speed (`WPM`), short focus breaks, and built-in feedback capture.
+Read PDF text one word at a time with configurable speed (`WPM`) and built-in feedback capture.
 
 ## Features
 
-- Upload a PDF and extract text for reading.
-- One-word-at-a-time playback (word boundary = whitespace).
+- Upload a PDF and extract text for reading (or use default `pdf_start.pdf` when no file is selected).
+- One-word-at-a-time playback (word boundary = punctuation or whitespace).
 - Speed control in words per minute (`100 WPM` default).
-- Automatic 3-second break every minute of active playback.
+- Speed can be changed during reading.
+- Pause/resume playback by pressing `Space`.
 - 3-step feedback form after reading.
 - Local feedback storage as JSON files in `data/responses/`.
 
@@ -31,9 +32,10 @@ Open `http://127.0.0.1:5000`.
 
 ### 1) Start a reading session
 
-1. Upload a PDF.
+1. Upload a PDF (optional: skip upload to use default `pdf_start.pdf`).
 2. Set speed in WPM.
-3. Click `Start Reading` and follow the 3-second countdown.
+3. Click `Start Reading` (PDF is validated/parsed here), then follow the 3-second countdown.
+4. During reading, you can change WPM and press `Space` to pause/resume.
 
 ### 2) Submit feedback
 

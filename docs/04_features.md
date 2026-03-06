@@ -1,13 +1,14 @@
 # Features
 
 ## P0
-- Upload PDF and extract text for playback.
+- Upload PDF and extract text for playback, with fallback to default file `pdf_start.pdf`.
 - Select playback speed in `words per minute`.
 - Default speed value: `100 WPM`.
+- Allow speed changes during reading and apply them without restarting the session.
 - Toggle light/dark theme.
 - `3..1` countdown before reading starts.
-- Sequential one-word display (word delimiter: whitespace).
-- 3-second pause every minute.
+- Sequential one-word display (word delimiter: punctuation or whitespace).
+- Pause/resume playback on `Space`.
 - Feedback form after reading completes.
 - Save form results into a project folder.
 - Thank-you screen with submitted-data summary table.

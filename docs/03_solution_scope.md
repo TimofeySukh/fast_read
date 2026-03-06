@@ -4,12 +4,14 @@
 - Build a website with two main stages: fast text playback from PDF and post-session feedback collection.
 
 ## In Scope
-- PDF upload.
+- PDF selection with fallback to default file `pdf_start.pdf`.
 - Text playback speed selection in `WPM` (default: `100`).
 - Light/dark theme switch.
+- `Start Reading` button validates/parses selected PDF (or default PDF) and starts flow.
 - Minimal `3..1` countdown screen before playback starts.
-- One-word-at-a-time text playback up to the nearest whitespace boundary.
-- Automatic 3-second pause every 1 minute of active playback.
+- One-word-at-a-time text playback split by punctuation or whitespace boundaries.
+- Speed can be updated while reading, and playback interval updates accordingly.
+- Pause/resume playback on `Space` key press.
 - Post-reading form:
   - nickname + email;
   - speed rating (too slow / normal / too fast / custom);

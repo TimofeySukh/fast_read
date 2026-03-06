@@ -21,6 +21,7 @@
           <label class="field">
             <span>PDF File</span>
             <input id="pdfInput" type="file" accept="application/pdf" />
+            <small class="field-note">If no file is selected, default file `pdf_start.pdf` will be used.</small>
           </label>
 
           <label class="field">
@@ -30,8 +31,7 @@
         </div>
 
         <div class="actions">
-          <button id="loadPdfBtn" type="button">Load PDF</button>
-          <button id="startBtn" type="button" disabled>Start Reading</button>
+          <button id="startBtn" type="button">Start Reading</button>
         </div>
 
         <p id="setupStatus" class="status" aria-live="polite"></p>
@@ -47,7 +47,14 @@
           <span id="readerProgress">0%</span>
         </div>
         <div id="focusText" class="focus-text">Ready</div>
-        <div id="pauseOverlay" class="pause-overlay hidden">Break: 3</div>
+        <div class="reader-controls">
+          <label class="field">
+            <span>Speed During Reading (WPM)</span>
+            <input id="readerSpeedInput" type="number" min="1" max="1000" value="100" />
+          </label>
+        </div>
+        <p class="reader-hint">Press <kbd>Space</kbd> to pause or resume playback.</p>
+        <div id="pauseOverlay" class="pause-overlay hidden">Paused</div>
       </section>
 
       <section id="feedbackSection" class="card hidden">

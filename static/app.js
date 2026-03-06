@@ -5,9 +5,7 @@ const state = {
   currentWordIndex: 0,
   speedWpm: 100,
   playbackTimer: null,
-  breakTimer: null,
-  activePlaybackMs: 0,
-  nextBreakMs: 60000,
+  isPaused: false,
 };
 
 const setupSection = document.getElementById("setupSection");
@@ -18,7 +16,7 @@ const thankYouSection = document.getElementById("thankYouSection");
 
 const pdfInput = document.getElementById("pdfInput");
 const speedInput = document.getElementById("speedInput");
-const loadPdfBtn = document.getElementById("loadPdfBtn");
+const readerSpeedInput = document.getElementById("readerSpeedInput");
 const startBtn = document.getElementById("startBtn");
 const setupStatus = document.getElementById("setupStatus");
 
@@ -50,22 +48,26 @@ function setStatus(element, message, isError = false) {
   element.style.color = isError ? "#c2463d" : "";
 }
 
-function sanitizeSpeedWpm() {
-  const value = Number.parseInt(speedInput.value, 10);
+function clampWpm(value) {
   if (Number.isNaN(value)) {
     return 100;
   }
   return Math.min(1000, Math.max(1, value));
 }
 
-function clearPlaybackTimers() {
+function applySpeedWpm(nextSpeed) {
+  state.speedWpm = clampWpm(nextSpeed);
+  speedInput.value = String(state.speedWpm);
+  readerSpeedInput.value = String(state.speedWpm);
+  if (!readerSection.classList.contains("hidden")) {
+    readerFileName.textContent = `${state.fileName} • ${state.speedWpm} WPM`;
+  }
+}
+
+function clearPlaybackTimer() {
   if (state.playbackTimer) {
     clearTimeout(state.playbackTimer);
     state.playbackTimer = null;
-  }
-  if (state.breakTimer) {
-    clearInterval(state.breakTimer);
-    state.breakTimer = null;
   }
 }
 
@@ -73,51 +75,12 @@ function wordIntervalMs() {
   return Math.max(60, Math.round(60000 / state.speedWpm));
 }
 
-async function loadPdf() {
-  const file = pdfInput.files?.[0];
-  if (!file) {
-    setStatus(setupStatus, "Please select a PDF file.", true);
-    return;
-  }
-
-  state.speedWpm = sanitizeSpeedWpm();
-  speedInput.value = String(state.speedWpm);
-
-  const formData = new FormData();
-  formData.append("file", file);
-
-  loadPdfBtn.disabled = true;
-  startBtn.disabled = true;
-  setStatus(setupStatus, "Loading and parsing PDF...");
-
+function splitTextIntoWords(text) {
   try {
-    const response = await fetch("/api/upload-pdf", {
-      method: "POST",
-      body: formData,
-    });
-    const payload = await response.json();
-
-    if (!response.ok) {
-      setStatus(setupStatus, payload.error || "Failed to load PDF.", true);
-      return;
-    }
-
-    state.fileName = payload.fileName;
-    state.rawText = payload.text;
-    state.words = payload.text.split(/\s+/).filter(Boolean);
-    const extractedWords = Number(payload.wordCount) || state.words.length;
-
-    if (!state.words.length) {
-      setStatus(setupStatus, "No readable words found in this PDF.", true);
-      return;
-    }
-
-    setStatus(setupStatus, `Loaded ${payload.fileName}. ${extractedWords} words extracted.`);
-    startBtn.disabled = false;
-  } catch (error) {
-    setStatus(setupStatus, "Network error while loading PDF.", true);
-  } finally {
-    loadPdfBtn.disabled = false;
+    const tokens = text.match(/[\p{L}\p{N}]+(?:['’`-][\p{L}\p{N}]+)*/gu);
+    return tokens || [];
+  } catch {
+    return text.split(/[^A-Za-z0-9]+/).filter(Boolean);
   }
 }
 
@@ -128,15 +91,77 @@ function showSection(section) {
   section.classList.remove("hidden");
 }
 
-function startCountdown() {
-  if (!state.words.length) {
-    setStatus(setupStatus, "Load a PDF first.", true);
-    return;
+async function requestReadingPayload() {
+  const selectedFile = pdfInput.files?.[0];
+  if (selectedFile) {
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+
+    const response = await fetch("/api/upload-pdf", {
+      method: "POST",
+      body: formData,
+    });
+    const payload = await response.json();
+    if (!response.ok) {
+      throw new Error(payload.error || "Failed to parse selected PDF.");
+    }
+    payload.isDefaultFile = false;
+    return payload;
   }
 
-  state.speedWpm = sanitizeSpeedWpm();
-  speedInput.value = String(state.speedWpm);
+  const response = await fetch("/api/default-pdf", { method: "POST" });
+  const payload = await response.json();
+  if (!response.ok) {
+    throw new Error(payload.error || "Failed to load default PDF.");
+  }
+  payload.isDefaultFile = true;
+  return payload;
+}
 
+function applyLoadedPayload(payload) {
+  state.fileName = payload.fileName;
+  state.rawText = payload.text;
+  state.words = splitTextIntoWords(payload.text);
+}
+
+async function prepareTextForReading() {
+  const selectedFile = pdfInput.files?.[0];
+  const initialLabel = startBtn.textContent;
+  startBtn.disabled = true;
+  startBtn.textContent = "Checking PDF...";
+
+  if (selectedFile) {
+    setStatus(setupStatus, "Checking selected PDF...");
+  } else {
+    setStatus(setupStatus, "No file selected. Loading default PDF...");
+  }
+
+  try {
+    const payload = await requestReadingPayload();
+    applyLoadedPayload(payload);
+
+    if (!state.words.length) {
+      setStatus(setupStatus, "No readable words found in this PDF.", true);
+      return false;
+    }
+
+    if (payload.isDefaultFile) {
+      setStatus(setupStatus, `Using default PDF: ${payload.fileName}. ${state.words.length} words extracted.`);
+    } else {
+      setStatus(setupStatus, `Loaded ${payload.fileName}. ${state.words.length} words extracted.`);
+    }
+
+    return true;
+  } catch (error) {
+    setStatus(setupStatus, error.message || "Failed to prepare reading text.", true);
+    return false;
+  } finally {
+    startBtn.disabled = false;
+    startBtn.textContent = initialLabel;
+  }
+}
+
+function startCountdown() {
   showSection(countdownSection);
   let value = 3;
   countdownNumber.textContent = String(value);
@@ -158,27 +183,11 @@ function updateProgress() {
   readerProgress.textContent = `${pct}%`;
 }
 
-function startBreak() {
-  clearPlaybackTimers();
-
-  let remaining = 3;
-  pauseOverlay.textContent = `Break: ${remaining}`;
-  pauseOverlay.classList.remove("hidden");
-
-  state.breakTimer = setInterval(() => {
-    remaining -= 1;
-    if (remaining <= 0) {
-      clearInterval(state.breakTimer);
-      state.breakTimer = null;
-      pauseOverlay.classList.add("hidden");
-      scheduleNextWord();
-      return;
-    }
-    pauseOverlay.textContent = `Break: ${remaining}`;
-  }, 1000);
-}
-
 function scheduleNextWord() {
+  if (state.isPaused) {
+    return;
+  }
+
   if (state.currentWordIndex >= state.words.length) {
     finishReading();
     return;
@@ -186,16 +195,13 @@ function scheduleNextWord() {
 
   const interval = wordIntervalMs();
   state.playbackTimer = setTimeout(() => {
-    focusText.textContent = state.words[state.currentWordIndex];
-    state.currentWordIndex += 1;
-    state.activePlaybackMs += interval;
-    updateProgress();
-
-    if (state.activePlaybackMs >= state.nextBreakMs && state.currentWordIndex < state.words.length) {
-      state.nextBreakMs += 60000;
-      startBreak();
+    if (state.isPaused) {
       return;
     }
+
+    focusText.textContent = state.words[state.currentWordIndex];
+    state.currentWordIndex += 1;
+    updateProgress();
 
     if (state.currentWordIndex >= state.words.length) {
       finishReading();
@@ -206,12 +212,42 @@ function scheduleNextWord() {
   }, interval);
 }
 
+function pauseReading() {
+  if (state.isPaused) {
+    return;
+  }
+  state.isPaused = true;
+  clearPlaybackTimer();
+  pauseOverlay.textContent = "Paused";
+  pauseOverlay.classList.remove("hidden");
+}
+
+function resumeReading() {
+  if (!state.isPaused) {
+    return;
+  }
+  state.isPaused = false;
+  pauseOverlay.classList.add("hidden");
+  scheduleNextWord();
+}
+
+function togglePauseResume() {
+  if (state.currentWordIndex >= state.words.length) {
+    return;
+  }
+
+  if (state.isPaused) {
+    resumeReading();
+  } else {
+    pauseReading();
+  }
+}
+
 function startReading() {
-  clearPlaybackTimers();
+  clearPlaybackTimer();
 
   state.currentWordIndex = 0;
-  state.activePlaybackMs = 0;
-  state.nextBreakMs = 60000;
+  state.isPaused = false;
 
   showSection(readerSection);
   readerFileName.textContent = `${state.fileName} • ${state.speedWpm} WPM`;
@@ -222,8 +258,19 @@ function startReading() {
   scheduleNextWord();
 }
 
+async function handleStartReadingClick() {
+  applySpeedWpm(Number.parseInt(speedInput.value, 10));
+  const ok = await prepareTextForReading();
+  if (!ok) {
+    return;
+  }
+  startCountdown();
+}
+
 function finishReading() {
-  clearPlaybackTimers();
+  clearPlaybackTimer();
+  state.isPaused = false;
+  pauseOverlay.classList.add("hidden");
   showSection(feedbackSection);
   showStep(1);
 }
@@ -323,7 +370,7 @@ async function submitFeedback(event) {
     feedbackForm.reset();
     customFeelingWrap.classList.add("hidden");
     showSection(thankYouSection);
-  } catch (error) {
+  } catch {
     setStatus(feedbackStatus, "Network error while saving feedback.", true);
   }
 }
@@ -358,6 +405,35 @@ function bindSpeedFeelingToggle() {
   });
 }
 
+function bindSpacePauseShortcut() {
+  document.addEventListener("keydown", (event) => {
+    if (event.code !== "Space") {
+      return;
+    }
+
+    if (readerSection.classList.contains("hidden")) {
+      return;
+    }
+
+    const tagName = document.activeElement?.tagName;
+    if (tagName === "INPUT" || tagName === "TEXTAREA") {
+      return;
+    }
+
+    event.preventDefault();
+    togglePauseResume();
+  });
+}
+
+function bindSpeedInputs() {
+  [speedInput, readerSpeedInput].forEach((input) => {
+    input.addEventListener("change", () => {
+      const parsed = Number.parseInt(input.value, 10);
+      applySpeedWpm(parsed);
+    });
+  });
+}
+
 function initTheme() {
   const saved = window.localStorage.getItem("fast-read-theme");
   const initial = saved === "dark" ? "dark" : "light";
@@ -374,18 +450,22 @@ function initTheme() {
 }
 
 function startNewSession() {
+  clearPlaybackTimer();
+  state.isPaused = false;
+  pauseOverlay.classList.add("hidden");
   showSection(setupSection);
   setStatus(setupStatus, "");
   setStatus(feedbackStatus, "");
-  startBtn.disabled = state.words.length === 0;
 }
 
-loadPdfBtn.addEventListener("click", loadPdf);
-startBtn.addEventListener("click", startCountdown);
+startBtn.addEventListener("click", handleStartReadingClick);
 feedbackForm.addEventListener("submit", submitFeedback);
 newSessionBtn.addEventListener("click", startNewSession);
 
 bindStepNavigation();
 bindSpeedFeelingToggle();
+bindSpacePauseShortcut();
+bindSpeedInputs();
 initTheme();
+applySpeedWpm(100);
 showSection(setupSection);

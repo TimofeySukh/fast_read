@@ -3,7 +3,7 @@
 ## Milestones
 1. Build base UI: PDF upload, speed selection, theme.
 2. Implement word-based playback engine (WPM) and `3..1` countdown.
-3. Add automatic 3-second pause every minute.
+3. Add keyboard pause/resume on `Space` and on-screen hint below the word display.
 4. Implement 3-step feedback form.
 5. Save form data in project folder and show thank-you summary table.
 6. Run basic testing and verify English across UI and code artifacts.
@@ -27,3 +27,7 @@
 - After every project change, check whether `README.md` needs corrections.
 - Apply only necessary corrections in `README.md`.
 - Do not add new README content without a separate user request.
+
+## Git Rule After Changes
+- After every project change, immediately create a git commit.
+- After each commit, immediately push to GitHub (`main`) unless explicitly told otherwise.

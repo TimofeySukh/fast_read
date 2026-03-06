@@ -9,26 +9,30 @@ from typing import Any
 
 from flask import Flask, jsonify, render_template, request
 from pypdf import PdfReader
-from werkzeug.utils import secure_filename
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
 RESPONSES_DIR = DATA_DIR / "responses"
 ALLOWED_EXTENSIONS = {".pdf"}
+DEFAULT_PDF_PATH = Path("/home/tim/PDFs/pdf_start.pdf")
+WORD_PATTERN = re.compile(r"[^\W_]+(?:['’`-][^\W_]+)*", re.UNICODE)
 
 
 def normalize_text(text: str) -> str:
     return re.sub(r"\s+", " ", text).strip()
 
 
-def extract_pdf_text(file_storage: Any) -> str:
-    reader = PdfReader(file_storage.stream)
+def extract_pdf_text(reader: PdfReader) -> str:
     page_text: list[str] = []
     for page in reader.pages:
         extracted = page.extract_text() or ""
         if extracted:
             page_text.append(extracted)
     return normalize_text(" ".join(page_text))
+
+
+def count_words(text: str) -> int:
+    return len(WORD_PATTERN.findall(text))
 
 
 def validate_feedback_payload(payload: dict[str, Any]) -> tuple[bool, str]:
@@ -100,30 +104,58 @@ def create_app() -> Flask:
             return jsonify({"error": "Missing file"}), 400
 
         file = request.files["file"]
-        filename = secure_filename(file.filename or "")
-        suffix = Path(filename).suffix.lower()
+        original_name = str(file.filename or "").strip()
+        suffix = Path(original_name).suffix.lower()
 
-        if not filename:
+        if not original_name:
             return jsonify({"error": "File name is empty"}), 400
-        if suffix not in ALLOWED_EXTENSIONS:
+        if suffix not in ALLOWED_EXTENSIONS and file.mimetype != "application/pdf":
             return jsonify({"error": "Only PDF files are allowed"}), 400
 
         try:
-            text = extract_pdf_text(file)
+            text = extract_pdf_text(PdfReader(file.stream))
         except Exception:
             return jsonify({"error": "Failed to parse PDF"}), 400
 
         if not text:
-            return jsonify({"error": "No extractable text found in this PDF"}), 400
+            return jsonify(
+                {"error": "No extractable text found in this PDF (it may be a scanned/image PDF)."}
+            ), 400
 
-        word_count = len([token for token in text.split(" ") if token])
+        word_count = count_words(text)
 
         return jsonify(
             {
-                "fileName": filename,
+                "fileName": original_name,
                 "text": text,
                 "textLength": len(text),
                 "wordCount": word_count,
+            }
+        )
+
+    @app.post("/api/default-pdf")
+    def default_pdf() -> tuple[Any, int] | Any:
+        if not DEFAULT_PDF_PATH.exists():
+            return jsonify({"error": f"Default PDF not found: {DEFAULT_PDF_PATH}"}), 404
+
+        try:
+            with DEFAULT_PDF_PATH.open("rb") as handle:
+                text = extract_pdf_text(PdfReader(handle))
+        except Exception:
+            return jsonify({"error": "Failed to parse default PDF"}), 400
+
+        if not text:
+            return jsonify(
+                {"error": "No extractable text found in default PDF (it may be a scanned/image PDF)."}
+            ), 400
+
+        return jsonify(
+            {
+                "fileName": DEFAULT_PDF_PATH.name,
+                "text": text,
+                "textLength": len(text),
+                "wordCount": count_words(text),
+                "isDefaultFile": True,
             }
         )
 
