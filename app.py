@@ -14,7 +14,7 @@ BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
 RESPONSES_DIR = DATA_DIR / "responses"
 ALLOWED_EXTENSIONS = {".pdf"}
-DEFAULT_PDF_PATH = Path("/home/tim/PDFs/pdf_start.pdf")
+DEFAULT_PDF_PATH = BASE_DIR / "pdf_start.pdf"
 WORD_PATTERN = re.compile(r"[^\W_]+(?:['’`-][^\W_]+)*", re.UNICODE)
 
 

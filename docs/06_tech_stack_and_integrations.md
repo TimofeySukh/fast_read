@@ -8,7 +8,7 @@
 ## Integrations
 - PDF parsing for text extraction.
 - File-based storage of user responses in the project directory (local storage for MVP).
-- Built-in default source PDF at `/home/tim/PDFs/pdf_start.pdf` when no file is selected.
+- Built-in default source PDF at project root: `./pdf_start.pdf` when no file is selected.
 
 ## Constraints
 - `Assumption:` MVP runs without an external DB, using local file storage.
