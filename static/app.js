@@ -17,6 +17,9 @@ const thankYouSection = document.getElementById("thankYouSection");
 const pdfInput = document.getElementById("pdfInput");
 const speedInput = document.getElementById("speedInput");
 const readerSpeedInput = document.getElementById("readerSpeedInput");
+const decreaseSpeedBtn = document.getElementById("decreaseSpeedBtn");
+const increaseSpeedBtn = document.getElementById("increaseSpeedBtn");
+const readerPauseBtn = document.getElementById("readerPauseBtn");
 const startBtn = document.getElementById("startBtn");
 const setupStatus = document.getElementById("setupStatus");
 
@@ -68,6 +71,17 @@ function clearPlaybackTimer() {
   if (state.playbackTimer) {
     clearTimeout(state.playbackTimer);
     state.playbackTimer = null;
+  }
+}
+
+function renderPauseState() {
+  if (state.isPaused) {
+    pauseOverlay.textContent = "Paused";
+    pauseOverlay.classList.remove("hidden");
+    readerPauseBtn.textContent = "Resume";
+  } else {
+    pauseOverlay.classList.add("hidden");
+    readerPauseBtn.textContent = "Pause";
   }
 }
 
@@ -218,8 +232,7 @@ function pauseReading() {
   }
   state.isPaused = true;
   clearPlaybackTimer();
-  pauseOverlay.textContent = "Paused";
-  pauseOverlay.classList.remove("hidden");
+  renderPauseState();
 }
 
 function resumeReading() {
@@ -227,7 +240,7 @@ function resumeReading() {
     return;
   }
   state.isPaused = false;
-  pauseOverlay.classList.add("hidden");
+  renderPauseState();
   scheduleNextWord();
 }
 
@@ -253,7 +266,7 @@ function startReading() {
   readerFileName.textContent = `${state.fileName} • ${state.speedWpm} WPM`;
   readerProgress.textContent = "0%";
   focusText.textContent = "Starting...";
-  pauseOverlay.classList.add("hidden");
+  renderPauseState();
 
   scheduleNextWord();
 }
@@ -270,7 +283,7 @@ async function handleStartReadingClick() {
 function finishReading() {
   clearPlaybackTimer();
   state.isPaused = false;
-  pauseOverlay.classList.add("hidden");
+  renderPauseState();
   showSection(feedbackSection);
   showStep(1);
 }
@@ -425,12 +438,33 @@ function bindSpacePauseShortcut() {
   });
 }
 
+function bindReaderTouchControls() {
+  readerPauseBtn.addEventListener("click", () => {
+    togglePauseResume();
+  });
+
+  focusText.addEventListener("click", () => {
+    if (readerSection.classList.contains("hidden")) {
+      return;
+    }
+    togglePauseResume();
+  });
+}
+
 function bindSpeedInputs() {
   [speedInput, readerSpeedInput].forEach((input) => {
     input.addEventListener("change", () => {
       const parsed = Number.parseInt(input.value, 10);
       applySpeedWpm(parsed);
     });
+  });
+
+  decreaseSpeedBtn.addEventListener("click", () => {
+    applySpeedWpm(state.speedWpm - 5);
+  });
+
+  increaseSpeedBtn.addEventListener("click", () => {
+    applySpeedWpm(state.speedWpm + 5);
   });
 }
 
@@ -452,7 +486,7 @@ function initTheme() {
 function startNewSession() {
   clearPlaybackTimer();
   state.isPaused = false;
-  pauseOverlay.classList.add("hidden");
+  renderPauseState();
   showSection(setupSection);
   setStatus(setupStatus, "");
   setStatus(feedbackStatus, "");
@@ -465,7 +499,9 @@ newSessionBtn.addEventListener("click", startNewSession);
 bindStepNavigation();
 bindSpeedFeelingToggle();
 bindSpacePauseShortcut();
+bindReaderTouchControls();
 bindSpeedInputs();
 initTheme();
 applySpeedWpm(100);
+renderPauseState();
 showSection(setupSection);

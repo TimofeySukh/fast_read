@@ -215,6 +215,15 @@ button.ghost {
   width: min(320px, 100%);
 }
 
+.reader-actions {
+  margin-top: 10px;
+  justify-content: center;
+}
+
+.reader-actions button {
+  min-width: 88px;
+}
+
 .reader-controls .field {
   margin-bottom: 0;
   text-align: left;

@@ -8,7 +8,7 @@
 - Toggle light/dark theme.
 - `3..1` countdown before reading starts.
 - Sequential one-word display (word delimiter: punctuation or whitespace).
-- Pause/resume playback on `Space`.
+- Pause/resume playback on-screen (`Pause/Resume`), plus `Space` shortcut on desktop.
 - Feedback form after reading completes.
 - Save form results into a project folder.
 - Thank-you screen with submitted-data summary table.

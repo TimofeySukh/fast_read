@@ -11,7 +11,7 @@
 - Minimal `3..1` countdown screen before playback starts.
 - One-word-at-a-time text playback split by punctuation or whitespace boundaries.
 - Speed can be updated while reading, and playback interval updates accordingly.
-- Pause/resume playback on `Space` key press.
+- Pause/resume playback via on-screen button, with optional `Space` key shortcut on desktop.
 - Post-reading form:
   - nickname + email;
   - speed rating (too slow / normal / too fast / custom);

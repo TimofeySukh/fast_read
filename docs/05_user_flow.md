@@ -9,7 +9,7 @@
 6. The user sees a `3..1` countdown screen (centered numbers only).
 7. The user reads text shown one word at a time (split by punctuation or whitespace).
 8. The user can adjust WPM during reading.
-9. The user can press `Space` to pause or resume playback.
+9. The user can tap `Pause/Resume` on-screen (or press `Space` on desktop) to pause or resume playback.
 10. After text completion, the feedback form opens.
 11. The user fills in nickname/email.
 12. The user selects speed rating: too slow / normal / too fast / custom.

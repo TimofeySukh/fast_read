@@ -8,7 +8,7 @@ Read PDF text one word at a time with configurable speed (`WPM`) and built-in fe
 - One-word-at-a-time playback (word boundary = punctuation or whitespace).
 - Speed control in words per minute (`100 WPM` default).
 - Speed can be changed during reading.
-- Pause/resume playback by pressing `Space`.
+- Pause/resume playback via on-screen `Pause/Resume` button (mobile-friendly), or `Space` on desktop.
 - 3-step feedback form after reading.
 - Local feedback storage as JSON files in `data/responses/`.
 
@@ -35,7 +35,7 @@ Open `http://127.0.0.1:5000`.
 1. Upload a PDF (optional: skip upload to use default `pdf_start.pdf`).
 2. Set speed in WPM.
 3. Click `Start Reading` (PDF is validated/parsed here), then follow the 3-second countdown.
-4. During reading, you can change WPM and press `Space` to pause/resume.
+4. During reading, you can change WPM and pause/resume via button (or `Space` on desktop).
 
 ### 2) Submit feedback
 

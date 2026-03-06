@@ -10,6 +10,6 @@
 - A minimal `3..1` countdown is shown before reading starts.
 - During reading, one word is shown at a time (word boundary = punctuation or whitespace).
 - During reading, speed can be changed and the new value is applied immediately.
-- During reading, the user can pause/resume playback by pressing `Space`.
+- During reading, the user can pause/resume playback via on-screen button (and `Space` on desktop).
 - After reading, structured feedback is collected about speed and product quality.
 - After form submission, a thank-you screen with a submission summary table is shown.

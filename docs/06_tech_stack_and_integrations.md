@@ -17,7 +17,7 @@
 - Default value: `100 WPM`.
 - Text playback must be word-based, where a word is determined by punctuation or whitespace boundary.
 - Speed changes during reading must update playback interval without restarting the session.
-- Pause/resume control is bound to the `Space` key during reading.
+- Pause/resume control is available via on-screen button (mobile) and `Space` key shortcut (desktop).
 
 ## TBD
 - Specific frontend framework.
