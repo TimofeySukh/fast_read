@@ -10,7 +10,7 @@ Replace the previous app behavior with a deterministic research protocol with a 
 
 ## Core Flow Contract
 1. Welcome screen with required participant name.
-2. Calibration ramp in one-word mode.
+2. Calibration playback from `pdf_start.pdf` with manual speed controls.
 3. 6-text test runner (2 reading segments per text).
 4. Familiarity checklist screen (mandatory, before feedback).
 5. Final feedback screen (mandatory text).
@@ -19,15 +19,18 @@ Replace the previous app behavior with a deterministic research protocol with a 
 ## Calibration Contract
 - Source: `pdf_start.pdf`.
 - Mode: one-word display.
-- Speed ramp: increase by `5 WPM` every `2 seconds`.
-- Stop action:
-  - desktop: `Space`,
-  - mobile: on-screen `STOP` button.
+- Manual controls:
+  - quick-step buttons: `-100`, `-50`, `-20`, `-10`, `-5`, `+5`, `+10`, `+20`, `+50`, `+100`,
+  - direct numeric input.
+- Allowed range: `50..700`.
+- Confirm action:
+  - desktop: `Space` or `Continue`,
+  - mobile: `Continue`.
 - Persist:
   - selected WPM,
-  - stop interaction type,
+  - selection interaction type,
   - calibration timestamp.
-- Post-stop prepare state exists before first test.
+- Post-confirm prepare state exists before first segment.
 
 ## Reading Segment Contract
 - Each of 6 texts is read twice:
@@ -55,7 +58,7 @@ This strict alternation is final for current study phase.
 - Must contain:
   - progress message (example: `Text 1 of 6 completed`),
   - next format hint (example: `Next format: PDF` or `Next format: one word at a time`),
-  - explicit continue action (`Continue Test` button).
+  - explicit continue action (`Continue` button).
 - Desktop continue shortcut: `Space`.
 - Mobile continue action: on-screen button.
 - No forced one-minute breaks.

@@ -10,7 +10,7 @@ Build a controlled reading research app that compares two reading formats on the
 - Each text is read in both formats (12 measured reading segments total).
 - Segment order alternates by text (`words -> PDF`, then `PDF -> words`, repeating).
 - Calibration is done once at the beginning from `pdf_start.pdf`.
-- Calibration speed ramp is fixed: `+5 WPM` every `2 seconds`.
+- Calibration speed is selected manually by participant (`50..700`, with quick-step controls).
 - Final selected WPM is fixed for all one-word segments in that session.
 
 ## Required Data Output

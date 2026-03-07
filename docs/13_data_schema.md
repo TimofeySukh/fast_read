@@ -40,9 +40,11 @@ Target persistence format for one completed or partial session.
 ```json
 {
   "sourcePdf": "pdf_start.pdf",
-  "rampStepWpm": 5,
-  "rampStepSeconds": 2,
-  "stopMethod": "space_or_stop_button",
+  "selectionMode": "manual",
+  "minWpm": 50,
+  "maxWpm": 700,
+  "stepWpm": 5,
+  "stopMethod": "manual_select",
   "selectedWpm": 180,
   "stoppedAtUtc": "ISO-8601"
 }

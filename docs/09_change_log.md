@@ -13,6 +13,29 @@ Use this file as the single mandatory log for project updates.
 ## Entries
 - Date: 2026-03-07
 - Branch: main-idea-rus
+- Scope: Rework calibration to playback + manual speed controls
+- Files changed:
+  - templates/index.html
+  - static/app.js
+  - static/styles.css
+  - app.py
+  - docs/01_summary.md
+  - docs/03_solution_scope.md
+  - docs/04_features.md
+  - docs/05_user_flow.md
+  - docs/13_data_schema.md
+  - docs/09_change_log.md
+- Summary:
+  - Removed bad calibration revision commit and restored baseline before rework.
+  - Implemented calibration playback from `pdf_start` with manual controls: `±5/10/20/50/100` and direct input.
+  - Replaced `Поехали` with `Продолжить`, removed Гагарин phrase, and updated onboarding copy.
+  - Reworded UI progress text to use `исследование` terminology.
+  - Updated backend calibration schema/validation for `manual_select` mode (`50..700`).
+- Follow-up needed:
+  - Manual UX check for button density on small mobile screens.
+
+- Date: 2026-03-07
+- Branch: main-idea-rus
 - Scope: Remove manual finish for one-word segments and update feedback prompt
 - Files changed:
   - templates/index.html

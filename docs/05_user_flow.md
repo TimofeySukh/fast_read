@@ -7,10 +7,10 @@
 4. `Start` becomes enabled only after non-empty name.
 5. Name is persisted immediately.
 6. Calibration screen starts from `pdf_start.pdf` in one-word mode.
-7. WPM ramps automatically by `+5` every `2s`.
-8. Participant stops at comfortable speed:
-   - desktop: `Space`,
-   - mobile: `STOP`.
+7. Participant adjusts speed manually with quick-step buttons and direct input.
+8. Participant confirms comfortable speed:
+   - desktop: `Space` or `Continue`,
+   - mobile: `Continue`.
 9. Selected WPM is persisted.
 10. Prepare screen appears before first text.
 11. Text sequence starts and follows locked alternation:
@@ -29,7 +29,7 @@
 13. Between segments and texts:
    - transition screen shows progress,
    - next format is announced,
-   - participant continues by `Continue Test` (desktop `Space` shortcut allowed).
+   - participant continues by `Continue` (desktop `Space` shortcut allowed).
 14. After all 12 reading segments are complete, familiarity checklist screen opens.
 15. Participant marks familiarity for all 6 listed works.
 16. Feedback screen opens.
@@ -40,7 +40,7 @@
 
 ## Device-Specific Interaction Rules
 - Desktop:
-  - `Space` is used for calibration stop and transition continue.
+  - `Space` is used for calibration confirm and transition continue.
   - `Space` also controls pause/resume in one-word reading mode.
 - Mobile:
   - every keyboard action has an on-screen button equivalent.

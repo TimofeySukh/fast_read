@@ -124,6 +124,16 @@ h2 {
   justify-content: center;
 }
 
+.calibration-row {
+  margin-top: 12px;
+  margin-bottom: 10px;
+}
+
+.calibration-row button {
+  min-width: 68px;
+  padding: 9px 12px;
+}
+
 .end-actions {
   justify-content: flex-end;
 }

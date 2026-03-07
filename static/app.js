@@ -1,3 +1,6 @@
+const CALIBRATION_MIN_WPM = 50;
+const CALIBRATION_MAX_WPM = 700;
+
 const state = {
   protocol: null,
   sessionId: "",
@@ -15,7 +18,6 @@ const state = {
   wordTimer: null,
   calibrationWords: [],
   calibrationWordIndex: 0,
-  calibrationRampTimer: null,
   busy: false,
   familiarityChecklist: {},
 };
@@ -37,7 +39,18 @@ const startSessionBtn = document.getElementById("startSessionBtn");
 
 const calibrationWpmValue = document.getElementById("calibrationWpmValue");
 const calibrationWord = document.getElementById("calibrationWord");
-const calibrationStopBtn = document.getElementById("calibrationStopBtn");
+const calibrationContinueBtn = document.getElementById("calibrationContinueBtn");
+const calibrationSpeedInput = document.getElementById("calibrationSpeedInput");
+const calibrationMinus100Btn = document.getElementById("calibrationMinus100Btn");
+const calibrationMinus50Btn = document.getElementById("calibrationMinus50Btn");
+const calibrationMinus20Btn = document.getElementById("calibrationMinus20Btn");
+const calibrationMinus10Btn = document.getElementById("calibrationMinus10Btn");
+const calibrationMinus5Btn = document.getElementById("calibrationMinus5Btn");
+const calibrationPlus5Btn = document.getElementById("calibrationPlus5Btn");
+const calibrationPlus10Btn = document.getElementById("calibrationPlus10Btn");
+const calibrationPlus20Btn = document.getElementById("calibrationPlus20Btn");
+const calibrationPlus50Btn = document.getElementById("calibrationPlus50Btn");
+const calibrationPlus100Btn = document.getElementById("calibrationPlus100Btn");
 
 const transitionTitle = document.getElementById("transitionTitle");
 const transitionProgress = document.getElementById("transitionProgress");
@@ -102,11 +115,18 @@ function clearWordTimer() {
   }
 }
 
-function clearCalibrationRampTimer() {
-  if (state.calibrationRampTimer) {
-    window.clearInterval(state.calibrationRampTimer);
-    state.calibrationRampTimer = null;
+function clampCalibrationWpm(value) {
+  const raw = Number.parseInt(String(value), 10);
+  if (Number.isNaN(raw)) {
+    return state.selectedWpm || 100;
   }
+  return Math.min(CALIBRATION_MAX_WPM, Math.max(CALIBRATION_MIN_WPM, raw));
+}
+
+function applyCalibrationWpm(value) {
+  state.selectedWpm = clampCalibrationWpm(value);
+  calibrationWpmValue.textContent = String(state.selectedWpm);
+  calibrationSpeedInput.value = String(state.selectedWpm);
 }
 
 async function fetchJson(url, options = {}) {
@@ -142,6 +162,24 @@ function findTextById(textId) {
 
 function currentSegmentPlan() {
   return state.protocol.segmentPlan[state.currentSegmentIndex] || null;
+}
+
+function startCalibrationPlaybackLoop() {
+  clearWordTimer();
+
+  if (!isVisible(screens.calibration)) {
+    return;
+  }
+
+  if (!state.calibrationWords.length) {
+    calibrationWord.textContent = "Нет слов для калибровки";
+    return;
+  }
+
+  calibrationWord.textContent = state.calibrationWords[state.calibrationWordIndex];
+  state.calibrationWordIndex = (state.calibrationWordIndex + 1) % state.calibrationWords.length;
+
+  state.wordTimer = window.setTimeout(startCalibrationPlaybackLoop, readingIntervalMs(state.selectedWpm));
 }
 
 function startWordPlaybackLoop() {
@@ -245,13 +283,13 @@ function presentTransition(previousSegment, nextSegment) {
 
   if (!previousSegment) {
     transitionTitle.textContent = "Калибровка завершена";
-    transitionProgress.textContent = "Приготовьтесь к первому тексту. Что сказал Гагарин?";
+    transitionProgress.textContent = "Приготовьтесь к первому исследованию.";
   } else if (previousSegment.textIndex === nextSegment.textIndex) {
-    transitionTitle.textContent = `Текст ${nextSegment.textIndex} из 6`;
+    transitionTitle.textContent = `Исследование ${nextSegment.textIndex} из 6`;
     transitionProgress.textContent = `Часть ${previousSegment.orderInText} завершена. Переходим к части ${nextSegment.orderInText}.`;
   } else {
-    transitionTitle.textContent = `Текст ${previousSegment.textIndex} из 6 завершен`;
-    transitionProgress.textContent = `Приготовьтесь к тексту ${nextSegment.textIndex} из 6.`;
+    transitionTitle.textContent = `Исследование ${previousSegment.textIndex} из 6 завершено`;
+    transitionProgress.textContent = `Приготовьтесь к исследованию ${nextSegment.textIndex} из 6.`;
   }
 
   transitionNextFormat.textContent = buildNextFormatText(previousSegment, nextSegment);
@@ -268,7 +306,7 @@ async function startWordsSegment(segment) {
   wordsPauseBtn.disabled = false;
   wordsPauseBtn.textContent = "Пауза";
 
-  wordsSegmentLabel.textContent = `Текст ${segment.textIndex} из 6 • ${segment.textTitle}`;
+  wordsSegmentLabel.textContent = `Исследование ${segment.textIndex} из 6 • ${segment.textTitle}`;
   wordsSegmentFormat.textContent = "Режим по одному слову";
   wordsSegmentWpm.textContent = `${state.selectedWpm} слов/мин`;
   wordsCurrentWord.textContent = "Готово";
@@ -279,7 +317,7 @@ async function startWordsSegment(segment) {
 
 function startPdfSegment(segment) {
   const textInfo = findTextById(segment.textId);
-  pdfSegmentLabel.textContent = `Текст ${segment.textIndex} из 6 • ${segment.textTitle}`;
+  pdfSegmentLabel.textContent = `Исследование ${segment.textIndex} из 6 • ${segment.textTitle}`;
   pdfSegmentFormat.textContent = "Режим PDF";
   pdfViewerFrame.src = `${textInfo.pdfUrl}#view=FitH`;
   showScreen("pdf");
@@ -378,43 +416,13 @@ async function submitFeedback() {
   }
 }
 
-function startCalibrationLoop() {
-  clearWordTimer();
-  clearCalibrationRampTimer();
-
-  state.calibrationWordIndex = 0;
-  state.selectedWpm = state.protocol.calibration.baseWpm;
-  calibrationWpmValue.textContent = String(state.selectedWpm);
-
-  const stepMs = state.protocol.calibration.stepSeconds * 1000;
-  state.calibrationRampTimer = window.setInterval(() => {
-    state.selectedWpm += state.protocol.calibration.wpmStep;
-    calibrationWpmValue.textContent = String(state.selectedWpm);
-  }, stepMs);
-
-  const tick = () => {
-    if (!state.calibrationWords.length) {
-      calibrationWord.textContent = "Нет слов для калибровки";
-      return;
-    }
-
-    calibrationWord.textContent = state.calibrationWords[state.calibrationWordIndex];
-    state.calibrationWordIndex = (state.calibrationWordIndex + 1) % state.calibrationWords.length;
-    state.wordTimer = window.setTimeout(tick, readingIntervalMs(state.selectedWpm));
-  };
-
-  tick();
-}
-
-async function stopCalibration(stopMethod) {
+async function completeCalibration() {
   if (!state.sessionId || state.busy || !isVisible(screens.calibration)) {
     return;
   }
 
   state.busy = true;
-  calibrationStopBtn.disabled = true;
-  clearWordTimer();
-  clearCalibrationRampTimer();
+  calibrationContinueBtn.disabled = true;
 
   try {
     await fetchJson("/api/session/calibration", {
@@ -425,18 +433,19 @@ async function stopCalibration(stopMethod) {
       body: JSON.stringify({
         sessionId: state.sessionId,
         selectedWpm: state.selectedWpm,
-        stopMethod,
+        stopMethod: "manual_select",
       }),
     });
 
     setGlobalStatus("");
+    clearWordTimer();
     presentTransition(null, currentSegmentPlan());
   } catch (error) {
     setGlobalStatus(error.message || "Не удалось сохранить калибровку.", true);
     showScreen("welcome");
   } finally {
     state.busy = false;
-    calibrationStopBtn.disabled = false;
+    calibrationContinueBtn.disabled = false;
   }
 }
 
@@ -475,10 +484,14 @@ async function startSession() {
     state.wordsCache = new Map();
     state.familiarityChecklist = {};
     state.calibrationWords = calibrationPayload.words;
+    state.calibrationWordIndex = 0;
+
+    const startWpm = state.protocol?.calibration?.baseWpm ?? 100;
+    applyCalibrationWpm(startWpm);
 
     showScreen("calibration");
     setGlobalStatus("");
-    startCalibrationLoop();
+    startCalibrationPlaybackLoop();
   } catch (error) {
     setGlobalStatus(error.message || "Не удалось начать сессию.", true);
     showScreen("welcome");
@@ -493,8 +506,23 @@ function bindEvents() {
     startSessionBtn.disabled = participantNameInput.value.trim().length === 0 || state.busy;
   });
 
+  calibrationSpeedInput.addEventListener("input", () => {
+    applyCalibrationWpm(calibrationSpeedInput.value);
+  });
+
+  calibrationMinus100Btn.addEventListener("click", () => applyCalibrationWpm(state.selectedWpm - 100));
+  calibrationMinus50Btn.addEventListener("click", () => applyCalibrationWpm(state.selectedWpm - 50));
+  calibrationMinus20Btn.addEventListener("click", () => applyCalibrationWpm(state.selectedWpm - 20));
+  calibrationMinus10Btn.addEventListener("click", () => applyCalibrationWpm(state.selectedWpm - 10));
+  calibrationMinus5Btn.addEventListener("click", () => applyCalibrationWpm(state.selectedWpm - 5));
+  calibrationPlus5Btn.addEventListener("click", () => applyCalibrationWpm(state.selectedWpm + 5));
+  calibrationPlus10Btn.addEventListener("click", () => applyCalibrationWpm(state.selectedWpm + 10));
+  calibrationPlus20Btn.addEventListener("click", () => applyCalibrationWpm(state.selectedWpm + 20));
+  calibrationPlus50Btn.addEventListener("click", () => applyCalibrationWpm(state.selectedWpm + 50));
+  calibrationPlus100Btn.addEventListener("click", () => applyCalibrationWpm(state.selectedWpm + 100));
+
   startSessionBtn.addEventListener("click", startSession);
-  calibrationStopBtn.addEventListener("click", () => stopCalibration("stop_button"));
+  calibrationContinueBtn.addEventListener("click", completeCalibration);
   transitionContinueBtn.addEventListener("click", startCurrentSegment);
   wordsPauseBtn.addEventListener("click", toggleWordsPause);
   pdfFinishBtn.addEventListener("click", finishCurrentSegment);
@@ -517,7 +545,7 @@ function bindEvents() {
 
     if (isVisible(screens.calibration)) {
       event.preventDefault();
-      stopCalibration("space");
+      completeCalibration();
       return;
     }
 

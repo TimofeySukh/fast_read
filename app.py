@@ -19,8 +19,9 @@ PDF_FOLDER = BASE_DIR / "pdf_folder"
 
 SCHEMA_VERSION = "1.0.0"
 BASE_WPM = 100
-WPM_STEP = 5
-STEP_SECONDS = 2
+CALIBRATION_STEP_WPM = 5
+CALIBRATION_MIN_WPM = 50
+CALIBRATION_MAX_WPM = 700
 
 WORD_PATTERN = re.compile(r"[^\W_]+(?:['’`-][^\W_]+)*", re.UNICODE)
 
@@ -264,8 +265,9 @@ def create_app() -> Flask:
                 "calibration": {
                     "sourceFile": CALIBRATION_FILE.name,
                     "baseWpm": BASE_WPM,
-                    "wpmStep": WPM_STEP,
-                    "stepSeconds": STEP_SECONDS,
+                    "minWpm": CALIBRATION_MIN_WPM,
+                    "maxWpm": CALIBRATION_MAX_WPM,
+                    "stepWpm": CALIBRATION_STEP_WPM,
                 },
                 "texts": texts,
                 "segmentPlan": SEGMENT_PLAN,
@@ -374,12 +376,22 @@ def create_app() -> Flask:
         except (TypeError, ValueError):
             return jsonify({"error": "selectedWpm must be an integer"}), 400
 
-        if selected_wpm < 1 or selected_wpm > 1000:
-            return jsonify({"error": "selectedWpm must be between 1 and 1000"}), 400
+        if selected_wpm < CALIBRATION_MIN_WPM or selected_wpm > CALIBRATION_MAX_WPM:
+            return (
+                jsonify(
+                    {
+                        "error": (
+                            f"selectedWpm must be between "
+                            f"{CALIBRATION_MIN_WPM} and {CALIBRATION_MAX_WPM}"
+                        )
+                    }
+                ),
+                400,
+            )
 
         stop_method = str(payload.get("stopMethod", "")).strip()
-        if stop_method not in {"space", "stop_button"}:
-            return jsonify({"error": "stopMethod must be 'space' or 'stop_button'"}), 400
+        if stop_method not in {"manual_select", "space", "stop_button"}:
+            return jsonify({"error": "stopMethod must be 'manual_select', 'space' or 'stop_button'"}), 400
 
         try:
             record = load_session(session_id)
@@ -389,8 +401,10 @@ def create_app() -> Flask:
         now = utc_now_iso()
         record["calibration"] = {
             "sourcePdf": CALIBRATION_FILE.name,
-            "rampStepWpm": WPM_STEP,
-            "rampStepSeconds": STEP_SECONDS,
+            "selectionMode": "manual",
+            "minWpm": CALIBRATION_MIN_WPM,
+            "maxWpm": CALIBRATION_MAX_WPM,
+            "stepWpm": CALIBRATION_STEP_WPM,
             "stopMethod": stop_method,
             "selectedWpm": selected_wpm,
             "stoppedAtUtc": now,

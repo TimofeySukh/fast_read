@@ -10,7 +10,7 @@
     <main class="app-shell">
       <header class="hero">
         <p class="eyebrow">Исследование чтения</p>
-        <h1>Сессия сравнения форматов</h1>
+        <h1>Сессия исследования форматов</h1>
         <p class="hero-note">Здесь сравниваются два формата чтения на 6 текстах.</p>
       </header>
 
@@ -19,7 +19,7 @@
       <section id="welcomeScreen" class="screen card">
         <h2>Добро пожаловать</h2>
         <p>
-          Приветствую, спасибо что решили принять участие в моей исследовании надеюсь вам понравиться:).
+          Спасибо, что решили принять участие в моем исследовании. Здесь будут 6 текстов, и каждый из них вы увидите в двух форматах: в формате обычного текста и в формате по одному слову. Постарайтесь внимательно вчитываться в материалы, а в самом конце исследования оставьте свое мнение о чтении по словам.
         </p>
         <label class="field" for="participantNameInput">
           <span>Представьтесь пожалуйста</span>
@@ -32,16 +32,30 @@
 
       <section id="calibrationScreen" class="screen card hidden" aria-live="polite">
         <h2>Калибровка</h2>
-        <p class="muted">Скорость повышается на 5 слов в минуту каждые 2 секунды. Остановите, когда станет комфортно.</p>
+        <p class="muted">Скорость можно менять кнопками или вручную в поле. Подберите комфортный темп по тексту из стартового файла.</p>
         <div class="badge-row">
           <span class="badge"><strong id="calibrationWpmValue">100</strong> слов/мин</span>
         </div>
         <div id="calibrationWord" class="word-stage">Готово</div>
-        <p class="hint">
-          Нажмите <kbd>Пробел</kbd> на компьютере или <strong>СТОП</strong> на телефоне.
-        </p>
+        <div class="actions center-actions calibration-row">
+          <button id="calibrationMinus100Btn" type="button" class="ghost">-100</button>
+          <button id="calibrationMinus50Btn" type="button" class="ghost">-50</button>
+          <button id="calibrationMinus20Btn" type="button" class="ghost">-20</button>
+          <button id="calibrationMinus10Btn" type="button" class="ghost">-10</button>
+          <button id="calibrationMinus5Btn" type="button" class="ghost">-5</button>
+          <button id="calibrationPlus5Btn" type="button" class="ghost">+5</button>
+          <button id="calibrationPlus10Btn" type="button" class="ghost">+10</button>
+          <button id="calibrationPlus20Btn" type="button" class="ghost">+20</button>
+          <button id="calibrationPlus50Btn" type="button" class="ghost">+50</button>
+          <button id="calibrationPlus100Btn" type="button" class="ghost">+100</button>
+        </div>
+        <label class="field" for="calibrationSpeedInput">
+          <span>Введите свою скорость (слов/мин)</span>
+          <input id="calibrationSpeedInput" type="number" min="50" max="700" step="1" value="100" />
+        </label>
+        <p class="hint">Когда выберете комфортную скорость, нажмите <strong>Продолжить</strong>.</p>
         <div class="actions center-actions">
-          <button id="calibrationStopBtn" type="button">СТОП</button>
+          <button id="calibrationContinueBtn" type="button">Продолжить</button>
         </div>
       </section>
 
@@ -49,9 +63,9 @@
         <h2 id="transitionTitle">Приготовьтесь</h2>
         <p id="transitionProgress" class="muted"></p>
         <p id="transitionNextFormat" class="transition-format"></p>
-        <p class="hint">Нажмите <kbd>Пробел</kbd> или кнопку <strong>Поехали</strong>.</p>
+        <p class="hint">Нажмите <kbd>Пробел</kbd> или кнопку <strong>Продолжить</strong>.</p>
         <div class="actions">
-          <button id="transitionContinueBtn" type="button">Поехали</button>
+          <button id="transitionContinueBtn" type="button">Продолжить</button>
         </div>
       </section>
 

@@ -8,8 +8,9 @@
 - `F-02` Calibration:
   - source is `pdf_start.pdf`,
   - one-word mode,
-  - `+5 WPM` every `2 seconds`,
-  - stop by `Space` (desktop) or `STOP` button (mobile),
+  - manual WPM controls (`±5/10/20/50/100`) and direct numeric input,
+  - allowed WPM range `50..700`,
+  - confirm by `Continue` (desktop `Space` shortcut allowed),
   - selected WPM persisted.
 - `F-03` Test runner:
   - exactly 6 texts,
@@ -25,7 +26,7 @@
 - `F-06` Transition screens:
   - shown between all segments,
   - include progress + next-format message,
-  - include `Continue Test` (plus desktop `Space` shortcut).
+  - include `Continue` (plus desktop `Space` shortcut).
 - `F-07` One-word playback:
   - pace is WPM-based,
   - words are split by whitespace and punctuation,
