@@ -1,28 +1,63 @@
 # fast_read
 
-Research web app for comparing two reading formats on a fixed 6-text corpus:
-- one-word-at-a-time mode,
-- normal PDF reading mode.
+`fast_read` is a reading-format project built for **research purposes**.
 
-## What It Does
-- Collects participant name (required).
-- Runs calibration from `pdf_start.pdf` (`+5 WPM` every `2s`, stop at comfortable speed).
-- Runs 6 texts in locked alternating format order.
-- Measures hidden timing for each segment.
-- Collects mandatory familiarity checklist and mandatory feedback.
-- Saves one JSON session record to `data/sessions/`.
+It is used to compare reading behavior across formats and collect study data.
 
-## Run
+## What This Repository Contains
+- Web app backend (Flask) and frontend flow for reading sessions.
+- PDF text extraction pipeline for one-word mode.
+- Session logging to JSON for later analysis.
+
+## Branch Map
+```text
+main
+├── main-idea
+│   └── main-idea-rus  (current primary research branch)
+```
+
+- `main`: ready product branch where users can upload PDF and read by letters.
+- `main-idea`: first research implementation in English.
+- `main-idea-rus`: current main branch for collecting data in the research flow.
+
+## Features (main-idea-rus)
+- Participant onboarding and calibration.
+- Fixed study flow with alternating `words` / `pdf` reading segments.
+- Hidden per-segment timing.
+- Mandatory familiarity checklist and final feedback.
+- JSON session save in `data/sessions/`.
+
+## Installation
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-python app.py
 ```
 
-Open `http://127.0.0.1:5000`.
+## Quickstart
+```bash
+python3 app.py
+```
 
-## Notes
-- Buttons are English by design.
-- Study corpus PDFs are read from `pdf_folder/`.
-- This project commits changes locally; GitHub push is manual.
+Open: `http://127.0.0.1:5000`
+
+## Common Branch Workflows
+Run current research branch:
+```bash
+git checkout main-idea-rus
+python3 app.py
+```
+
+Run stable product branch:
+```bash
+git checkout main
+python3 app.py
+```
+
+## Contributing
+- Open an issue or PR with a clear scope.
+- Keep docs in sync with meaningful behavior changes.
+- Create a local commit for each meaningful change.
+
+## License
+License is not specified yet.

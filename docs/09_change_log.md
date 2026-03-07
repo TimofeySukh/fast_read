@@ -13,6 +13,19 @@ Use this file as the single mandatory log for project updates.
 ## Entries
 - Date: 2026-03-07
 - Branch: main-idea-rus
+- Scope: Rewrite README with research positioning and branch map
+- Files changed:
+  - README.md
+  - docs/09_change_log.md
+- Summary:
+  - Reworked README to a clearer onboarding structure (what/why/install/quickstart).
+  - Added explicit research-purpose statement for the project.
+  - Added branch graph and branch role descriptions (`main`, `main-idea`, `main-idea-rus`).
+- Follow-up needed:
+  - Add license name when owner decides on it.
+
+- Date: 2026-03-07
+- Branch: main-idea-rus
 - Scope: Prevent stale frontend behavior through Cloudflare tunnel
 - Files changed:
   - app.py
