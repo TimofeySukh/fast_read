@@ -3,8 +3,9 @@ __pycache__/
 *.pyc
 .env
 .DS_Store
-.tmp_raw_transcript.txt
+.tmp_raw_transcript*.txt
 pdf_start.pdf
 
 # Runtime data
 /data/responses/*.json
+/data/sessions/*.json

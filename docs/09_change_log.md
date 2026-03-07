@@ -13,6 +13,25 @@ Use this file as the single mandatory log for project updates.
 ## Entries
 - Date: 2026-03-07
 - Branch: main-idea
+- Scope: Implement research protocol MVP from docs
+- Files changed:
+  - app.py
+  - templates/index.html
+  - static/app.js
+  - static/styles.css
+  - README.md
+  - .gitignore
+  - docs/09_change_log.md
+- Summary:
+  - Replaced legacy upload/email flow with fixed-corpus research protocol flow.
+  - Added backend session lifecycle APIs (`start`, `calibration`, `complete`) and JSON persistence in `data/sessions/`.
+  - Added deterministic 6-text alternating test runner UI with transitions, hidden timing capture, checklist, and mandatory feedback.
+  - Updated README and runtime ignores for session JSON artifacts.
+- Follow-up needed:
+  - Run manual browser QA on desktop and mobile for full interaction flow.
+
+- Date: 2026-03-07
+- Branch: main-idea
 - Scope: Full-fidelity expansion of research docs from renewed audio transcript
 - Files changed:
   - docs/01_summary.md

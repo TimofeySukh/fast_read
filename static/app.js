@@ -1,507 +1,578 @@
 const state = {
-  fileName: "",
-  rawText: "",
-  words: [],
-  currentWordIndex: 0,
-  speedWpm: 100,
-  playbackTimer: null,
-  isPaused: false,
+  protocol: null,
+  sessionId: "",
+  participantName: "",
+  selectedWpm: 100,
+  currentSegmentIndex: 0,
+  segmentResults: [],
+  currentSegment: null,
+  currentSegmentStartPerf: 0,
+  currentSegmentStartedAtUtc: "",
+  wordsCache: new Map(),
+  activeWords: [],
+  activeWordIndex: 0,
+  isWordsPaused: false,
+  wordTimer: null,
+  calibrationWords: [],
+  calibrationWordIndex: 0,
+  calibrationRampTimer: null,
+  busy: false,
+  familiarityChecklist: {},
 };
 
-const setupSection = document.getElementById("setupSection");
-const countdownSection = document.getElementById("countdownSection");
-const readerSection = document.getElementById("readerSection");
-const feedbackSection = document.getElementById("feedbackSection");
-const thankYouSection = document.getElementById("thankYouSection");
+const screens = {
+  welcome: document.getElementById("welcomeScreen"),
+  calibration: document.getElementById("calibrationScreen"),
+  transition: document.getElementById("transitionScreen"),
+  words: document.getElementById("wordsScreen"),
+  pdf: document.getElementById("pdfScreen"),
+  checklist: document.getElementById("checklistScreen"),
+  feedback: document.getElementById("feedbackScreen"),
+  thankYou: document.getElementById("thankYouScreen"),
+};
 
-const pdfInput = document.getElementById("pdfInput");
-const speedInput = document.getElementById("speedInput");
-const readerSpeedInput = document.getElementById("readerSpeedInput");
-const decreaseSpeedBtn = document.getElementById("decreaseSpeedBtn");
-const increaseSpeedBtn = document.getElementById("increaseSpeedBtn");
-const readerPauseBtn = document.getElementById("readerPauseBtn");
-const startBtn = document.getElementById("startBtn");
-const setupStatus = document.getElementById("setupStatus");
+const globalStatus = document.getElementById("globalStatus");
 
-const countdownNumber = document.getElementById("countdownNumber");
-const focusText = document.getElementById("focusText");
-const readerFileName = document.getElementById("readerFileName");
-const readerProgress = document.getElementById("readerProgress");
-const pauseOverlay = document.getElementById("pauseOverlay");
+const participantNameInput = document.getElementById("participantNameInput");
+const startSessionBtn = document.getElementById("startSessionBtn");
 
-const feedbackForm = document.getElementById("feedbackForm");
-const feedbackStatus = document.getElementById("feedbackStatus");
-const customFeelingWrap = document.getElementById("customFeelingWrap");
-const speedFeelingCustomInput = document.getElementById("speedFeelingCustomInput");
+const calibrationWpmValue = document.getElementById("calibrationWpmValue");
+const calibrationWord = document.getElementById("calibrationWord");
+const calibrationStopBtn = document.getElementById("calibrationStopBtn");
 
-const nicknameInput = document.getElementById("nicknameInput");
-const emailInput = document.getElementById("emailInput");
+const transitionTitle = document.getElementById("transitionTitle");
+const transitionProgress = document.getElementById("transitionProgress");
+const transitionNextFormat = document.getElementById("transitionNextFormat");
+const transitionContinueBtn = document.getElementById("transitionContinueBtn");
+
+const wordsSegmentLabel = document.getElementById("wordsSegmentLabel");
+const wordsSegmentFormat = document.getElementById("wordsSegmentFormat");
+const wordsSegmentWpm = document.getElementById("wordsSegmentWpm");
+const wordsCurrentWord = document.getElementById("wordsCurrentWord");
+const wordsPauseBtn = document.getElementById("wordsPauseBtn");
+const wordsFinishBtn = document.getElementById("wordsFinishBtn");
+
+const pdfSegmentLabel = document.getElementById("pdfSegmentLabel");
+const pdfSegmentFormat = document.getElementById("pdfSegmentFormat");
+const pdfViewerFrame = document.getElementById("pdfViewerFrame");
+const pdfFinishBtn = document.getElementById("pdfFinishBtn");
+
+const checklistForm = document.getElementById("checklistForm");
+const checklistContinueBtn = document.getElementById("checklistContinueBtn");
+
 const feedbackInput = document.getElementById("feedbackInput");
-const themeToggle = document.getElementById("themeToggle");
-const newSessionBtn = document.getElementById("newSessionBtn");
+const submitFeedbackBtn = document.getElementById("submitFeedbackBtn");
 
-const thanksRecordId = document.getElementById("thanksRecordId");
-const thanksNickname = document.getElementById("thanksNickname");
-const thanksEmail = document.getElementById("thanksEmail");
-const thanksSpeed = document.getElementById("thanksSpeed");
-const thanksFeeling = document.getElementById("thanksFeeling");
+const summarySessionId = document.getElementById("summarySessionId");
+const summaryParticipantName = document.getElementById("summaryParticipantName");
+const summarySelectedWpm = document.getElementById("summarySelectedWpm");
+const summarySegmentCount = document.getElementById("summarySegmentCount");
+const summaryTotalTime = document.getElementById("summaryTotalTime");
+const restartBtn = document.getElementById("restartBtn");
 
-function setStatus(element, message, isError = false) {
-  element.textContent = message;
-  element.style.color = isError ? "#c2463d" : "";
+function setGlobalStatus(message, isError = false) {
+  globalStatus.textContent = message;
+  globalStatus.classList.toggle("is-error", isError);
 }
 
-function clampWpm(value) {
-  if (Number.isNaN(value)) {
-    return 100;
-  }
-  return Math.min(1000, Math.max(1, value));
-}
-
-function applySpeedWpm(nextSpeed) {
-  state.speedWpm = clampWpm(nextSpeed);
-  speedInput.value = String(state.speedWpm);
-  readerSpeedInput.value = String(state.speedWpm);
-  if (!readerSection.classList.contains("hidden")) {
-    readerFileName.textContent = `${state.fileName} • ${state.speedWpm} WPM`;
-  }
-}
-
-function clearPlaybackTimer() {
-  if (state.playbackTimer) {
-    clearTimeout(state.playbackTimer);
-    state.playbackTimer = null;
-  }
-}
-
-function renderPauseState() {
-  if (state.isPaused) {
-    pauseOverlay.textContent = "Paused";
-    pauseOverlay.classList.remove("hidden");
-    readerPauseBtn.textContent = "Resume";
-  } else {
-    pauseOverlay.classList.add("hidden");
-    readerPauseBtn.textContent = "Pause";
-  }
-}
-
-function wordIntervalMs() {
-  return Math.max(60, Math.round(60000 / state.speedWpm));
-}
-
-function splitTextIntoWords(text) {
-  try {
-    const tokens = text.match(/[\p{L}\p{N}]+(?:['’`-][\p{L}\p{N}]+)*/gu);
-    return tokens || [];
-  } catch {
-    return text.split(/[^A-Za-z0-9]+/).filter(Boolean);
-  }
-}
-
-function showSection(section) {
-  [setupSection, countdownSection, readerSection, feedbackSection, thankYouSection].forEach((node) => {
-    node.classList.add("hidden");
+function showScreen(name) {
+  Object.entries(screens).forEach(([key, node]) => {
+    node.classList.toggle("hidden", key !== name);
   });
-  section.classList.remove("hidden");
 }
 
-async function requestReadingPayload() {
-  const selectedFile = pdfInput.files?.[0];
-  if (selectedFile) {
-    const formData = new FormData();
-    formData.append("file", selectedFile);
+function isVisible(node) {
+  return !node.classList.contains("hidden");
+}
 
-    const response = await fetch("/api/upload-pdf", {
-      method: "POST",
-      body: formData,
-    });
-    const payload = await response.json();
-    if (!response.ok) {
-      throw new Error(payload.error || "Failed to parse selected PDF.");
-    }
-    payload.isDefaultFile = false;
-    return payload;
+function isTextInputFocused() {
+  const active = document.activeElement;
+  if (!active) {
+    return false;
   }
+  const tag = active.tagName;
+  return tag === "INPUT" || tag === "TEXTAREA";
+}
 
-  const response = await fetch("/api/default-pdf", { method: "POST" });
+function isLikelyMobile() {
+  const ua = navigator.userAgent || "";
+  return /Mobi|Android|iPhone|iPad|iPod/i.test(ua);
+}
+
+function readingIntervalMs(wpm) {
+  const safe = Math.max(1, Number(wpm) || 1);
+  return Math.max(50, Math.round(60000 / safe));
+}
+
+function clearWordTimer() {
+  if (state.wordTimer) {
+    window.clearTimeout(state.wordTimer);
+    state.wordTimer = null;
+  }
+}
+
+function clearCalibrationRampTimer() {
+  if (state.calibrationRampTimer) {
+    window.clearInterval(state.calibrationRampTimer);
+    state.calibrationRampTimer = null;
+  }
+}
+
+async function fetchJson(url, options = {}) {
+  const response = await fetch(url, options);
   const payload = await response.json();
   if (!response.ok) {
-    throw new Error(payload.error || "Failed to load default PDF.");
+    throw new Error(payload.error || "Request failed");
   }
-  payload.isDefaultFile = true;
   return payload;
 }
 
-function applyLoadedPayload(payload) {
-  state.fileName = payload.fileName;
-  state.rawText = payload.text;
-  state.words = splitTextIntoWords(payload.text);
+function renderChecklist() {
+  checklistForm.innerHTML = "";
+  for (const item of state.protocol.familiarityItems) {
+    const label = document.createElement("label");
+    label.className = "checklist-item";
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.id = `check-${item.id}`;
+    checkbox.dataset.checkId = item.id;
+
+    const text = document.createElement("span");
+    text.textContent = item.label;
+
+    label.append(checkbox, text);
+    checklistForm.appendChild(label);
+  }
 }
 
-async function prepareTextForReading() {
-  const selectedFile = pdfInput.files?.[0];
-  const initialLabel = startBtn.textContent;
-  startBtn.disabled = true;
-  startBtn.textContent = "Checking PDF...";
+function segmentFormatLabel(format) {
+  return format === "pdf" ? "PDF" : "one word at a time";
+}
 
-  if (selectedFile) {
-    setStatus(setupStatus, "Checking selected PDF...");
+function findTextById(textId) {
+  return state.protocol.texts.find((item) => item.id === textId);
+}
+
+function currentSegmentPlan() {
+  return state.protocol.segmentPlan[state.currentSegmentIndex] || null;
+}
+
+function startWordPlaybackLoop() {
+  clearWordTimer();
+
+  if (state.isWordsPaused) {
+    return;
+  }
+
+  if (state.activeWordIndex >= state.activeWords.length) {
+    wordsPauseBtn.disabled = true;
+    return;
+  }
+
+  const nextWord = state.activeWords[state.activeWordIndex];
+  wordsCurrentWord.textContent = nextWord;
+  state.activeWordIndex += 1;
+
+  state.wordTimer = window.setTimeout(startWordPlaybackLoop, readingIntervalMs(state.selectedWpm));
+}
+
+function toggleWordsPause() {
+  if (!isVisible(screens.words) || !state.currentSegment || state.currentSegment.format !== "words") {
+    return;
+  }
+
+  if (state.activeWordIndex >= state.activeWords.length) {
+    return;
+  }
+
+  state.isWordsPaused = !state.isWordsPaused;
+  wordsPauseBtn.textContent = state.isWordsPaused ? "Resume" : "Pause";
+
+  if (state.isWordsPaused) {
+    clearWordTimer();
   } else {
-    setStatus(setupStatus, "No file selected. Loading default PDF...");
-  }
-
-  try {
-    const payload = await requestReadingPayload();
-    applyLoadedPayload(payload);
-
-    if (!state.words.length) {
-      setStatus(setupStatus, "No readable words found in this PDF.", true);
-      return false;
-    }
-
-    if (payload.isDefaultFile) {
-      setStatus(setupStatus, `Using default PDF: ${payload.fileName}. ${state.words.length} words extracted.`);
-    } else {
-      setStatus(setupStatus, `Loaded ${payload.fileName}. ${state.words.length} words extracted.`);
-    }
-
-    return true;
-  } catch (error) {
-    setStatus(setupStatus, error.message || "Failed to prepare reading text.", true);
-    return false;
-  } finally {
-    startBtn.disabled = false;
-    startBtn.textContent = initialLabel;
+    startWordPlaybackLoop();
   }
 }
 
-function startCountdown() {
-  showSection(countdownSection);
-  let value = 3;
-  countdownNumber.textContent = String(value);
-
-  const timer = setInterval(() => {
-    value -= 1;
-    if (value <= 0) {
-      clearInterval(timer);
-      startReading();
-      return;
-    }
-    countdownNumber.textContent = String(value);
-  }, 1000);
-}
-
-function updateProgress() {
-  const total = state.words.length;
-  const pct = total === 0 ? 0 : Math.round((state.currentWordIndex / total) * 100);
-  readerProgress.textContent = `${pct}%`;
-}
-
-function scheduleNextWord() {
-  if (state.isPaused) {
-    return;
+async function getWordsForText(textId) {
+  if (state.wordsCache.has(textId)) {
+    return state.wordsCache.get(textId);
   }
 
-  if (state.currentWordIndex >= state.words.length) {
-    finishReading();
-    return;
-  }
-
-  const interval = wordIntervalMs();
-  state.playbackTimer = setTimeout(() => {
-    if (state.isPaused) {
-      return;
-    }
-
-    focusText.textContent = state.words[state.currentWordIndex];
-    state.currentWordIndex += 1;
-    updateProgress();
-
-    if (state.currentWordIndex >= state.words.length) {
-      finishReading();
-      return;
-    }
-
-    scheduleNextWord();
-  }, interval);
+  const payload = await fetchJson(`/api/text/${textId}/words`);
+  state.wordsCache.set(textId, payload.words);
+  return payload.words;
 }
 
-function pauseReading() {
-  if (state.isPaused) {
-    return;
-  }
-  state.isPaused = true;
-  clearPlaybackTimer();
-  renderPauseState();
+function setSegmentStart(segment) {
+  state.currentSegment = segment;
+  state.currentSegmentStartPerf = performance.now();
+  state.currentSegmentStartedAtUtc = new Date().toISOString();
 }
 
-function resumeReading() {
-  if (!state.isPaused) {
-    return;
-  }
-  state.isPaused = false;
-  renderPauseState();
-  scheduleNextWord();
-}
+function pushFinishedSegment() {
+  const finishedAtUtc = new Date().toISOString();
+  const durationSeconds = Number(((performance.now() - state.currentSegmentStartPerf) / 1000).toFixed(2));
 
-function togglePauseResume() {
-  if (state.currentWordIndex >= state.words.length) {
-    return;
-  }
-
-  if (state.isPaused) {
-    resumeReading();
-  } else {
-    pauseReading();
-  }
-}
-
-function startReading() {
-  clearPlaybackTimer();
-
-  state.currentWordIndex = 0;
-  state.isPaused = false;
-
-  showSection(readerSection);
-  readerFileName.textContent = `${state.fileName} • ${state.speedWpm} WPM`;
-  readerProgress.textContent = "0%";
-  focusText.textContent = "Starting...";
-  renderPauseState();
-
-  scheduleNextWord();
-}
-
-async function handleStartReadingClick() {
-  applySpeedWpm(Number.parseInt(speedInput.value, 10));
-  const ok = await prepareTextForReading();
-  if (!ok) {
-    return;
-  }
-  startCountdown();
-}
-
-function finishReading() {
-  clearPlaybackTimer();
-  state.isPaused = false;
-  renderPauseState();
-  showSection(feedbackSection);
-  showStep(1);
-}
-
-function showStep(stepNumber) {
-  const steps = document.querySelectorAll(".step");
-  steps.forEach((step) => {
-    const isTarget = Number(step.dataset.step) === stepNumber;
-    step.classList.toggle("hidden", !isTarget);
-  });
-}
-
-function selectedSpeedFeeling() {
-  const checked = document.querySelector('input[name="speedFeeling"]:checked');
-  return checked ? checked.value : "";
-}
-
-function validateStep(stepNumber) {
-  if (stepNumber === 1) {
-    if (!nicknameInput.value.trim()) {
-      setStatus(feedbackStatus, "Nickname is required.", true);
-      return false;
-    }
-    if (!emailInput.value.trim() || !emailInput.value.includes("@")) {
-      setStatus(feedbackStatus, "A valid email is required.", true);
-      return false;
-    }
-  }
-
-  if (stepNumber === 2) {
-    const value = selectedSpeedFeeling();
-    if (!value) {
-      setStatus(feedbackStatus, "Select one speed feeling option.", true);
-      return false;
-    }
-    if (value === "custom" && !speedFeelingCustomInput.value.trim()) {
-      setStatus(feedbackStatus, "Custom speed feeling is required.", true);
-      return false;
-    }
-  }
-
-  setStatus(feedbackStatus, "");
-  return true;
-}
-
-function fillThankYouTable(recordId) {
-  const feelingValue = selectedSpeedFeeling();
-  const feelingText =
-    feelingValue === "custom" ? speedFeelingCustomInput.value.trim() || "custom" : feelingValue;
-
-  thanksRecordId.textContent = recordId;
-  thanksNickname.textContent = nicknameInput.value.trim();
-  thanksEmail.textContent = emailInput.value.trim();
-  thanksSpeed.textContent = String(state.speedWpm);
-  thanksFeeling.textContent = feelingText;
-}
-
-async function submitFeedback(event) {
-  event.preventDefault();
-
-  if (!validateStep(3)) {
-    return;
-  }
-
-  if (!feedbackInput.value.trim()) {
-    setStatus(feedbackStatus, "General feedback is required.", true);
-    return;
-  }
-
-  const payload = {
-    nickname: nicknameInput.value.trim(),
-    email: emailInput.value.trim(),
-    speedWpm: state.speedWpm,
-    speedFeeling: selectedSpeedFeeling(),
-    speedFeelingCustom: speedFeelingCustomInput.value.trim(),
-    feedback: feedbackInput.value.trim(),
-    sourceFile: state.fileName,
-    wordCount: state.words.length,
+  const record = {
+    segmentId: state.currentSegment.segmentId,
+    textIndex: state.currentSegment.textIndex,
+    textTitle: state.currentSegment.textTitle,
+    format: state.currentSegment.format,
+    orderInText: state.currentSegment.orderInText,
+    startedAtUtc: state.currentSegmentStartedAtUtc,
+    finishedAtUtc,
+    durationSeconds,
+    completionAction: "i_finished_button",
+    selectedWpmAtRun: state.currentSegment.format === "words" ? state.selectedWpm : state.selectedWpm,
   };
 
-  setStatus(feedbackStatus, "Saving feedback...");
+  state.segmentResults.push(record);
+}
+
+function presentTransition(previousSegment, nextSegment) {
+  if (!nextSegment) {
+    showScreen("checklist");
+    return;
+  }
+
+  if (!previousSegment) {
+    transitionTitle.textContent = "Calibration completed";
+    transitionProgress.textContent = "Get ready for Text 1 of 6.";
+  } else if (previousSegment.textIndex === nextSegment.textIndex) {
+    transitionTitle.textContent = `Text ${nextSegment.textIndex} of 6`;
+    transitionProgress.textContent = `Part ${previousSegment.orderInText} completed. Continue to part ${nextSegment.orderInText}.`;
+  } else {
+    transitionTitle.textContent = `Text ${previousSegment.textIndex} of 6 completed`;
+    transitionProgress.textContent = `Get ready for Text ${nextSegment.textIndex} of 6.`;
+  }
+
+  transitionNextFormat.textContent = `Format of the next segment: ${segmentFormatLabel(nextSegment.format)}.`;
+  showScreen("transition");
+}
+
+async function startWordsSegment(segment) {
+  const words = await getWordsForText(segment.textId);
+
+  state.activeWords = words;
+  state.activeWordIndex = 0;
+  state.isWordsPaused = false;
+  wordsPauseBtn.disabled = false;
+  wordsPauseBtn.textContent = "Pause";
+
+  wordsSegmentLabel.textContent = `Text ${segment.textIndex} of 6 • ${segment.textTitle}`;
+  wordsSegmentFormat.textContent = "One-word mode";
+  wordsSegmentWpm.textContent = `${state.selectedWpm} WPM`;
+  wordsCurrentWord.textContent = "Ready";
+
+  showScreen("words");
+  startWordPlaybackLoop();
+}
+
+function startPdfSegment(segment) {
+  const textInfo = findTextById(segment.textId);
+  pdfSegmentLabel.textContent = `Text ${segment.textIndex} of 6 • ${segment.textTitle}`;
+  pdfSegmentFormat.textContent = "PDF mode";
+  pdfViewerFrame.src = `${textInfo.pdfUrl}#view=FitH`;
+  showScreen("pdf");
+}
+
+async function startCurrentSegment() {
+  const segment = currentSegmentPlan();
+  if (!segment) {
+    showScreen("checklist");
+    return;
+  }
+
+  setSegmentStart(segment);
 
   try {
-    const response = await fetch("/api/feedback", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    const body = await response.json();
-
-    if (!response.ok) {
-      setStatus(feedbackStatus, body.error || "Failed to save feedback.", true);
-      return;
+    if (segment.format === "words") {
+      await startWordsSegment(segment);
+    } else {
+      startPdfSegment(segment);
     }
-
-    fillThankYouTable(body.recordId);
-    feedbackForm.reset();
-    customFeelingWrap.classList.add("hidden");
-    showSection(thankYouSection);
-  } catch {
-    setStatus(feedbackStatus, "Network error while saving feedback.", true);
+  } catch (error) {
+    setGlobalStatus(error.message || "Failed to start segment.", true);
+    showScreen("transition");
   }
 }
 
-function bindStepNavigation() {
-  document.querySelectorAll(".next-btn").forEach((button) => {
-    button.addEventListener("click", () => {
-      const currentStep = Number(button.closest(".step").dataset.step);
-      const nextStep = Number(button.dataset.next);
-      if (validateStep(currentStep)) {
-        showStep(nextStep);
-      }
-    });
-  });
+function finishCurrentSegment() {
+  if (!state.currentSegment) {
+    return;
+  }
 
-  document.querySelectorAll(".back-btn").forEach((button) => {
-    button.addEventListener("click", () => {
-      showStep(Number(button.dataset.back));
-    });
-  });
+  clearWordTimer();
+  pushFinishedSegment();
+
+  const previousSegment = state.currentSegment;
+  state.currentSegment = null;
+  state.currentSegmentIndex += 1;
+
+  const nextSegment = currentSegmentPlan();
+  presentTransition(previousSegment, nextSegment);
 }
 
-function bindSpeedFeelingToggle() {
-  document.querySelectorAll('input[name="speedFeeling"]').forEach((radio) => {
-    radio.addEventListener("change", () => {
-      const isCustom = selectedSpeedFeeling() === "custom";
-      customFeelingWrap.classList.toggle("hidden", !isCustom);
-      if (!isCustom) {
-        speedFeelingCustomInput.value = "";
-      }
-    });
-  });
+function collectChecklistAnswers() {
+  const payload = {};
+  for (const item of state.protocol.familiarityItems) {
+    const checkbox = document.getElementById(`check-${item.id}`);
+    payload[item.id] = Boolean(checkbox?.checked);
+  }
+  state.familiarityChecklist = payload;
 }
 
-function bindSpacePauseShortcut() {
+async function submitFeedback() {
+  if (state.busy) {
+    return;
+  }
+
+  const feedback = feedbackInput.value.trim();
+  if (!feedback) {
+    setGlobalStatus("Feedback is required.", true);
+    return;
+  }
+
+  state.busy = true;
+  submitFeedbackBtn.disabled = true;
+  setGlobalStatus("Saving session...");
+
+  const payload = {
+    sessionId: state.sessionId,
+    segments: state.segmentResults,
+    familiarityChecklist: state.familiarityChecklist,
+    feedback: {
+      text: feedback,
+    },
+    device: {
+      platformType: isLikelyMobile() ? "mobile" : "desktop",
+      userAgent: navigator.userAgent,
+    },
+  };
+
+  try {
+    await fetchJson("/api/session/complete", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const totalSeconds = state.segmentResults.reduce((acc, item) => acc + Number(item.durationSeconds || 0), 0);
+    summarySessionId.textContent = state.sessionId;
+    summaryParticipantName.textContent = state.participantName;
+    summarySelectedWpm.textContent = String(state.selectedWpm);
+    summarySegmentCount.textContent = `${state.segmentResults.length} / ${state.protocol.segmentPlan.length}`;
+    summaryTotalTime.textContent = `${totalSeconds.toFixed(2)} sec`;
+
+    setGlobalStatus("Session saved.");
+    showScreen("thankYou");
+  } catch (error) {
+    setGlobalStatus(error.message || "Failed to save session.", true);
+  } finally {
+    state.busy = false;
+    submitFeedbackBtn.disabled = false;
+  }
+}
+
+function startCalibrationLoop() {
+  clearWordTimer();
+  clearCalibrationRampTimer();
+
+  state.calibrationWordIndex = 0;
+  state.selectedWpm = state.protocol.calibration.baseWpm;
+  calibrationWpmValue.textContent = String(state.selectedWpm);
+
+  const stepMs = state.protocol.calibration.stepSeconds * 1000;
+  state.calibrationRampTimer = window.setInterval(() => {
+    state.selectedWpm += state.protocol.calibration.wpmStep;
+    calibrationWpmValue.textContent = String(state.selectedWpm);
+  }, stepMs);
+
+  const tick = () => {
+    if (!state.calibrationWords.length) {
+      calibrationWord.textContent = "No words";
+      return;
+    }
+
+    calibrationWord.textContent = state.calibrationWords[state.calibrationWordIndex];
+    state.calibrationWordIndex = (state.calibrationWordIndex + 1) % state.calibrationWords.length;
+    state.wordTimer = window.setTimeout(tick, readingIntervalMs(state.selectedWpm));
+  };
+
+  tick();
+}
+
+async function stopCalibration(stopMethod) {
+  if (!state.sessionId || state.busy || !isVisible(screens.calibration)) {
+    return;
+  }
+
+  state.busy = true;
+  calibrationStopBtn.disabled = true;
+  clearWordTimer();
+  clearCalibrationRampTimer();
+
+  try {
+    await fetchJson("/api/session/calibration", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        sessionId: state.sessionId,
+        selectedWpm: state.selectedWpm,
+        stopMethod,
+      }),
+    });
+
+    setGlobalStatus("Calibration saved.");
+    presentTransition(null, currentSegmentPlan());
+  } catch (error) {
+    setGlobalStatus(error.message || "Failed to save calibration.", true);
+    showScreen("welcome");
+  } finally {
+    state.busy = false;
+    calibrationStopBtn.disabled = false;
+  }
+}
+
+async function startSession() {
+  if (state.busy) {
+    return;
+  }
+
+  const participantName = participantNameInput.value.trim();
+  if (!participantName) {
+    return;
+  }
+
+  state.busy = true;
+  startSessionBtn.disabled = true;
+  setGlobalStatus("Starting session...");
+
+  try {
+    const startPayload = await fetchJson("/api/session/start", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        participantName,
+        userAgent: navigator.userAgent,
+      }),
+    });
+
+    const calibrationPayload = await fetchJson("/api/calibration/words");
+
+    state.sessionId = startPayload.sessionId;
+    state.participantName = participantName;
+    state.currentSegmentIndex = 0;
+    state.segmentResults = [];
+    state.wordsCache = new Map();
+    state.familiarityChecklist = {};
+    state.calibrationWords = calibrationPayload.words;
+
+    showScreen("calibration");
+    setGlobalStatus("Calibration started.");
+    startCalibrationLoop();
+  } catch (error) {
+    setGlobalStatus(error.message || "Failed to start session.", true);
+    showScreen("welcome");
+  } finally {
+    state.busy = false;
+    startSessionBtn.disabled = participantNameInput.value.trim().length === 0;
+  }
+}
+
+function bindEvents() {
+  participantNameInput.addEventListener("input", () => {
+    startSessionBtn.disabled = participantNameInput.value.trim().length === 0 || state.busy;
+  });
+
+  startSessionBtn.addEventListener("click", () => {
+    startSession();
+  });
+
+  calibrationStopBtn.addEventListener("click", () => {
+    stopCalibration("stop_button");
+  });
+
+  transitionContinueBtn.addEventListener("click", () => {
+    startCurrentSegment();
+  });
+
+  wordsPauseBtn.addEventListener("click", () => {
+    toggleWordsPause();
+  });
+
+  wordsFinishBtn.addEventListener("click", () => {
+    finishCurrentSegment();
+  });
+
+  pdfFinishBtn.addEventListener("click", () => {
+    finishCurrentSegment();
+  });
+
+  checklistContinueBtn.addEventListener("click", () => {
+    collectChecklistAnswers();
+    showScreen("feedback");
+    setGlobalStatus("");
+  });
+
+  submitFeedbackBtn.addEventListener("click", () => {
+    submitFeedback();
+  });
+
+  restartBtn.addEventListener("click", () => {
+    window.location.reload();
+  });
+
   document.addEventListener("keydown", (event) => {
     if (event.code !== "Space") {
       return;
     }
-
-    if (readerSection.classList.contains("hidden")) {
+    if (isTextInputFocused()) {
       return;
     }
 
-    const tagName = document.activeElement?.tagName;
-    if (tagName === "INPUT" || tagName === "TEXTAREA") {
+    if (isVisible(screens.calibration)) {
+      event.preventDefault();
+      stopCalibration("space");
       return;
     }
 
-    event.preventDefault();
-    togglePauseResume();
-  });
-}
-
-function bindReaderTouchControls() {
-  readerPauseBtn.addEventListener("click", () => {
-    togglePauseResume();
-  });
-
-  focusText.addEventListener("click", () => {
-    if (readerSection.classList.contains("hidden")) {
+    if (isVisible(screens.transition)) {
+      event.preventDefault();
+      startCurrentSegment();
       return;
     }
-    togglePauseResume();
+
+    if (isVisible(screens.words)) {
+      event.preventDefault();
+      toggleWordsPause();
+    }
   });
 }
 
-function bindSpeedInputs() {
-  [speedInput, readerSpeedInput].forEach((input) => {
-    input.addEventListener("change", () => {
-      const parsed = Number.parseInt(input.value, 10);
-      applySpeedWpm(parsed);
-    });
-  });
+async function init() {
+  showScreen("welcome");
+  startSessionBtn.disabled = true;
 
-  decreaseSpeedBtn.addEventListener("click", () => {
-    applySpeedWpm(state.speedWpm - 5);
-  });
+  try {
+    state.protocol = await fetchJson("/api/protocol");
+    renderChecklist();
+    setGlobalStatus("Protocol loaded.");
+  } catch (error) {
+    setGlobalStatus(error.message || "Failed to load protocol.", true);
+    startSessionBtn.disabled = true;
+  }
 
-  increaseSpeedBtn.addEventListener("click", () => {
-    applySpeedWpm(state.speedWpm + 5);
-  });
+  bindEvents();
 }
 
-function initTheme() {
-  const saved = window.localStorage.getItem("fast-read-theme");
-  const initial = saved === "dark" ? "dark" : "light";
-  document.body.dataset.theme = initial;
-  themeToggle.textContent = initial === "dark" ? "Light Theme" : "Dark Theme";
-
-  themeToggle.addEventListener("click", () => {
-    const current = document.body.dataset.theme;
-    const next = current === "dark" ? "light" : "dark";
-    document.body.dataset.theme = next;
-    window.localStorage.setItem("fast-read-theme", next);
-    themeToggle.textContent = next === "dark" ? "Light Theme" : "Dark Theme";
-  });
-}
-
-function startNewSession() {
-  clearPlaybackTimer();
-  state.isPaused = false;
-  renderPauseState();
-  showSection(setupSection);
-  setStatus(setupStatus, "");
-  setStatus(feedbackStatus, "");
-}
-
-startBtn.addEventListener("click", handleStartReadingClick);
-feedbackForm.addEventListener("submit", submitFeedback);
-newSessionBtn.addEventListener("click", startNewSession);
-
-bindStepNavigation();
-bindSpeedFeelingToggle();
-bindSpacePauseShortcut();
-bindReaderTouchControls();
-bindSpeedInputs();
-initTheme();
-applySpeedWpm(100);
-renderPauseState();
-showSection(setupSection);
+init();
