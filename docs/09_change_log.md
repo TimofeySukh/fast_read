@@ -13,6 +13,18 @@ Use this file as the single mandatory log for project updates.
 ## Entries
 - Date: 2026-03-07
 - Branch: main-idea
+- Scope: Switch default UI theme to dark style
+- Files changed:
+  - static/styles.css
+  - docs/09_change_log.md
+- Summary:
+  - Replaced light default palette with dark project theme.
+  - Updated backgrounds, surfaces, inputs, badges, word stage, and checklist cards for dark-first UI.
+- Follow-up needed:
+  - Visual QA on desktop and mobile contrast/readability.
+
+- Date: 2026-03-07
+- Branch: main-idea
 - Scope: Prevent duplicate segment starts on transition screen
 - Files changed:
   - static/app.js
