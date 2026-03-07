@@ -13,6 +13,20 @@ Use this file as the single mandatory log for project updates.
 ## Entries
 - Date: 2026-03-07
 - Branch: main-idea-rus
+- Scope: Correct README meaning to match research protocol + add non-commercial license
+- Files changed:
+  - README.md
+  - LICENSE
+  - docs/09_change_log.md
+- Summary:
+  - Rewrote README to match docs-defined project intent (controlled research protocol, fixed corpus, locked 6-text/12-segment flow).
+  - Added branch graph and clarified branch roles.
+  - Added explicit non-commercial license declaration and `LICENSE` file (CC BY-NC 4.0).
+- Follow-up needed:
+  - Confirm if CC BY-NC 4.0 is the final legal choice for software distribution.
+
+- Date: 2026-03-07
+- Branch: main-idea-rus
 - Scope: Rewrite README with research positioning and branch map
 - Files changed:
   - README.md

@@ -1,31 +1,44 @@
 # fast_read
 
-`fast_read` is a reading-format project built for **research purposes**.
+`fast_read` is a controlled reading research app.
+It compares two formats on the same fixed Russian-language corpus:
+- one-word-at-a-time playback,
+- normal PDF page reading.
 
-It is used to compare reading behavior across formats and collect study data.
+This repository is primarily used to run a structured study protocol and collect session data.
 
-## What This Repository Contains
-- Web app backend (Flask) and frontend flow for reading sessions.
-- PDF text extraction pipeline for one-word mode.
-- Session logging to JSON for later analysis.
+## Why Use It
+- Run a deterministic research flow (same order for every participant).
+- Measure hidden reading time per segment.
+- Collect calibration, familiarity checklist, and mandatory feedback in one JSON record.
+- Compare `words` vs `pdf` format performance across the same 6 texts.
 
-## Branch Map
-```text
-main
-├── main-idea
-│   └── main-idea-rus  (current primary research branch)
+## Branch Graph
+```mermaid
+gitGraph
+  commit id: "main"
+  branch main-idea
+  checkout main-idea
+  commit id: "first research flow (EN)"
+  branch main-idea-rus
+  checkout main-idea-rus
+  commit id: "current research flow (RU corpus)"
+  checkout main
+  commit id: "stable product line"
 ```
 
 - `main`: ready product branch where users can upload PDF and read by letters.
 - `main-idea`: first research implementation in English.
-- `main-idea-rus`: current main branch for collecting data in the research flow.
+- `main-idea-rus`: current primary branch for research data collection.
 
 ## Features (main-idea-rus)
-- Participant onboarding and calibration.
-- Fixed study flow with alternating `words` / `pdf` reading segments.
-- Hidden per-segment timing.
-- Mandatory familiarity checklist and final feedback.
-- JSON session save in `data/sessions/`.
+- Required participant name at start.
+- Calibration from `pdf_start.pdf` with manual WPM controls (`50..700`).
+- Exactly 6 texts and 12 measured segments in locked alternating order.
+- One-word mode tokenization by whitespace and punctuation.
+- Hidden timing per segment (never shown to participant).
+- Mandatory familiarity checklist before mandatory free-text feedback.
+- Session persistence to JSON in `data/sessions/`.
 
 ## Installation
 ```bash
@@ -60,4 +73,7 @@ python3 app.py
 - Create a local commit for each meaningful change.
 
 ## License
-License is not specified yet.
+This project is licensed for **non-commercial use only** under:
+- **Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)**.
+
+See [LICENSE](LICENSE) for details.
