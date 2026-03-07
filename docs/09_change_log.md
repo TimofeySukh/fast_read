@@ -13,6 +13,35 @@ Use this file as the single mandatory log for project updates.
 ## Entries
 - Date: 2026-03-07
 - Branch: main-idea-rus
+- Scope: Add comprehension scale on transitions and move protocol to 5 texts / 10 segments
+- Files changed:
+  - app.py
+  - static/app.js
+  - static/styles.css
+  - templates/index.html
+  - AGENT.md
+  - README.md
+  - docs/01_summary.md
+  - docs/03_solution_scope.md
+  - docs/04_features.md
+  - docs/05_user_flow.md
+  - docs/06_tech_stack_and_integrations.md
+  - docs/07_mvp_plan.md
+  - docs/08_risks_and_open_questions.md
+  - docs/09_change_log.md
+  - docs/11_audio_requirements_trace.md
+  - docs/12_screen_copy_and_controls.md
+  - docs/13_data_schema.md
+- Summary:
+  - Added mandatory comprehension rating (`1..5`) on every transition screen after a finished segment (words and PDF).
+  - Rating is now saved into each segment record as `comprehensionScore`.
+  - Removed "Black Man (Yesenin)" from protocol and checklist.
+  - Updated fixed study constants from `6/12` to `5/10` across app and docs.
+- Follow-up needed:
+  - Manual UX check for transition flow on mobile (rating selection + continue).
+
+- Date: 2026-03-07
+- Branch: main-idea-rus
 - Scope: Add one-word reading progress bar (excluding calibration)
 - Files changed:
   - templates/index.html
@@ -38,7 +67,7 @@ Use this file as the single mandatory log for project updates.
   - LICENSE
   - docs/09_change_log.md
 - Summary:
-  - Rewrote README to match docs-defined project intent (controlled research protocol, fixed corpus, locked 6-text/12-segment flow).
+  - Rewrote README to match docs-defined project intent (controlled research protocol, fixed corpus, locked 5-text/10-segment flow).
   - Added branch graph and clarified branch roles.
   - Added explicit non-commercial license declaration and `LICENSE` file (CC BY-NC 4.0).
 - Follow-up needed:
@@ -79,7 +108,7 @@ Use this file as the single mandatory log for project updates.
   - static/app.js
   - docs/09_change_log.md
 - Summary:
-  - Reverted UI progress labels from `Исследование X из 6` back to `Текст X из 6`.
+  - Reverted UI progress labels from `Исследование X из 5` back to `Текст X из 5`.
   - Updated related transition phrases to use `текст` wording.
 - Follow-up needed:
   - None.
@@ -191,7 +220,7 @@ Use this file as the single mandatory log for project updates.
 - Summary:
   - Replaced legacy upload/email flow with fixed-corpus research protocol flow.
   - Added backend session lifecycle APIs (`start`, `calibration`, `complete`) and JSON persistence in `data/sessions/`.
-  - Added deterministic 6-text alternating test runner UI with transitions, hidden timing capture, checklist, and mandatory feedback.
+  - Added deterministic 5-text alternating test runner UI with transitions, hidden timing capture, checklist, and mandatory feedback.
   - Updated README and runtime ignores for session JSON artifacts.
 - Follow-up needed:
   - Run manual browser QA on desktop and mobile for full interaction flow.
@@ -232,7 +261,7 @@ Use this file as the single mandatory log for project updates.
   - docs/08_risks_and_open_questions.md
   - docs/09_change_log.md
 - Summary:
-  - Locked text 6 order to strict alternation (`PDF -> words`).
+  - Locked text 5 order to strict alternation (`words -> PDF`).
   - Locked final feedback as mandatory.
   - Removed sequence conflict from edge cases and open questions.
 - Follow-up needed:
@@ -260,4 +289,4 @@ Use this file as the single mandatory log for project updates.
   - Changed workflow rule to commit immediately but push manually by owner.
   - Added agent handoff rule file.
 - Follow-up needed:
-  - Confirm final order for text 6 format.
+  - Confirm final order for text 5 format.

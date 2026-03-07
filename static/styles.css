@@ -236,6 +236,36 @@ kbd {
   margin: 10px 0;
 }
 
+.comprehension-block {
+  margin: 8px 0 12px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: rgba(12, 17, 21, 0.9);
+}
+
+.comprehension-title {
+  margin: 0 0 10px;
+  font-weight: 700;
+}
+
+.comprehension-scale {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.comprehension-btn {
+  min-width: 44px;
+  padding: 8px 14px;
+}
+
+.comprehension-btn.is-active {
+  border: 1px solid transparent;
+  background: linear-gradient(125deg, var(--accent), #15785f);
+  color: #fff;
+}
+
 .segment-meta {
   display: flex;
   gap: 10px;

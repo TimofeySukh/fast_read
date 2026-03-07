@@ -16,7 +16,7 @@
 - None from product-owner side at this moment.
 
 ## Locked Decisions
-- Strict alternation across all 6 texts is final.
+- Strict alternation across all 5 texts is final.
 - Text 6 order is `PDF -> words`.
 - Final feedback is mandatory.
 - No email field in session output.

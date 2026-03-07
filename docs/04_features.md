@@ -13,7 +13,7 @@
   - confirm by `Continue` (desktop `Space` shortcut allowed),
   - selected WPM persisted.
 - `F-03` Test runner:
-  - exactly 6 texts,
+  - exactly 5 texts,
   - exactly 2 segments per text,
   - locked order matrix from scope doc.
 - `F-04` Segment completion:
@@ -26,6 +26,7 @@
 - `F-06` Transition screens:
   - shown between all segments,
   - include progress + next-format message,
+  - include mandatory comprehension score selection (`1..5`) for each finished segment,
   - include `Continue` (plus desktop `Space` shortcut).
 - `F-07` One-word playback:
   - pace is WPM-based,
@@ -38,7 +39,7 @@
   - desktop `Space` pause/resume for one-word reading,
   - mobile on-screen pause/resume equivalent.
 - `F-09` Familiarity checklist (mandatory before feedback):
-  - 6 listed works with checkboxes.
+  - 5 listed works with checkboxes.
 - `F-10` Feedback:
   - required free-text feedback field,
   - no email collection.
@@ -47,7 +48,7 @@
 
 ## P1 Quality Requirements
 - `Q-01` Mobile and desktop parity for all required actions.
-- `Q-02` Clear progress status (`Text X of 6` and segment context).
+- `Q-02` Clear progress status (`Text X of 5` and segment context).
 - `Q-03` Recoverable UX for accidental reload/interruption (at minimum save partial state with status flag).
 
 ## P2 Analysis Helpers

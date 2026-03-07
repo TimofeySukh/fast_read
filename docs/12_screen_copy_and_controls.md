@@ -56,8 +56,9 @@ This is the screen-level contract for the research flow.
 ## S6 Between-Segment Transition
 - Purpose: move participant from one segment/format to next.
 - Required UI:
-  - progress text (`Text X of 6 completed`),
+  - progress text (`Text X of 5 completed`),
   - next-format text (`Next format: ...`),
+  - comprehension scale (`1..5`) for how well the previous segment was understood,
   - `Continue Test` button.
 - Desktop shortcut:
   - `Space` triggers continue.
@@ -66,11 +67,10 @@ This is the screen-level contract for the research flow.
 - Purpose: capture prior familiarity before feedback.
 - Required UI:
   - prompt question about prior reading,
-  - six checkboxes:
+  - five checkboxes:
     - Jump (Tolstoy),
     - Frog Traveler (Garshin),
     - Myth of the Cave (Plato),
-    - Black Man (Yesenin),
     - Macintosh Presentation,
     - Heart Article,
   - `Continue` button.

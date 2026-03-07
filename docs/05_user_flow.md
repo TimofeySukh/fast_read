@@ -18,8 +18,7 @@
    - text 2: PDF then words,
    - text 3: words then PDF,
    - text 4: PDF then words,
-   - text 5: words then PDF,
-   - text 6: PDF then words.
+   - text 5: words then PDF.
 12. For each segment:
    - hidden stopwatch starts on segment render,
    - participant reads,
@@ -30,9 +29,10 @@
 13. Between segments and texts:
    - transition screen shows progress,
    - next format is announced,
+   - participant selects comprehension score `1..5` for the just-finished segment,
    - participant continues by `Continue` (desktop `Space` shortcut allowed).
-14. After all 12 reading segments are complete, familiarity checklist screen opens.
-15. Participant marks familiarity for all 6 listed works.
+14. After all 10 reading segments are complete, familiarity checklist screen opens.
+15. Participant marks familiarity for all 5 listed works.
 16. Feedback screen opens.
 17. Participant enters mandatory feedback text.
 18. Participant submits.

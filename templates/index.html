@@ -11,7 +11,7 @@
       <header class="hero">
         <p class="eyebrow">Исследование чтения</p>
         <h1>Сессия исследования форматов</h1>
-        <p class="hero-note">Здесь сравниваются два формата чтения на 6 текстах.</p>
+        <p class="hero-note">Здесь сравниваются два формата чтения на 5 текстах.</p>
       </header>
 
       <p id="globalStatus" class="global-status" aria-live="polite"></p>
@@ -19,7 +19,7 @@
       <section id="welcomeScreen" class="screen card">
         <h2>Добро пожаловать</h2>
         <p>
-          Спасибо, что решили принять участие в моем исследовании. Здесь будут 6 текстов, и каждый из них вы увидите в двух форматах: в формате обычного текста и в формате по одному слову. Постарайтесь внимательно вчитываться в материалы, а в самом конце исследования оставьте свое мнение о чтении по словам.
+          Спасибо, что решили принять участие в моем исследовании. Здесь будут 5 текстов, и каждый из них вы увидите в двух форматах: в формате обычного текста и в формате по одному слову. Постарайтесь внимательно вчитываться в материалы, а в самом конце исследования оставьте свое мнение о чтении по словам.
         </p>
         <label class="field" for="participantNameInput">
           <span>Представьтесь пожалуйста</span>
@@ -63,6 +63,17 @@
         <h2 id="transitionTitle">Приготовьтесь</h2>
         <p id="transitionProgress" class="muted"></p>
         <p id="transitionNextFormat" class="transition-format"></p>
+        <div id="comprehensionBlock" class="comprehension-block hidden">
+          <p class="comprehension-title">Насколько вы поняли только что прочитанный текст?</p>
+          <div id="comprehensionScale" class="comprehension-scale" role="radiogroup" aria-label="Оценка понимания от 1 до 5">
+            <button type="button" class="comprehension-btn" data-score="1">1</button>
+            <button type="button" class="comprehension-btn" data-score="2">2</button>
+            <button type="button" class="comprehension-btn" data-score="3">3</button>
+            <button type="button" class="comprehension-btn" data-score="4">4</button>
+            <button type="button" class="comprehension-btn" data-score="5">5</button>
+          </div>
+          <p id="comprehensionHint" class="hint">Выберите оценку от 1 до 5, затем нажмите «Продолжить».</p>
+        </div>
         <p class="hint">Нажмите <kbd>Пробел</kbd> или кнопку <strong>Продолжить</strong>.</p>
         <div class="actions">
           <button id="transitionContinueBtn" type="button">Продолжить</button>
@@ -71,7 +82,7 @@
 
       <section id="wordsScreen" class="screen card hidden" aria-live="polite">
         <div class="segment-meta">
-          <span id="wordsSegmentLabel">Текст 1 из 6</span>
+          <span id="wordsSegmentLabel">Текст 1 из 5</span>
           <span id="wordsSegmentFormat">Режим по одному слову</span>
           <span id="wordsSegmentWpm">100 слов/мин</span>
         </div>
@@ -90,7 +101,7 @@
 
       <section id="pdfScreen" class="screen card hidden" aria-live="polite">
         <div class="segment-meta">
-          <span id="pdfSegmentLabel">Текст 1 из 6</span>
+          <span id="pdfSegmentLabel">Текст 1 из 5</span>
           <span id="pdfSegmentFormat">Режим PDF</span>
         </div>
         <iframe id="pdfViewerFrame" class="pdf-frame" title="PDF Reader"></iframe>

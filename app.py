@@ -45,20 +45,11 @@ TEXTS: list[dict[str, Any]] = [
         "checklistLabel": "Лягушка-путешественница (Гаршин)",
     },
     {
-        "id": "black_man",
-        "title": "Черный человек",
-        "author": "Сергей Есенин",
-        "filename": "черный_человек.pdf",
-        "order": ["words", "pdf"],
-        "checklistId": "black_man_yesenin",
-        "checklistLabel": "Черный человек (Сергей Есенин)",
-    },
-    {
         "id": "myth_of_the_cave",
         "title": "Миф о пещере",
         "author": "Платон",
         "filename": "миф_о_пещере.pdf",
-        "order": ["pdf", "words"],
+        "order": ["words", "pdf"],
         "checklistId": "myth_of_the_cave_plato",
         "checklistLabel": "Миф о пещере (Платон)",
     },
@@ -67,7 +58,7 @@ TEXTS: list[dict[str, Any]] = [
         "title": "Презентация Макинтоша",
         "author": "—",
         "filename": "макинтош.pdf",
-        "order": ["words", "pdf"],
+        "order": ["pdf", "words"],
         "checklistId": "macintosh_presentation",
         "checklistLabel": "Презентация Макинтоша",
     },
@@ -76,7 +67,7 @@ TEXTS: list[dict[str, Any]] = [
         "title": "Статья про сердце",
         "author": "—",
         "filename": "сердце.pdf",
-        "order": ["pdf", "words"],
+        "order": ["words", "pdf"],
         "checklistId": "heart_article",
         "checklistLabel": "Статья про сердце",
     },
@@ -195,6 +186,7 @@ def validate_segments(segments: Any) -> tuple[bool, str]:
             "textTitle",
             "format",
             "orderInText",
+            "comprehensionScore",
             "startedAtUtc",
             "finishedAtUtc",
             "durationSeconds",
@@ -211,6 +203,13 @@ def validate_segments(segments: Any) -> tuple[bool, str]:
             return False, f"durationSeconds must be numeric in segment {actual_id}"
         if duration < 0:
             return False, f"durationSeconds must be >= 0 in segment {actual_id}"
+
+        try:
+            comprehension_score = int(actual.get("comprehensionScore", 0))
+        except (TypeError, ValueError):
+            return False, f"comprehensionScore must be integer in segment {actual_id}"
+        if comprehension_score < 1 or comprehension_score > 5:
+            return False, f"comprehensionScore must be in range 1..5 in segment {actual_id}"
 
         if str(actual["format"]) == "words":
             try:

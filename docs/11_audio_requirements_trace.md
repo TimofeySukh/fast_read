@@ -11,8 +11,8 @@ This file maps spoken requirements to implementation-level requirements so no de
   - Requirement: protocol-first flow, not generic reader.
 
 - `00:10-00:20`
-  - There are 6 PDFs in `pdf_folder/`.
-  - Requirement: fixed six-text corpus in one session.
+  - There are 5 PDFs in `pdf_folder/`.
+  - Requirement: fixed five-text corpus in one session.
 
 - `00:28-00:52`
   - Welcome message and required name before start.
@@ -53,8 +53,8 @@ This file maps spoken requirements to implementation-level requirements so no de
   - Stopwatch remains hidden.
 
 - `04:22-04:86`
-  - Text order and alternation pattern for texts 3-6 was listed.
-  - Final product-owner lock: strict alternation through all 6 texts.
+  - Text order and alternation pattern for texts 3-5 was listed.
+  - Final product-owner lock: strict alternation through all 5 texts.
 
 - `04:86-04:96`
   - Save output in JSON.
@@ -67,7 +67,7 @@ This file maps spoken requirements to implementation-level requirements so no de
   - Email should not be collected.
 
 ## Clarification Decisions Applied After Audio
-- Strict alternation is locked for all six texts; text 6 is `PDF -> words`.
+- Strict alternation is locked for all five texts; text 5 is `words -> PDF`.
 - Final feedback is mandatory.
 - Buttons remain English.
 - Docs remain English.

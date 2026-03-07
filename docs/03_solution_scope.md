@@ -5,13 +5,13 @@ Replace the previous app behavior with a deterministic research protocol with a 
 
 ## Input Assets
 - Calibration source file in repo root: `pdf_start.pdf`.
-- Study corpus folder: `pdf_folder/` with 6 predefined texts.
+- Study corpus folder: `pdf_folder/` with 5 predefined texts.
 - No participant-side file upload is required in the research flow.
 
 ## Core Flow Contract
 1. Welcome screen with required participant name.
 2. Calibration playback from `pdf_start.pdf` with manual speed controls.
-3. 6-text test runner (2 reading segments per text).
+3. 5-text test runner (2 reading segments per text).
 4. Familiarity checklist screen (mandatory, before feedback).
 5. Final feedback screen (mandatory text).
 6. Session completion/thank-you confirmation.
@@ -33,7 +33,7 @@ Replace the previous app behavior with a deterministic research protocol with a 
 - Post-confirm prepare state exists before first segment.
 
 ## Reading Segment Contract
-- Each of 6 texts is read twice:
+- Each of 5 texts is read twice:
   - once in one-word mode,
   - once in normal PDF mode.
 - For every segment:
@@ -46,18 +46,18 @@ Replace the previous app behavior with a deterministic research protocol with a 
 ## Locked Text Order And Format Matrix
 1. Jump (Tolstoy): `words -> PDF`
 2. Frog Traveler (Garshin): `PDF -> words`
-3. Black Man (Yesenin): `words -> PDF`
-4. Myth of the Cave (Plato): `PDF -> words`
-5. Macintosh Presentation: `words -> PDF`
-6. Heart Article: `PDF -> words`
+3. Myth of the Cave (Plato): `words -> PDF`
+4. Macintosh Presentation: `PDF -> words`
+5. Heart Article: `words -> PDF`
 
 This strict alternation is final for current study phase.
 
 ## Transition Screens
 - Show between every segment and between texts.
 - Must contain:
-  - progress message (example: `Text 1 of 6 completed`),
+  - progress message (example: `Text 1 of 5 completed`),
   - next format hint (example: `Next format: PDF` or `Next format: one word at a time`),
+  - comprehension scale `1..5` for the just-finished segment,
   - explicit continue action (`Continue` button).
 - Desktop continue shortcut: `Space`.
 - Mobile continue action: on-screen button.
@@ -78,7 +78,6 @@ Display checklist question: whether participant has previously read each work:
 - Jump (Tolstoy)
 - Frog Traveler (Garshin)
 - Myth of the Cave (Plato)
-- Black Man (Yesenin)
 - Macintosh Presentation
 - Heart Article
 

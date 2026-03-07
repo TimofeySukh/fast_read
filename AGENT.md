@@ -27,7 +27,7 @@ Attach this file whenever assigning work in this project.
 7. `docs/09_change_log.md` (latest entry first)
 
 ## Study-Critical Constraints
-- 6 texts, 12 measured segments, strict alternating format matrix.
+- 5 texts, 10 measured segments, strict alternating format matrix.
 - Hidden timers only; participant never sees stopwatch values.
 - Pre-feedback familiarity checklist is mandatory.
 - Final feedback is mandatory.

@@ -6,8 +6,8 @@ Build a controlled reading research app that compares two reading formats on the
 - normal PDF page reading.
 
 ## Study Constants
-- Exactly 6 texts are used in one session.
-- Each text is read in both formats (12 measured reading segments total).
+- Exactly 5 texts are used in one session.
+- Each text is read in both formats (10 measured reading segments total).
 - Segment order alternates by text (`words -> PDF`, then `PDF -> words`, repeating).
 - Calibration is done once at the beginning from `pdf_start.pdf`.
 - Calibration speed is selected manually by participant (`50..700`, with quick-step controls).
@@ -17,8 +17,9 @@ Build a controlled reading research app that compares two reading formats on the
 - Participant name.
 - Calibration result (selected WPM and stop method).
 - Timing for every reading segment (hidden stopwatch, never visible in UI).
+- Comprehension score (`1..5`) for every finished segment.
 - Segment order and text IDs.
-- Pre-feedback familiarity checklist answers (6 required items).
+- Pre-feedback familiarity checklist answers (5 required items).
 - Final mandatory free-text feedback.
 - All persisted in JSON.
 

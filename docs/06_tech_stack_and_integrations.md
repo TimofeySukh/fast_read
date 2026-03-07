@@ -8,7 +8,7 @@
 
 ## Study Assets
 - Calibration PDF: `pdf_start.pdf` in repository root.
-- Corpus folder: `pdf_folder/` with 6 predefined test PDFs.
+- Corpus folder: `pdf_folder/` with 5 predefined test PDFs.
 - Corpus is fixed for this study iteration.
 
 ## One-Word Processing Contract
@@ -23,6 +23,7 @@
   - participant ID/session ID,
   - text ID,
   - format (`words` or `pdf`),
+  - comprehension score (`1..5`),
   - start/end timestamps and duration.
 - Transition and UI control events can also be logged for auditability.
 

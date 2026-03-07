@@ -11,7 +11,7 @@ This repository is primarily used to run a structured study protocol and collect
 - Run a deterministic research flow (same order for every participant).
 - Measure hidden reading time per segment.
 - Collect calibration, familiarity checklist, and mandatory feedback in one JSON record.
-- Compare `words` vs `pdf` format performance across the same 6 texts.
+- Compare `words` vs `pdf` format performance across the same 5 texts.
 
 ## Branch Graph
 ```mermaid
@@ -34,7 +34,7 @@ gitGraph
 ## Features (main-idea-rus)
 - Required participant name at start.
 - Calibration from `pdf_start.pdf` with manual WPM controls (`50..700`).
-- Exactly 6 texts and 12 measured segments in locked alternating order.
+- Exactly 5 texts and 10 measured segments in locked alternating order.
 - One-word mode tokenization by whitespace and punctuation.
 - Hidden timing per segment (never shown to participant).
 - Mandatory familiarity checklist before mandatory free-text feedback.

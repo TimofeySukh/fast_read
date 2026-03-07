@@ -20,6 +20,8 @@ const state = {
   calibrationWordIndex: 0,
   busy: false,
   familiarityChecklist: {},
+  pendingComprehensionSegmentId: "",
+  selectedComprehensionScore: null,
 };
 
 const screens = {
@@ -56,6 +58,9 @@ const transitionTitle = document.getElementById("transitionTitle");
 const transitionProgress = document.getElementById("transitionProgress");
 const transitionNextFormat = document.getElementById("transitionNextFormat");
 const transitionContinueBtn = document.getElementById("transitionContinueBtn");
+const comprehensionBlock = document.getElementById("comprehensionBlock");
+const comprehensionHint = document.getElementById("comprehensionHint");
+const comprehensionButtons = Array.from(document.querySelectorAll(".comprehension-btn"));
 
 const wordsSegmentLabel = document.getElementById("wordsSegmentLabel");
 const wordsSegmentFormat = document.getElementById("wordsSegmentFormat");
@@ -164,6 +169,10 @@ function findTextById(textId) {
 
 function currentSegmentPlan() {
   return state.protocol.segmentPlan[state.currentSegmentIndex] || null;
+}
+
+function totalTextCount() {
+  return state.protocol?.texts?.length || 0;
 }
 
 function startCalibrationPlaybackLoop() {
@@ -277,7 +286,49 @@ function pushFinishedSegment() {
     durationSeconds,
     completionAction: state.currentSegment.format === "words" ? "auto_end_of_text" : "i_finished_button",
     selectedWpmAtRun: state.selectedWpm,
+    comprehensionScore: null,
   });
+}
+
+function resetComprehensionSelection() {
+  state.selectedComprehensionScore = null;
+  for (const button of comprehensionButtons) {
+    button.classList.remove("is-active");
+  }
+}
+
+function setComprehensionSelection(score) {
+  state.selectedComprehensionScore = score;
+  for (const button of comprehensionButtons) {
+    const buttonScore = Number.parseInt(button.dataset.score || "0", 10);
+    button.classList.toggle("is-active", buttonScore === score);
+  }
+}
+
+function saveComprehensionForPendingSegment() {
+  if (!state.pendingComprehensionSegmentId) {
+    return true;
+  }
+
+  if (!state.selectedComprehensionScore) {
+    setGlobalStatus("Пожалуйста, оцените понимание текста по шкале от 1 до 5.", true);
+    return false;
+  }
+
+  const segmentRecord = [...state.segmentResults]
+    .reverse()
+    .find((item) => item.segmentId === state.pendingComprehensionSegmentId);
+
+  if (!segmentRecord) {
+    setGlobalStatus("Не удалось сохранить оценку понимания.", true);
+    return false;
+  }
+
+  segmentRecord.comprehensionScore = state.selectedComprehensionScore;
+  state.pendingComprehensionSegmentId = "";
+  resetComprehensionSelection();
+  setGlobalStatus("");
+  return true;
 }
 
 function buildNextFormatText(previousSegment, nextSegment) {
@@ -292,23 +343,33 @@ function buildNextFormatText(previousSegment, nextSegment) {
 }
 
 function presentTransition(previousSegment, nextSegment) {
-  if (!nextSegment) {
-    showScreen("checklist");
-    return;
-  }
+  const textsTotal = totalTextCount();
+  const requiresComprehension = Boolean(previousSegment);
 
   if (!previousSegment) {
     transitionTitle.textContent = "Калибровка завершена";
     transitionProgress.textContent = "Приготовьтесь к первому тексту.";
-  } else if (previousSegment.textIndex === nextSegment.textIndex) {
-    transitionTitle.textContent = `Текст ${nextSegment.textIndex} из 6`;
+    transitionNextFormat.textContent = buildNextFormatText(previousSegment, nextSegment);
+  } else if (nextSegment && previousSegment.textIndex === nextSegment.textIndex) {
+    transitionTitle.textContent = `Текст ${nextSegment.textIndex} из ${textsTotal}`;
     transitionProgress.textContent = `Часть ${previousSegment.orderInText} завершена. Переходим к части ${nextSegment.orderInText}.`;
+    transitionNextFormat.textContent = buildNextFormatText(previousSegment, nextSegment);
+  } else if (nextSegment) {
+    transitionTitle.textContent = `Текст ${previousSegment.textIndex} из ${textsTotal} завершен`;
+    transitionProgress.textContent = `Приготовьтесь к тексту ${nextSegment.textIndex} из ${textsTotal}.`;
+    transitionNextFormat.textContent = buildNextFormatText(previousSegment, nextSegment);
   } else {
-    transitionTitle.textContent = `Текст ${previousSegment.textIndex} из 6 завершен`;
-    transitionProgress.textContent = `Приготовьтесь к тексту ${nextSegment.textIndex} из 6.`;
+    transitionTitle.textContent = `Текст ${previousSegment.textIndex} из ${textsTotal} завершен`;
+    transitionProgress.textContent = "Все тексты пройдены. Нажмите «Продолжить», чтобы перейти к финальным вопросам.";
+    transitionNextFormat.textContent = "";
   }
 
-  transitionNextFormat.textContent = buildNextFormatText(previousSegment, nextSegment);
+  transitionNextFormat.classList.toggle("hidden", !nextSegment);
+  comprehensionBlock.classList.toggle("hidden", !requiresComprehension);
+  if (requiresComprehension) {
+    resetComprehensionSelection();
+    comprehensionHint.classList.remove("is-error");
+  }
   transitionContinueBtn.disabled = false;
   showScreen("transition");
 }
@@ -322,7 +383,7 @@ async function startWordsSegment(segment) {
   wordsPauseBtn.disabled = false;
   wordsPauseBtn.textContent = "Пауза";
 
-  wordsSegmentLabel.textContent = `Текст ${segment.textIndex} из 6 • ${segment.textTitle}`;
+  wordsSegmentLabel.textContent = `Текст ${segment.textIndex} из ${totalTextCount()} • ${segment.textTitle}`;
   wordsSegmentFormat.textContent = "Режим по одному слову";
   wordsSegmentWpm.textContent = `${state.selectedWpm} слов/мин`;
   wordsCurrentWord.textContent = "Готово";
@@ -334,7 +395,7 @@ async function startWordsSegment(segment) {
 
 function startPdfSegment(segment) {
   const textInfo = findTextById(segment.textId);
-  pdfSegmentLabel.textContent = `Текст ${segment.textIndex} из 6 • ${segment.textTitle}`;
+  pdfSegmentLabel.textContent = `Текст ${segment.textIndex} из ${totalTextCount()} • ${segment.textTitle}`;
   pdfSegmentFormat.textContent = "Режим PDF";
   pdfViewerFrame.src = `${textInfo.pdfUrl}#view=FitH`;
   showScreen("pdf");
@@ -366,6 +427,19 @@ async function startCurrentSegment() {
   }
 }
 
+function continueFromTransition() {
+  if (!saveComprehensionForPendingSegment()) {
+    return;
+  }
+
+  if (!currentSegmentPlan()) {
+    showScreen("checklist");
+    return;
+  }
+
+  startCurrentSegment();
+}
+
 function finishCurrentSegment() {
   if (!state.currentSegment) {
     return;
@@ -377,6 +451,7 @@ function finishCurrentSegment() {
   const previousSegment = state.currentSegment;
   state.currentSegment = null;
   state.currentSegmentIndex += 1;
+  state.pendingComprehensionSegmentId = previousSegment.segmentId;
 
   presentTransition(previousSegment, currentSegmentPlan());
 }
@@ -500,6 +575,8 @@ async function startSession() {
     state.segmentResults = [];
     state.wordsCache = new Map();
     state.familiarityChecklist = {};
+    state.pendingComprehensionSegmentId = "";
+    state.selectedComprehensionScore = null;
     state.calibrationWords = calibrationPayload.words;
     state.calibrationWordIndex = 0;
 
@@ -540,9 +617,17 @@ function bindEvents() {
 
   startSessionBtn.addEventListener("click", startSession);
   calibrationContinueBtn.addEventListener("click", completeCalibration);
-  transitionContinueBtn.addEventListener("click", startCurrentSegment);
+  transitionContinueBtn.addEventListener("click", continueFromTransition);
   wordsPauseBtn.addEventListener("click", toggleWordsPause);
   pdfFinishBtn.addEventListener("click", finishCurrentSegment);
+  for (const button of comprehensionButtons) {
+    button.addEventListener("click", () => {
+      const score = Number.parseInt(button.dataset.score || "0", 10);
+      if (score >= 1 && score <= 5) {
+        setComprehensionSelection(score);
+      }
+    });
+  }
 
   checklistContinueBtn.addEventListener("click", () => {
     collectChecklistAnswers();
@@ -568,7 +653,7 @@ function bindEvents() {
 
     if (isVisible(screens.transition)) {
       event.preventDefault();
-      startCurrentSegment();
+      continueFromTransition();
       return;
     }
 
