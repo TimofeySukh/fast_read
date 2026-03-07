@@ -22,7 +22,7 @@
   3. Black Man (Yesenin): words -> PDF
   4. Myth of the Cave (Plato): PDF -> words
   5. Macintosh Presentation: words -> PDF
-  6. Heart Article: words -> PDF (latest spoken instruction)
+  6. Heart Article: PDF -> words
 - Hidden stopwatch for every reading segment (not visible to participant).
 - Transition screens between segments/texts with:
   - `Continue Test` button,
@@ -32,7 +32,7 @@
   - question: whether participant has read the listed works before,
   - checkbox list for all 6 items.
 - Final feedback screen:
-  - free-text feedback box,
+  - required free-text feedback box,
   - no email collection.
 - Save results as JSON.
 

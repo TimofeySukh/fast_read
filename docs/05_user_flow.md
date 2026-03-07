@@ -28,9 +28,8 @@
 
 ## Alternate Flows
 - Mobile users use on-screen controls instead of keyboard input.
-- Participant leaves feedback empty: system should validate according to product decision.
+- No empty-feedback path: feedback submission requires non-empty text.
 
 ## Edge Cases
 - Missing or invalid PDF file in test set.
 - Participant closes page mid-test.
-- Conflicting format sequence instructions (see open questions).

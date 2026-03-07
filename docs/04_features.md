@@ -9,7 +9,7 @@
 - Transition screen between each segment with `Continue Test` button and next-format message.
 - Segment completion action (`I finished`).
 - Pre-feedback familiarity checklist with 6 work titles.
-- Final free-text feedback box.
+- Final required free-text feedback box.
 - JSON result persistence.
 
 ## P1

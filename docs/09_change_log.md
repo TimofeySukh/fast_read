@@ -13,6 +13,22 @@ Use this file as the single mandatory log for project updates.
 ## Entries
 - Date: 2026-03-07
 - Branch: main-idea
+- Scope: Resolve open questions from owner decisions
+- Files changed:
+  - docs/03_solution_scope.md
+  - docs/04_features.md
+  - docs/05_user_flow.md
+  - docs/08_risks_and_open_questions.md
+  - docs/09_change_log.md
+- Summary:
+  - Locked text 6 order to strict alternation (`PDF -> words`).
+  - Locked final feedback as mandatory.
+  - Removed sequence conflict from edge cases and open questions.
+- Follow-up needed:
+  - Confirm transition-screen timing rule (`button-only` vs `auto-continue`).
+
+- Date: 2026-03-07
+- Branch: main-idea
 - Scope: Research-flow documentation overhaul from audio + explicit user addenda
 - Files changed:
   - docs/01_summary.md
