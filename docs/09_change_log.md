@@ -13,6 +13,18 @@ Use this file as the single mandatory log for project updates.
 ## Entries
 - Date: 2026-03-07
 - Branch: main-idea
+- Scope: Prevent duplicate segment starts on transition screen
+- Files changed:
+  - static/app.js
+  - docs/09_change_log.md
+- Summary:
+  - Added guard against duplicate segment start when `Continue Test` is triggered multiple times quickly.
+  - Transition button is now explicitly disabled once segment start begins.
+- Follow-up needed:
+  - Verify in manual browser test with rapid key presses on transition.
+
+- Date: 2026-03-07
+- Branch: main-idea
 - Scope: Implement research protocol MVP from docs
 - Files changed:
   - app.py

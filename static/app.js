@@ -250,6 +250,7 @@ function presentTransition(previousSegment, nextSegment) {
   }
 
   transitionNextFormat.textContent = `Format of the next segment: ${segmentFormatLabel(nextSegment.format)}.`;
+  transitionContinueBtn.disabled = false;
   showScreen("transition");
 }
 
@@ -280,12 +281,17 @@ function startPdfSegment(segment) {
 }
 
 async function startCurrentSegment() {
+  if (state.currentSegment) {
+    return;
+  }
+
   const segment = currentSegmentPlan();
   if (!segment) {
     showScreen("checklist");
     return;
   }
 
+  transitionContinueBtn.disabled = true;
   setSegmentStart(segment);
 
   try {
