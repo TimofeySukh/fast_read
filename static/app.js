@@ -60,6 +60,8 @@ const transitionContinueBtn = document.getElementById("transitionContinueBtn");
 const wordsSegmentLabel = document.getElementById("wordsSegmentLabel");
 const wordsSegmentFormat = document.getElementById("wordsSegmentFormat");
 const wordsSegmentWpm = document.getElementById("wordsSegmentWpm");
+const wordsProgressBar = document.getElementById("wordsProgressBar");
+const wordsProgressText = document.getElementById("wordsProgressText");
 const wordsCurrentWord = document.getElementById("wordsCurrentWord");
 const wordsPauseBtn = document.getElementById("wordsPauseBtn");
 
@@ -197,6 +199,7 @@ function startWordPlaybackLoop() {
 
   wordsCurrentWord.textContent = state.activeWords[state.activeWordIndex];
   state.activeWordIndex += 1;
+  updateWordsProgress();
 
   const intervalMs = readingIntervalMs(state.selectedWpm);
   if (state.activeWordIndex >= state.activeWords.length) {
@@ -209,6 +212,19 @@ function startWordPlaybackLoop() {
   }
 
   state.wordTimer = window.setTimeout(startWordPlaybackLoop, intervalMs);
+}
+
+function updateWordsProgress() {
+  if (!wordsProgressBar || !wordsProgressText) {
+    return;
+  }
+
+  const totalWords = state.activeWords.length;
+  const shownWords = Math.min(state.activeWordIndex, totalWords);
+  const progressPercent = totalWords > 0 ? (shownWords / totalWords) * 100 : 0;
+
+  wordsProgressBar.style.width = `${progressPercent}%`;
+  wordsProgressText.textContent = `${shownWords} / ${totalWords}`;
 }
 
 function toggleWordsPause() {
@@ -310,6 +326,7 @@ async function startWordsSegment(segment) {
   wordsSegmentFormat.textContent = "Режим по одному слову";
   wordsSegmentWpm.textContent = `${state.selectedWpm} слов/мин`;
   wordsCurrentWord.textContent = "Готово";
+  updateWordsProgress();
 
   showScreen("words");
   startWordPlaybackLoop();

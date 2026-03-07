@@ -23,6 +23,7 @@
 12. For each segment:
    - hidden stopwatch starts on segment render,
    - participant reads,
+   - one-word segments show a progress bar above the word display,
    - one-word segments auto-complete only after final word is shown,
    - PDF segments are completed by pressing `I finished`,
    - stopwatch stops and duration is saved.

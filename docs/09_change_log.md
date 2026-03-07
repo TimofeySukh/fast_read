@@ -13,6 +13,25 @@ Use this file as the single mandatory log for project updates.
 ## Entries
 - Date: 2026-03-07
 - Branch: main-idea-rus
+- Scope: Add one-word reading progress bar (excluding calibration)
+- Files changed:
+  - templates/index.html
+  - static/app.js
+  - static/styles.css
+  - docs/04_features.md
+  - docs/05_user_flow.md
+  - docs/12_screen_copy_and_controls.md
+  - docs/09_change_log.md
+- Summary:
+  - Added a visual progress bar directly above the one-word display in study segments.
+  - Progress updates by shown words (`shown / total`) during one-word playback.
+  - Calibration screen remains unchanged (no progress bar there).
+  - Synced docs to reflect this UI behavior.
+- Follow-up needed:
+  - Manual UI check on mobile for bar readability and spacing.
+
+- Date: 2026-03-07
+- Branch: main-idea-rus
 - Scope: Correct README meaning to match research protocol + add non-commercial license
 - Files changed:
   - README.md

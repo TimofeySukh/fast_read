@@ -34,14 +34,15 @@ This is the screen-level contract for the research flow.
 ## S4 Reading Segment: One-Word Mode
 - Purpose: run one-word segment at selected fixed WPM.
 - Required UI:
+  - progress bar above the word display area (segment-local),
   - single token display,
   - progress marker (text index / segment context),
-  - control hint under word area (space/button pause-resume),
-  - `I finished` button.
+  - control hint under word area (space/button pause-resume).
 - Behavior:
   - tokenization splits by whitespace and punctuation,
   - no forced periodic breaks,
-  - hidden timer start on render, stop on `I finished`.
+  - hidden timer start on render, stop automatically at end-of-text.
+  - progress bar is shown only in one-word study segments (not in calibration).
 
 ## S5 Reading Segment: PDF Mode
 - Purpose: run normal page-reading segment.

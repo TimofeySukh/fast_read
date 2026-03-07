@@ -31,7 +31,9 @@
   - pace is WPM-based,
   - words are split by whitespace and punctuation,
   - no character-based stepping,
-  - no forced periodic breaks.
+  - no forced periodic breaks,
+  - show per-segment progress bar above the word display area,
+  - do not show this progress bar during calibration.
 - `F-08` Runtime controls:
   - desktop `Space` pause/resume for one-word reading,
   - mobile on-screen pause/resume equivalent.
