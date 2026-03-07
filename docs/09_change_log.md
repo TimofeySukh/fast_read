@@ -13,6 +13,17 @@ Use this file as the single mandatory log for project updates.
 ## Entries
 - Date: 2026-03-07
 - Branch: main-idea-rus
+- Scope: Hide local corpus folder from git untracked list
+- Files changed:
+  - .gitignore
+  - docs/09_change_log.md
+- Summary:
+  - Added `pdf_folder/` to `.gitignore` so local PDF corpus files are not shown as untracked.
+- Follow-up needed:
+  - None.
+
+- Date: 2026-03-07
+- Branch: main-idea-rus
 - Scope: Russian screen localization and custom transition copy
 - Files changed:
   - app.py
