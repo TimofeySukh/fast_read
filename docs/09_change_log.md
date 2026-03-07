@@ -13,6 +13,21 @@ Use this file as the single mandatory log for project updates.
 ## Entries
 - Date: 2026-03-07
 - Branch: main-idea-rus
+- Scope: Prevent stale frontend behavior through Cloudflare tunnel
+- Files changed:
+  - app.py
+  - templates/index.html
+  - docs/06_tech_stack_and_integrations.md
+  - docs/09_change_log.md
+- Summary:
+  - Added no-cache headers for `/` and `/api/*` responses.
+  - Added cache-busting query token to static `app.js` and `styles.css` URLs in the template.
+  - This prevents old calibration logic from being served after deploy through tunnel/CDN layers.
+- Follow-up needed:
+  - Restart app process and cloudflared, then hard-refresh browser once to clear old cached bundle.
+
+- Date: 2026-03-07
+- Branch: main-idea-rus
 - Scope: Restore `Текст` wording in progress labels
 - Files changed:
   - static/app.js

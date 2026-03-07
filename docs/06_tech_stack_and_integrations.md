@@ -46,3 +46,7 @@
 - No email collection.
 - No hidden auto-push to GitHub.
 - Every meaningful product change must update docs and change log, then commit.
+
+## Deployment Cache Safety
+- Serve `/` and `/api/*` responses with no-cache headers to avoid stale protocol/UI behavior behind tunnels/CDN.
+- Add versioned static asset URLs (`app.js`, `styles.css`) from server-side template render to force clients to fetch latest frontend code after deploy.

@@ -223,6 +223,20 @@ def validate_segments(segments: Any) -> tuple[bool, str]:
     return True, ""
 
 
+def compute_asset_version() -> str:
+    """Cache-busting token for static assets served to clients/CDNs."""
+    candidates = [
+        BASE_DIR / "static" / "app.js",
+        BASE_DIR / "static" / "styles.css",
+        BASE_DIR / "templates" / "index.html",
+    ]
+    latest_mtime = 0
+    for candidate in candidates:
+        if candidate.exists():
+            latest_mtime = max(latest_mtime, int(candidate.stat().st_mtime))
+    return str(latest_mtime or int(datetime.now(timezone.utc).timestamp()))
+
+
 def validate_checklist(checklist: Any) -> tuple[bool, str]:
     if not isinstance(checklist, dict):
         return False, "familiarityChecklist must be an object"
@@ -239,9 +253,18 @@ def validate_checklist(checklist: Any) -> tuple[bool, str]:
 def create_app() -> Flask:
     app = Flask(__name__, template_folder="templates", static_folder="static")
 
+    @app.after_request
+    def add_no_cache_headers(response):  # type: ignore[no-untyped-def]
+        path = request.path
+        if path == "/" or path.startswith("/api/"):
+            response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+            response.headers["Pragma"] = "no-cache"
+            response.headers["Expires"] = "0"
+        return response
+
     @app.get("/")
     def index() -> str:
-        return render_template("index.html")
+        return render_template("index.html", asset_version=compute_asset_version())
 
     @app.get("/api/protocol")
     def protocol() -> Any:
