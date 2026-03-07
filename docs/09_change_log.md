@@ -12,6 +12,23 @@ Use this file as the single mandatory log for project updates.
 
 ## Entries
 - Date: 2026-03-07
+- Branch: main-idea-rus
+- Scope: Russian screen localization and custom transition copy
+- Files changed:
+  - app.py
+  - templates/index.html
+  - static/app.js
+  - docs/09_change_log.md
+- Summary:
+  - Localized welcome, calibration, transition, test, checklist, and feedback screens to Russian.
+  - Added required transition phrase after calibration: `Что сказал Гагарин?` and changed transition button text to `Поехали`.
+  - Added custom transition text for PDF segments and special phrase before text 5.
+  - Removed final summary table and left only `Спасибо за ваше время!`.
+  - Removed `Start New Session` button logic from UI and JS.
+- Follow-up needed:
+  - Manual visual QA of all transitions and screen copy in browser.
+
+- Date: 2026-03-07
 - Branch: main-idea
 - Scope: Switch default UI theme to dark style
 - Files changed:

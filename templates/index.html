@@ -9,129 +9,102 @@
   <body>
     <main class="app-shell">
       <header class="hero">
-        <p class="eyebrow">Reading Research Study</p>
-        <h1>Format Comparison Session</h1>
-        <p class="hero-note">This flow compares one-word reading and PDF reading across 6 texts.</p>
+        <p class="eyebrow">Исследование чтения</p>
+        <h1>Сессия сравнения форматов</h1>
+        <p class="hero-note">Здесь сравниваются два формата чтения на 6 текстах.</p>
       </header>
 
       <p id="globalStatus" class="global-status" aria-live="polite"></p>
 
       <section id="welcomeScreen" class="screen card">
-        <h2>Welcome</h2>
+        <h2>Добро пожаловать</h2>
         <p>
-          Thank you for taking part in this research. Enter your name to start the study.
+          Приветствую, спасибо что решили принять участие в моей исследовании надеюсь вам понравиться:).
         </p>
         <label class="field" for="participantNameInput">
-          <span>Your name</span>
+          <span>Представьтесь пожалуйста</span>
           <input id="participantNameInput" type="text" autocomplete="name" />
         </label>
         <div class="actions">
-          <button id="startSessionBtn" type="button" disabled>Start</button>
+          <button id="startSessionBtn" type="button" disabled>начать</button>
         </div>
       </section>
 
       <section id="calibrationScreen" class="screen card hidden" aria-live="polite">
-        <h2>Calibration</h2>
-        <p class="muted">The speed increases by 5 WPM every 2 seconds. Stop when it feels comfortable.</p>
+        <h2>Калибровка</h2>
+        <p class="muted">Скорость повышается на 5 слов в минуту каждые 2 секунды. Остановите, когда станет комфортно.</p>
         <div class="badge-row">
-          <span class="badge"><strong id="calibrationWpmValue">100</strong> WPM</span>
+          <span class="badge"><strong id="calibrationWpmValue">100</strong> слов/мин</span>
         </div>
-        <div id="calibrationWord" class="word-stage">Ready</div>
+        <div id="calibrationWord" class="word-stage">Готово</div>
         <p class="hint">
-          Press <kbd>Space</kbd> on desktop or use <strong>STOP</strong> on mobile.
+          Нажмите <kbd>Пробел</kbd> на компьютере или <strong>СТОП</strong> на телефоне.
         </p>
         <div class="actions center-actions">
-          <button id="calibrationStopBtn" type="button">STOP</button>
+          <button id="calibrationStopBtn" type="button">СТОП</button>
         </div>
       </section>
 
       <section id="transitionScreen" class="screen card hidden" aria-live="polite">
-        <h2 id="transitionTitle">Get ready</h2>
+        <h2 id="transitionTitle">Приготовьтесь</h2>
         <p id="transitionProgress" class="muted"></p>
         <p id="transitionNextFormat" class="transition-format"></p>
-        <p class="hint">Press <kbd>Space</kbd> or tap <strong>Continue Test</strong>.</p>
+        <p class="hint">Нажмите <kbd>Пробел</kbd> или кнопку <strong>Поехали</strong>.</p>
         <div class="actions">
-          <button id="transitionContinueBtn" type="button">Continue Test</button>
+          <button id="transitionContinueBtn" type="button">Поехали</button>
         </div>
       </section>
 
       <section id="wordsScreen" class="screen card hidden" aria-live="polite">
         <div class="segment-meta">
-          <span id="wordsSegmentLabel">Text 1 of 6</span>
-          <span id="wordsSegmentFormat">One-word mode</span>
-          <span id="wordsSegmentWpm">100 WPM</span>
+          <span id="wordsSegmentLabel">Текст 1 из 6</span>
+          <span id="wordsSegmentFormat">Режим по одному слову</span>
+          <span id="wordsSegmentWpm">100 слов/мин</span>
         </div>
-        <div id="wordsCurrentWord" class="word-stage">Ready</div>
+        <div id="wordsCurrentWord" class="word-stage">Готово</div>
         <p class="hint">
-          Press <kbd>Space</kbd> (desktop) or <strong>Pause / Resume</strong> button (mobile).
+          Нажмите <kbd>Пробел</kbd> (компьютер) или кнопку <strong>Пауза / Продолжить</strong> (телефон).
         </p>
         <div class="actions center-actions">
-          <button id="wordsPauseBtn" type="button" class="ghost">Pause</button>
-          <button id="wordsFinishBtn" type="button">I finished</button>
+          <button id="wordsPauseBtn" type="button" class="ghost">Пауза</button>
+          <button id="wordsFinishBtn" type="button">Я закончил</button>
         </div>
       </section>
 
       <section id="pdfScreen" class="screen card hidden" aria-live="polite">
         <div class="segment-meta">
-          <span id="pdfSegmentLabel">Text 1 of 6</span>
-          <span id="pdfSegmentFormat">PDF mode</span>
+          <span id="pdfSegmentLabel">Текст 1 из 6</span>
+          <span id="pdfSegmentFormat">Режим PDF</span>
         </div>
         <iframe id="pdfViewerFrame" class="pdf-frame" title="PDF Reader"></iframe>
         <div class="actions end-actions">
-          <button id="pdfFinishBtn" type="button">I finished</button>
+          <button id="pdfFinishBtn" type="button">Я закончил</button>
         </div>
       </section>
 
       <section id="checklistScreen" class="screen card hidden">
-        <h2>Before feedback</h2>
-        <p>Have you read any of these works before?</p>
+        <h2>Перед обратной связью</h2>
+        <p>Вы читали какие-то из этих произведений раньше?</p>
         <form id="checklistForm" class="checklist"></form>
         <div class="actions">
-          <button id="checklistContinueBtn" type="button">Continue</button>
+          <button id="checklistContinueBtn" type="button">Продолжить</button>
         </div>
       </section>
 
       <section id="feedbackScreen" class="screen card hidden">
-        <h2>Feedback</h2>
-        <p>Please share your feedback about this session.</p>
+        <h2>Обратная связь</h2>
+        <p>Пожалуйста, поделитесь впечатлением об этой сессии.</p>
         <label class="field" for="feedbackInput">
-          <span>Feedback</span>
+          <span>Ваш комментарий</span>
           <textarea id="feedbackInput" rows="6" required></textarea>
         </label>
         <div class="actions">
-          <button id="submitFeedbackBtn" type="button">Submit</button>
+          <button id="submitFeedbackBtn" type="button">Отправить</button>
         </div>
       </section>
 
       <section id="thankYouScreen" class="screen card hidden">
-        <h2>Thank you for your time</h2>
-        <table class="summary-table" aria-label="Session summary">
-          <tbody>
-            <tr>
-              <th>Session ID</th>
-              <td id="summarySessionId">-</td>
-            </tr>
-            <tr>
-              <th>Participant</th>
-              <td id="summaryParticipantName">-</td>
-            </tr>
-            <tr>
-              <th>Selected WPM</th>
-              <td id="summarySelectedWpm">-</td>
-            </tr>
-            <tr>
-              <th>Completed Segments</th>
-              <td id="summarySegmentCount">-</td>
-            </tr>
-            <tr>
-              <th>Total Reading Time</th>
-              <td id="summaryTotalTime">-</td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="actions">
-          <button id="restartBtn" type="button">Start New Session</button>
-        </div>
+        <h2>Спасибо за ваше время!</h2>
       </section>
     </main>
 

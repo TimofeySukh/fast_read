@@ -32,7 +32,6 @@ const screens = {
 };
 
 const globalStatus = document.getElementById("globalStatus");
-
 const participantNameInput = document.getElementById("participantNameInput");
 const startSessionBtn = document.getElementById("startSessionBtn");
 
@@ -62,13 +61,6 @@ const checklistContinueBtn = document.getElementById("checklistContinueBtn");
 
 const feedbackInput = document.getElementById("feedbackInput");
 const submitFeedbackBtn = document.getElementById("submitFeedbackBtn");
-
-const summarySessionId = document.getElementById("summarySessionId");
-const summaryParticipantName = document.getElementById("summaryParticipantName");
-const summarySelectedWpm = document.getElementById("summarySelectedWpm");
-const summarySegmentCount = document.getElementById("summarySegmentCount");
-const summaryTotalTime = document.getElementById("summaryTotalTime");
-const restartBtn = document.getElementById("restartBtn");
 
 function setGlobalStatus(message, isError = false) {
   globalStatus.textContent = message;
@@ -122,7 +114,7 @@ async function fetchJson(url, options = {}) {
   const response = await fetch(url, options);
   const payload = await response.json();
   if (!response.ok) {
-    throw new Error(payload.error || "Request failed");
+    throw new Error(payload.error || "Ошибка запроса");
   }
   return payload;
 }
@@ -136,7 +128,6 @@ function renderChecklist() {
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.id = `check-${item.id}`;
-    checkbox.dataset.checkId = item.id;
 
     const text = document.createElement("span");
     text.textContent = item.label;
@@ -144,10 +135,6 @@ function renderChecklist() {
     label.append(checkbox, text);
     checklistForm.appendChild(label);
   }
-}
-
-function segmentFormatLabel(format) {
-  return format === "pdf" ? "PDF" : "one word at a time";
 }
 
 function findTextById(textId) {
@@ -170,10 +157,8 @@ function startWordPlaybackLoop() {
     return;
   }
 
-  const nextWord = state.activeWords[state.activeWordIndex];
-  wordsCurrentWord.textContent = nextWord;
+  wordsCurrentWord.textContent = state.activeWords[state.activeWordIndex];
   state.activeWordIndex += 1;
-
   state.wordTimer = window.setTimeout(startWordPlaybackLoop, readingIntervalMs(state.selectedWpm));
 }
 
@@ -187,7 +172,7 @@ function toggleWordsPause() {
   }
 
   state.isWordsPaused = !state.isWordsPaused;
-  wordsPauseBtn.textContent = state.isWordsPaused ? "Resume" : "Pause";
+  wordsPauseBtn.textContent = state.isWordsPaused ? "Продолжить" : "Пауза";
 
   if (state.isWordsPaused) {
     clearWordTimer();
@@ -216,7 +201,7 @@ function pushFinishedSegment() {
   const finishedAtUtc = new Date().toISOString();
   const durationSeconds = Number(((performance.now() - state.currentSegmentStartPerf) / 1000).toFixed(2));
 
-  const record = {
+  state.segmentResults.push({
     segmentId: state.currentSegment.segmentId,
     textIndex: state.currentSegment.textIndex,
     textTitle: state.currentSegment.textTitle,
@@ -226,10 +211,19 @@ function pushFinishedSegment() {
     finishedAtUtc,
     durationSeconds,
     completionAction: "i_finished_button",
-    selectedWpmAtRun: state.currentSegment.format === "words" ? state.selectedWpm : state.selectedWpm,
-  };
+    selectedWpmAtRun: state.selectedWpm,
+  });
+}
 
-  state.segmentResults.push(record);
+function buildNextFormatText(previousSegment, nextSegment) {
+  if (nextSegment.format === "pdf") {
+    if (nextSegment.textIndex === 5 && (!previousSegment || previousSegment.textIndex < 5)) {
+      return "Теперь давайте отойдем от художественной литературы.";
+    }
+    return "Теперь будет текст в привычном вам страничном формате.";
+  }
+
+  return "Теперь текст будет показываться по одному слову.";
 }
 
 function presentTransition(previousSegment, nextSegment) {
@@ -239,17 +233,17 @@ function presentTransition(previousSegment, nextSegment) {
   }
 
   if (!previousSegment) {
-    transitionTitle.textContent = "Calibration completed";
-    transitionProgress.textContent = "Get ready for Text 1 of 6.";
+    transitionTitle.textContent = "Калибровка завершена";
+    transitionProgress.textContent = "Приготовьтесь к первому тексту. Что сказал Гагарин?";
   } else if (previousSegment.textIndex === nextSegment.textIndex) {
-    transitionTitle.textContent = `Text ${nextSegment.textIndex} of 6`;
-    transitionProgress.textContent = `Part ${previousSegment.orderInText} completed. Continue to part ${nextSegment.orderInText}.`;
+    transitionTitle.textContent = `Текст ${nextSegment.textIndex} из 6`;
+    transitionProgress.textContent = `Часть ${previousSegment.orderInText} завершена. Переходим к части ${nextSegment.orderInText}.`;
   } else {
-    transitionTitle.textContent = `Text ${previousSegment.textIndex} of 6 completed`;
-    transitionProgress.textContent = `Get ready for Text ${nextSegment.textIndex} of 6.`;
+    transitionTitle.textContent = `Текст ${previousSegment.textIndex} из 6 завершен`;
+    transitionProgress.textContent = `Приготовьтесь к тексту ${nextSegment.textIndex} из 6.`;
   }
 
-  transitionNextFormat.textContent = `Format of the next segment: ${segmentFormatLabel(nextSegment.format)}.`;
+  transitionNextFormat.textContent = buildNextFormatText(previousSegment, nextSegment);
   transitionContinueBtn.disabled = false;
   showScreen("transition");
 }
@@ -261,12 +255,12 @@ async function startWordsSegment(segment) {
   state.activeWordIndex = 0;
   state.isWordsPaused = false;
   wordsPauseBtn.disabled = false;
-  wordsPauseBtn.textContent = "Pause";
+  wordsPauseBtn.textContent = "Пауза";
 
-  wordsSegmentLabel.textContent = `Text ${segment.textIndex} of 6 • ${segment.textTitle}`;
-  wordsSegmentFormat.textContent = "One-word mode";
-  wordsSegmentWpm.textContent = `${state.selectedWpm} WPM`;
-  wordsCurrentWord.textContent = "Ready";
+  wordsSegmentLabel.textContent = `Текст ${segment.textIndex} из 6 • ${segment.textTitle}`;
+  wordsSegmentFormat.textContent = "Режим по одному слову";
+  wordsSegmentWpm.textContent = `${state.selectedWpm} слов/мин`;
+  wordsCurrentWord.textContent = "Готово";
 
   showScreen("words");
   startWordPlaybackLoop();
@@ -274,8 +268,8 @@ async function startWordsSegment(segment) {
 
 function startPdfSegment(segment) {
   const textInfo = findTextById(segment.textId);
-  pdfSegmentLabel.textContent = `Text ${segment.textIndex} of 6 • ${segment.textTitle}`;
-  pdfSegmentFormat.textContent = "PDF mode";
+  pdfSegmentLabel.textContent = `Текст ${segment.textIndex} из 6 • ${segment.textTitle}`;
+  pdfSegmentFormat.textContent = "Режим PDF";
   pdfViewerFrame.src = `${textInfo.pdfUrl}#view=FitH`;
   showScreen("pdf");
 }
@@ -301,7 +295,7 @@ async function startCurrentSegment() {
       startPdfSegment(segment);
     }
   } catch (error) {
-    setGlobalStatus(error.message || "Failed to start segment.", true);
+    setGlobalStatus(error.message || "Не удалось запустить сегмент.", true);
     showScreen("transition");
   }
 }
@@ -318,8 +312,7 @@ function finishCurrentSegment() {
   state.currentSegment = null;
   state.currentSegmentIndex += 1;
 
-  const nextSegment = currentSegmentPlan();
-  presentTransition(previousSegment, nextSegment);
+  presentTransition(previousSegment, currentSegmentPlan());
 }
 
 function collectChecklistAnswers() {
@@ -338,26 +331,13 @@ async function submitFeedback() {
 
   const feedback = feedbackInput.value.trim();
   if (!feedback) {
-    setGlobalStatus("Feedback is required.", true);
+    setGlobalStatus("Пожалуйста, заполните поле обратной связи.", true);
     return;
   }
 
   state.busy = true;
   submitFeedbackBtn.disabled = true;
-  setGlobalStatus("Saving session...");
-
-  const payload = {
-    sessionId: state.sessionId,
-    segments: state.segmentResults,
-    familiarityChecklist: state.familiarityChecklist,
-    feedback: {
-      text: feedback,
-    },
-    device: {
-      platformType: isLikelyMobile() ? "mobile" : "desktop",
-      userAgent: navigator.userAgent,
-    },
-  };
+  setGlobalStatus("Сохраняем результаты...");
 
   try {
     await fetchJson("/api/session/complete", {
@@ -365,20 +345,22 @@ async function submitFeedback() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify({
+        sessionId: state.sessionId,
+        segments: state.segmentResults,
+        familiarityChecklist: state.familiarityChecklist,
+        feedback: { text: feedback },
+        device: {
+          platformType: isLikelyMobile() ? "mobile" : "desktop",
+          userAgent: navigator.userAgent,
+        },
+      }),
     });
 
-    const totalSeconds = state.segmentResults.reduce((acc, item) => acc + Number(item.durationSeconds || 0), 0);
-    summarySessionId.textContent = state.sessionId;
-    summaryParticipantName.textContent = state.participantName;
-    summarySelectedWpm.textContent = String(state.selectedWpm);
-    summarySegmentCount.textContent = `${state.segmentResults.length} / ${state.protocol.segmentPlan.length}`;
-    summaryTotalTime.textContent = `${totalSeconds.toFixed(2)} sec`;
-
-    setGlobalStatus("Session saved.");
+    setGlobalStatus("");
     showScreen("thankYou");
   } catch (error) {
-    setGlobalStatus(error.message || "Failed to save session.", true);
+    setGlobalStatus(error.message || "Не удалось сохранить результаты.", true);
   } finally {
     state.busy = false;
     submitFeedbackBtn.disabled = false;
@@ -401,7 +383,7 @@ function startCalibrationLoop() {
 
   const tick = () => {
     if (!state.calibrationWords.length) {
-      calibrationWord.textContent = "No words";
+      calibrationWord.textContent = "Нет слов для калибровки";
       return;
     }
 
@@ -436,10 +418,10 @@ async function stopCalibration(stopMethod) {
       }),
     });
 
-    setGlobalStatus("Calibration saved.");
+    setGlobalStatus("");
     presentTransition(null, currentSegmentPlan());
   } catch (error) {
-    setGlobalStatus(error.message || "Failed to save calibration.", true);
+    setGlobalStatus(error.message || "Не удалось сохранить калибровку.", true);
     showScreen("welcome");
   } finally {
     state.busy = false;
@@ -459,7 +441,7 @@ async function startSession() {
 
   state.busy = true;
   startSessionBtn.disabled = true;
-  setGlobalStatus("Starting session...");
+  setGlobalStatus("Запускаем сессию...");
 
   try {
     const startPayload = await fetchJson("/api/session/start", {
@@ -484,10 +466,10 @@ async function startSession() {
     state.calibrationWords = calibrationPayload.words;
 
     showScreen("calibration");
-    setGlobalStatus("Calibration started.");
+    setGlobalStatus("");
     startCalibrationLoop();
   } catch (error) {
-    setGlobalStatus(error.message || "Failed to start session.", true);
+    setGlobalStatus(error.message || "Не удалось начать сессию.", true);
     showScreen("welcome");
   } finally {
     state.busy = false;
@@ -500,29 +482,12 @@ function bindEvents() {
     startSessionBtn.disabled = participantNameInput.value.trim().length === 0 || state.busy;
   });
 
-  startSessionBtn.addEventListener("click", () => {
-    startSession();
-  });
-
-  calibrationStopBtn.addEventListener("click", () => {
-    stopCalibration("stop_button");
-  });
-
-  transitionContinueBtn.addEventListener("click", () => {
-    startCurrentSegment();
-  });
-
-  wordsPauseBtn.addEventListener("click", () => {
-    toggleWordsPause();
-  });
-
-  wordsFinishBtn.addEventListener("click", () => {
-    finishCurrentSegment();
-  });
-
-  pdfFinishBtn.addEventListener("click", () => {
-    finishCurrentSegment();
-  });
+  startSessionBtn.addEventListener("click", startSession);
+  calibrationStopBtn.addEventListener("click", () => stopCalibration("stop_button"));
+  transitionContinueBtn.addEventListener("click", startCurrentSegment);
+  wordsPauseBtn.addEventListener("click", toggleWordsPause);
+  wordsFinishBtn.addEventListener("click", finishCurrentSegment);
+  pdfFinishBtn.addEventListener("click", finishCurrentSegment);
 
   checklistContinueBtn.addEventListener("click", () => {
     collectChecklistAnswers();
@@ -530,13 +495,7 @@ function bindEvents() {
     setGlobalStatus("");
   });
 
-  submitFeedbackBtn.addEventListener("click", () => {
-    submitFeedback();
-  });
-
-  restartBtn.addEventListener("click", () => {
-    window.location.reload();
-  });
+  submitFeedbackBtn.addEventListener("click", submitFeedback);
 
   document.addEventListener("keydown", (event) => {
     if (event.code !== "Space") {
@@ -572,9 +531,9 @@ async function init() {
   try {
     state.protocol = await fetchJson("/api/protocol");
     renderChecklist();
-    setGlobalStatus("Protocol loaded.");
+    setGlobalStatus("");
   } catch (error) {
-    setGlobalStatus(error.message || "Failed to load protocol.", true);
+    setGlobalStatus(error.message || "Не удалось загрузить протокол.", true);
     startSessionBtn.disabled = true;
   }
 
