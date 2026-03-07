@@ -283,13 +283,13 @@ function presentTransition(previousSegment, nextSegment) {
 
   if (!previousSegment) {
     transitionTitle.textContent = "Калибровка завершена";
-    transitionProgress.textContent = "Приготовьтесь к первому исследованию.";
+    transitionProgress.textContent = "Приготовьтесь к первому тексту.";
   } else if (previousSegment.textIndex === nextSegment.textIndex) {
-    transitionTitle.textContent = `Исследование ${nextSegment.textIndex} из 6`;
+    transitionTitle.textContent = `Текст ${nextSegment.textIndex} из 6`;
     transitionProgress.textContent = `Часть ${previousSegment.orderInText} завершена. Переходим к части ${nextSegment.orderInText}.`;
   } else {
-    transitionTitle.textContent = `Исследование ${previousSegment.textIndex} из 6 завершено`;
-    transitionProgress.textContent = `Приготовьтесь к исследованию ${nextSegment.textIndex} из 6.`;
+    transitionTitle.textContent = `Текст ${previousSegment.textIndex} из 6 завершен`;
+    transitionProgress.textContent = `Приготовьтесь к тексту ${nextSegment.textIndex} из 6.`;
   }
 
   transitionNextFormat.textContent = buildNextFormatText(previousSegment, nextSegment);
@@ -306,7 +306,7 @@ async function startWordsSegment(segment) {
   wordsPauseBtn.disabled = false;
   wordsPauseBtn.textContent = "Пауза";
 
-  wordsSegmentLabel.textContent = `Исследование ${segment.textIndex} из 6 • ${segment.textTitle}`;
+  wordsSegmentLabel.textContent = `Текст ${segment.textIndex} из 6 • ${segment.textTitle}`;
   wordsSegmentFormat.textContent = "Режим по одному слову";
   wordsSegmentWpm.textContent = `${state.selectedWpm} слов/мин`;
   wordsCurrentWord.textContent = "Готово";
@@ -317,7 +317,7 @@ async function startWordsSegment(segment) {
 
 function startPdfSegment(segment) {
   const textInfo = findTextById(segment.textId);
-  pdfSegmentLabel.textContent = `Исследование ${segment.textIndex} из 6 • ${segment.textTitle}`;
+  pdfSegmentLabel.textContent = `Текст ${segment.textIndex} из 6 • ${segment.textTitle}`;
   pdfSegmentFormat.textContent = "Режим PDF";
   pdfViewerFrame.src = `${textInfo.pdfUrl}#view=FitH`;
   showScreen("pdf");

@@ -13,6 +13,18 @@ Use this file as the single mandatory log for project updates.
 ## Entries
 - Date: 2026-03-07
 - Branch: main-idea-rus
+- Scope: Restore `Текст` wording in progress labels
+- Files changed:
+  - static/app.js
+  - docs/09_change_log.md
+- Summary:
+  - Reverted UI progress labels from `Исследование X из 6` back to `Текст X из 6`.
+  - Updated related transition phrases to use `текст` wording.
+- Follow-up needed:
+  - None.
+
+- Date: 2026-03-07
+- Branch: main-idea-rus
 - Scope: Rework calibration to playback + manual speed controls
 - Files changed:
   - templates/index.html
