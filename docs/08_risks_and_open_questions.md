@@ -1,20 +1,20 @@
 # Risks And Open Questions
 
 ## Risks
-- A poorly chosen WPM range can lead to incorrect UX and unreliable feedback.
-- PDF text extraction quality may be unstable (complex layout, scanned pages).
-- Local file storage may become inconvenient as data volume grows.
+- Format-sequence ambiguity may invalidate comparisons.
+- Missing timing events can break analysis quality.
+- Mobile interaction gaps can bias participant behavior.
+- Inconsistent docs updates can desync implementation and research protocol.
 
 ## Open Questions
-- What WPM range and step size should be used?
-  - Suggested owner: Product + UX.
-- Should email validation be mandatory for MVP?
-  - Suggested owner: Product.
-- Which response storage format should be chosen: JSON, CSV, or SQLite?
-  - Suggested owner: Backend.
-- Is personal-data handling required for nickname/email, and what is the retention period?
-  - Suggested owner: Product + Legal/Compliance.
+- Text 6 order conflict:
+  - should it follow strict alternation (`PDF -> words`) or latest spoken instruction (`words -> PDF`)?
+  - Suggested owner: Product/Research.
+- Should free-text feedback be required or optional?
+  - Suggested owner: Product/Research.
+- Should transition screens wait for `Continue Test` only, or allow timed auto-continue fallback?
+  - Suggested owner: UX/Product.
 
 ## Assumptions
-- `Assumption:` User flow is based on one pass through one PDF per session.
-- `Assumption:` Feedback submission is required after each completed text session.
+- The 6 listed works are the fixed test corpus for this study phase.
+- JSON is the only persistence format for MVP.

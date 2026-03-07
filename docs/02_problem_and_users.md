@@ -1,16 +1,17 @@
 # Problem And Users
 
 ## Problem Statement
-- Hypothesis: people read faster when text is presented in a single focal area rather than in a traditional line/page layout.
+- We need a repeatable study flow to measure how reading format affects pace for Russian-language materials.
+- Existing ad-hoc tests do not capture consistent timing and participant-level calibration.
 
 ## Why It Matters
-- Reading long PDF materials is often slow because visual focus constantly shifts across the page.
-- A simple tool is needed to test and practice speed reading.
+- Format comparison (one-word vs PDF) is central to the research question.
+- Accurate per-step timing and consistent transitions are required for useful analysis.
 
 ## Target Users
-- People who read PDFs and want to increase reading speed.
-- Users willing to provide feedback on comfortable playback speed.
+- Study participants reading Russian texts.
+- Research owner collecting and analyzing timing and preference data.
 
 ## Pain Points And Current Alternatives
-- Traditional PDF readers are not optimized for sequential speed-reading mode.
-- It is hard for users to find a personal comfortable speed without an explicit test-and-feedback loop.
+- Manual testing produces inconsistent results.
+- Without structured flow, participants may skip steps or use different pacing conditions.

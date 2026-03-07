@@ -1,28 +1,36 @@
 # User Flow
 
 ## Main Flow
-1. The user opens the website.
-2. The user sees `Upload PDF`, `Select Speed`, and the theme toggle.
-3. The user can upload a PDF, or skip file selection and use default `pdf_start.pdf`.
-4. The user selects WPM or keeps the default `100`.
-5. The user clicks `Start Reading` (PDF is validated/parsed here).
-6. The user sees a `3..1` countdown screen (centered numbers only).
-7. The user reads text shown one word at a time (split by punctuation or whitespace).
-8. The user can adjust WPM during reading.
-9. The user can tap `Pause/Resume` on-screen (or press `Space` on desktop) to pause or resume playback.
-10. After text completion, the feedback form opens.
-11. The user fills in nickname/email.
-12. The user selects speed rating: too slow / normal / too fast / custom.
-13. The user adds free-text feedback.
-14. The user submits the form; data is saved.
-15. The user sees `Thank you for your time` with a submission summary table.
+1. Participant opens the app.
+2. Welcome screen asks for participant name.
+3. Participant enters name; `Start` becomes enabled.
+4. Name is saved.
+5. Calibration starts from `start.pdf` in one-word mode.
+6. Speed increases by +5 WPM every 2 seconds.
+7. Participant stops at comfortable speed (`Space` desktop / `STOP` mobile).
+8. Selected WPM is saved.
+9. Short prepare screen appears.
+10. Reading tests run through all 6 texts with predefined format order.
+11. For each reading segment, hidden stopwatch is captured.
+12. After each segment, participant taps `I finished`.
+13. Between segments, transition screen appears with `Continue Test` and next-format text.
+14. After all tests, participant sees familiarity checklist for:
+- Jump (Tolstoy)
+- Frog Traveler (Garshin)
+- Myth of the Cave (Plato)
+- Black Man (Yesenin)
+- Macintosh Presentation
+- Heart Article
+15. Participant selects checkboxes.
+16. Final feedback box appears.
+17. Participant submits feedback.
+18. System saves all results to JSON.
 
 ## Alternate Flows
-- The user does not change speed: the default value is used.
-- The user selects `custom` and enters their own speed-rating answer.
-- The user does not select a file: default `pdf_start.pdf` is used.
+- Mobile users use on-screen controls instead of keyboard input.
+- Participant leaves feedback empty: system should validate according to product decision.
 
 ## Edge Cases
-- PDF cannot be read or has no extractable text.
-- The user interrupts the session before reaching the form.
-- The user submits the form with missing required fields.
+- Missing or invalid PDF file in test set.
+- Participant closes page mid-test.
+- Conflicting format sequence instructions (see open questions).

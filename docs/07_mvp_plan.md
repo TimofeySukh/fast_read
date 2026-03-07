@@ -1,33 +1,28 @@
 # MVP Plan
 
 ## Milestones
-1. Build base UI: PDF upload, speed selection, theme.
-2. Implement word-based playback engine (WPM) and `3..1` countdown.
-3. Add mobile-friendly on-screen pause/resume controls and desktop `Space` shortcut.
-4. Implement 3-step feedback form.
-5. Save form data in project folder and show thank-you summary table.
-6. Run basic testing and verify English across UI and code artifacts.
+1. Implement welcome + required-name entry and immediate save.
+2. Implement calibration flow with +5 WPM every 2 seconds and stop control.
+3. Implement 6-text alternating-format test runner with hidden timing capture.
+4. Implement transition screens and completion actions.
+5. Implement pre-feedback familiarity checklist and final feedback box.
+6. Persist all study output into JSON.
 
 ## Delivery Order
-1. P0 reading flow functions (upload, parse, speed, playback).
-2. P0 feedback collection and storage.
-3. P1 reliability and validation.
-4. P2 analytics improvements.
+1. Calibration and control logic.
+2. Segment runner and timers.
+3. Transition/progress screens.
+4. Final checklist + feedback + save pipeline.
 
 ## Dependencies And Blockers
-- Choose a library/approach for PDF text extraction.
-- Finalize acceptable WPM range.
-- Decide feedback storage format.
+- Final confirmation of exact format order for text 6.
+- Final naming/location for `PDF folder` and `start.pdf` in deployed environments.
 
-## Team Assumptions
-- `Assumption:` MVP can be implemented by one full-stack developer.
-- `Assumption:` Minimalist UI design can be implemented without a separate design sprint.
-
-## README Rule After Changes
-- After every project change, check whether `README.md` needs corrections.
-- Apply only necessary corrections in `README.md`.
-- Do not add new README content without a separate user request.
-
-## Git Rule After Changes
-- After every project change, immediately create a git commit.
-- After each commit, immediately push to GitHub (`main`) unless explicitly told otherwise.
+## Documentation And Git Rules
+- Documentation must stay in English.
+- All button labels must stay in English.
+- After every meaningful change:
+  - update the appropriate docs file(s),
+  - append a short entry to `docs/09_change_log.md`,
+  - create a git commit immediately.
+- Push to GitHub is manual (performed by project owner), not automatic.

@@ -1,25 +1,31 @@
 # Tech Stack And Integrations
 
 ## Stack Preferences
-- Product format: web application.
-- Interface language: English only.
-- Code language (comments, tests, technical notes): English.
+- Web application.
+- Russian text content for reading tasks.
+- English labels for all buttons and operational UI controls.
+- English-only project documentation.
 
-## Integrations
-- PDF parsing for text extraction.
-- File-based storage of user responses in the project directory (local storage for MVP).
-- Built-in default source PDF at project root: `./pdf_start.pdf` when no file is selected.
+## Data And Storage
+- Persist research results as JSON.
+- Store:
+  - participant name,
+  - selected comfortable WPM,
+  - timing per segment,
+  - segment format order,
+  - familiarity checklist values,
+  - final feedback.
+
+## Input Assets
+- `PDF folder` with 6 study texts.
+- `start.pdf` for speed calibration.
 
 ## Constraints
-- `Assumption:` MVP runs without an external DB, using local file storage.
-- Support for at least light/dark themes is required.
-- Speed unit is fixed: `words per minute (WPM)`.
-- Default value: `100 WPM`.
-- Text playback must be word-based, where a word is determined by punctuation or whitespace boundary.
-- Speed changes during reading must update playback interval without restarting the session.
-- Pause/resume control is available via on-screen button (mobile) and `Space` key shortcut (desktop).
+- Hidden stopwatch must never be visible to participant.
+- Mobile must provide button-based equivalents for keyboard actions.
+- No email collection in this version.
+- Change tracking must go to `docs/09_change_log.md`.
 
 ## TBD
-- Specific frontend framework.
-- Specific backend/runtime choice.
-- Response storage format (JSON/CSV/SQLite).
+- Exact JSON schema versioning.
+- Recovery behavior for interrupted sessions.
