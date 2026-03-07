@@ -49,7 +49,6 @@ const wordsSegmentFormat = document.getElementById("wordsSegmentFormat");
 const wordsSegmentWpm = document.getElementById("wordsSegmentWpm");
 const wordsCurrentWord = document.getElementById("wordsCurrentWord");
 const wordsPauseBtn = document.getElementById("wordsPauseBtn");
-const wordsFinishBtn = document.getElementById("wordsFinishBtn");
 
 const pdfSegmentLabel = document.getElementById("pdfSegmentLabel");
 const pdfSegmentFormat = document.getElementById("pdfSegmentFormat");
@@ -154,12 +153,24 @@ function startWordPlaybackLoop() {
 
   if (state.activeWordIndex >= state.activeWords.length) {
     wordsPauseBtn.disabled = true;
+    finishCurrentSegment();
     return;
   }
 
   wordsCurrentWord.textContent = state.activeWords[state.activeWordIndex];
   state.activeWordIndex += 1;
-  state.wordTimer = window.setTimeout(startWordPlaybackLoop, readingIntervalMs(state.selectedWpm));
+
+  const intervalMs = readingIntervalMs(state.selectedWpm);
+  if (state.activeWordIndex >= state.activeWords.length) {
+    state.wordTimer = window.setTimeout(() => {
+      if (!state.isWordsPaused) {
+        finishCurrentSegment();
+      }
+    }, intervalMs);
+    return;
+  }
+
+  state.wordTimer = window.setTimeout(startWordPlaybackLoop, intervalMs);
 }
 
 function toggleWordsPause() {
@@ -210,7 +221,7 @@ function pushFinishedSegment() {
     startedAtUtc: state.currentSegmentStartedAtUtc,
     finishedAtUtc,
     durationSeconds,
-    completionAction: "i_finished_button",
+    completionAction: state.currentSegment.format === "words" ? "auto_end_of_text" : "i_finished_button",
     selectedWpmAtRun: state.selectedWpm,
   });
 }
@@ -486,7 +497,6 @@ function bindEvents() {
   calibrationStopBtn.addEventListener("click", () => stopCalibration("stop_button"));
   transitionContinueBtn.addEventListener("click", startCurrentSegment);
   wordsPauseBtn.addEventListener("click", toggleWordsPause);
-  wordsFinishBtn.addEventListener("click", finishCurrentSegment);
   pdfFinishBtn.addEventListener("click", finishCurrentSegment);
 
   checklistContinueBtn.addEventListener("click", () => {

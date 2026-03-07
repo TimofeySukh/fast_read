@@ -13,6 +13,24 @@ Use this file as the single mandatory log for project updates.
 ## Entries
 - Date: 2026-03-07
 - Branch: main-idea-rus
+- Scope: Remove manual finish for one-word segments and update feedback prompt
+- Files changed:
+  - templates/index.html
+  - static/app.js
+  - docs/03_solution_scope.md
+  - docs/04_features.md
+  - docs/05_user_flow.md
+  - docs/09_change_log.md
+- Summary:
+  - Removed `Я закончил` button from one-word reading screen.
+  - One-word segments now auto-complete only when the last word is shown.
+  - Updated feedback screen text to the new detailed question about readability/comprehension.
+  - Synced docs to reflect auto-completion behavior for one-word segments.
+- Follow-up needed:
+  - Manual QA of auto-transition timing at the end of one-word segments.
+
+- Date: 2026-03-07
+- Branch: main-idea-rus
 - Scope: Hide local corpus folder from git untracked list
 - Files changed:
   - .gitignore

@@ -35,7 +35,8 @@ Replace the previous app behavior with a deterministic research protocol with a 
   - once in normal PDF mode.
 - For every segment:
   - start hidden stopwatch when segment starts,
-  - stop stopwatch on explicit `I finished`,
+  - one-word segments stop automatically only at end-of-text,
+  - PDF segments stop on explicit `I finished`,
   - save duration to JSON.
 - Stopwatch is never shown to participant.
 

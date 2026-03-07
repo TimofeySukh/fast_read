@@ -16,7 +16,8 @@
   - exactly 2 segments per text,
   - locked order matrix from scope doc.
 - `F-04` Segment completion:
-  - each segment ends only with explicit `I finished`.
+  - one-word segments end automatically at the end of the text,
+  - PDF segments end with explicit `I finished`.
 - `F-05` Hidden timing:
   - stopwatch starts at segment display start,
   - stopwatch stops at `I finished`,

@@ -23,7 +23,8 @@
 12. For each segment:
    - hidden stopwatch starts on segment render,
    - participant reads,
-   - participant presses `I finished`,
+   - one-word segments auto-complete only after final word is shown,
+   - PDF segments are completed by pressing `I finished`,
    - stopwatch stops and duration is saved.
 13. Between segments and texts:
    - transition screen shows progress,
@@ -47,7 +48,8 @@
 ## Validation Rules
 - Name cannot be empty.
 - Feedback cannot be empty.
-- Segment completion requires explicit `I finished`; no auto-finish.
+- One-word segments cannot be manually finished early.
+- PDF segments require explicit `I finished`.
 
 ## Failure / Recovery Notes
 - If required corpus PDF is missing, session enters recoverable error state with explicit message.
