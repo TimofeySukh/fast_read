@@ -1,31 +1,48 @@
 # Tech Stack And Integrations
 
-## Stack Preferences
-- Web application.
-- Russian text content for reading tasks.
-- English labels for all buttons and operational UI controls.
-- English-only project documentation.
+## Runtime Stack
+- Backend: Flask.
+- PDF text extraction: `pypdf`.
+- Frontend: browser UI with desktop + mobile controls.
+- Persistence: JSON files.
 
-## Data And Storage
-- Persist research results as JSON.
-- Store:
-  - participant name,
-  - selected comfortable WPM,
-  - timing per segment,
-  - segment format order,
-  - familiarity checklist values,
-  - final feedback.
+## Study Assets
+- Calibration PDF: `pdf_start.pdf` in repository root.
+- Corpus folder: `pdf_folder/` with 6 predefined test PDFs.
+- Corpus is fixed for this study iteration.
 
-## Input Assets
-- `PDF folder` with 6 study texts.
-- `start.pdf` for speed calibration.
+## One-Word Processing Contract
+- Extract text from PDF pages.
+- Normalize whitespace.
+- Tokenize by word boundaries including punctuation separation.
+- Drive rendering by WPM timing, not by character count.
 
-## Constraints
-- Hidden stopwatch must never be visible to participant.
-- Mobile must provide button-based equivalents for keyboard actions.
-- No email collection in this version.
-- Change tracking must go to `docs/09_change_log.md`.
+## Timing And State Model
+- Hidden stopwatch objects for each reading segment.
+- Stopwatch values persisted per segment and associated with:
+  - participant ID/session ID,
+  - text ID,
+  - format (`words` or `pdf`),
+  - start/end timestamps and duration.
+- Transition and UI control events can also be logged for auditability.
 
-## TBD
-- Exact JSON schema versioning.
-- Recovery behavior for interrupted sessions.
+## Output Storage
+- Save one session record in JSON.
+- Required payload groups:
+  - participant metadata,
+  - calibration result,
+  - per-segment timings,
+  - familiarity checklist,
+  - final feedback,
+  - completion status.
+- Full target schema is in `docs/13_data_schema.md`.
+
+## Localization Rules
+- Buttons and controls: English.
+- Reading corpus: Russian text.
+- Documentation: English.
+
+## Operational Constraints
+- No email collection.
+- No hidden auto-push to GitHub.
+- Every meaningful product change must update docs and change log, then commit.

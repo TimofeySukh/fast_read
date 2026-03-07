@@ -1,17 +1,24 @@
 # Problem And Users
 
 ## Problem Statement
-- We need a repeatable study flow to measure how reading format affects pace for Russian-language materials.
-- Existing ad-hoc tests do not capture consistent timing and participant-level calibration.
+The project needs a strict, repeatable research flow that measures how reading format influences reading time on Russian texts. Previous ad-hoc flows were not valid enough for comparison because:
+- participant speed was not calibrated in a consistent way,
+- time tracking was not segment-level and structured,
+- flow transitions were inconsistent across participants and devices.
 
-## Why It Matters
-- Format comparison (one-word vs PDF) is central to the research question.
-- Accurate per-step timing and consistent transitions are required for useful analysis.
+## Research Questions
+- How does reading time change between one-word mode and normal PDF mode on the same text?
+- Does format order influence timing for the same participant?
+- Which calibrated WPM do participants select as comfortable in the initial ramp test?
 
-## Target Users
-- Study participants reading Russian texts.
-- Research owner collecting and analyzing timing and preference data.
+## Primary Users
+- Participants completing the reading session on desktop or mobile.
+- Research owner analyzing resulting JSON records.
 
-## Pain Points And Current Alternatives
-- Manual testing produces inconsistent results.
-- Without structured flow, participants may skip steps or use different pacing conditions.
+## Non-User Stakeholder
+- Development/ops side maintaining deterministic study behavior and clean data export.
+
+## Why This Matters
+- The project is not a generic speed-reader now; it is a measurement protocol.
+- Session consistency is more important than feature richness.
+- Missing one required step can invalidate a participant record for analysis.

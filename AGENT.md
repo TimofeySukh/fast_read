@@ -1,24 +1,33 @@
 # AGENT Hand-off Rules
 
-Attach this file when asking an agent to work on this project.
+Attach this file whenever assigning work in this project.
 
 ## Mandatory Rules
 - Keep all documentation in English.
 - Keep all UI button labels in English.
+- Follow the locked study protocol exactly (order, timers, checklist, mandatory feedback).
 - After each meaningful change:
-  - update the relevant files in `docs/`,
-  - append a short entry to `docs/09_change_log.md`,
-  - create a git commit immediately.
-- Do not auto-push to GitHub unless explicitly requested by the project owner.
+  - update the relevant docs file(s),
+  - append one entry to `docs/09_change_log.md`,
+  - create a local git commit immediately.
+- Push to GitHub is manual by project owner unless explicitly requested.
 
-## Required Reading Order For Agent
+## README Rule
+- After each meaningful change, check whether `README.md` needs correction.
+- Only fix existing README content when needed.
+- Do not add new README sections unless owner explicitly asks.
+
+## Required Reading Order
 1. `docs/01_summary.md`
 2. `docs/03_solution_scope.md`
 3. `docs/05_user_flow.md`
-4. `docs/10_docs_update_map.md`
-5. `docs/09_change_log.md` (latest entry first)
+4. `docs/12_screen_copy_and_controls.md`
+5. `docs/13_data_schema.md`
+6. `docs/10_docs_update_map.md`
+7. `docs/09_change_log.md` (latest entry first)
 
-## Current Study-Specific Requirements
-- Pre-feedback familiarity checklist must exist after all tests.
-- Transition screen between segments must include `Continue Test`.
-- Calibration phase must support desktop and mobile stop controls.
+## Study-Critical Constraints
+- 6 texts, 12 measured segments, strict alternating format matrix.
+- Hidden timers only; participant never sees stopwatch values.
+- Pre-feedback familiarity checklist is mandatory.
+- Final feedback is mandatory.

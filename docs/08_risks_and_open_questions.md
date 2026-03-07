@@ -1,17 +1,27 @@
 # Risks And Open Questions
 
-## Risks
-- Format-sequence ambiguity may invalidate comparisons.
-- Missing timing events can break analysis quality.
-- Mobile interaction gaps can bias participant behavior.
-- Inconsistent docs updates can desync implementation and research protocol.
+## Active Risks
+- `R-01` Segment timer loss:
+  - if start/stop hooks fail, analysis quality drops immediately.
+- `R-02` PDF extraction variability:
+  - malformed/scanned PDFs may produce weak tokenization for one-word mode.
+- `R-03` Mobile control mismatch:
+  - if any desktop keyboard action has no mobile equivalent, completion rate drops.
+- `R-04` Flow drift:
+  - if format matrix is accidentally changed, cross-session comparison becomes invalid.
+- `R-05` Documentation drift:
+  - implementation and protocol can diverge if docs updates are skipped.
 
 ## Open Questions
-- Should transition screens wait for `Continue Test` only, or allow timed auto-continue fallback?
-  - Suggested owner: UX/Product.
+- None from product-owner side at this moment.
+
+## Locked Decisions
+- Strict alternation across all 6 texts is final.
+- Text 6 order is `PDF -> words`.
+- Final feedback is mandatory.
+- No email field in session output.
+- Push to GitHub stays manual by owner.
 
 ## Assumptions
-- The 6 listed works are the fixed test corpus for this study phase.
-- Final format order is strict alternation through all 6 texts, including text 6 (`PDF -> words`).
-- Free-text feedback is mandatory.
-- JSON is the only persistence format for MVP.
+- Corpus remains fixed to current six works for this phase.
+- JSON remains the primary persistence output for MVP.

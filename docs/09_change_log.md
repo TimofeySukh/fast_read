@@ -13,6 +13,32 @@ Use this file as the single mandatory log for project updates.
 ## Entries
 - Date: 2026-03-07
 - Branch: main-idea
+- Scope: Full-fidelity expansion of research docs from renewed audio transcript
+- Files changed:
+  - docs/01_summary.md
+  - docs/02_problem_and_users.md
+  - docs/03_solution_scope.md
+  - docs/04_features.md
+  - docs/05_user_flow.md
+  - docs/06_tech_stack_and_integrations.md
+  - docs/07_mvp_plan.md
+  - docs/08_risks_and_open_questions.md
+  - docs/09_change_log.md
+  - docs/10_docs_update_map.md
+  - docs/11_audio_requirements_trace.md
+  - docs/12_screen_copy_and_controls.md
+  - docs/13_data_schema.md
+  - AGENT.md
+- Summary:
+  - Re-transcribed audio and expanded docs from compact brief to full requirement set.
+  - Added explicit audio trace (timestamp -> requirement mapping).
+  - Added screen-level contract and full JSON schema contract.
+  - Added README correction rule and clarified commit/push workflow.
+- Follow-up needed:
+  - Validate implementation against new docs and close any app/doc mismatches.
+
+- Date: 2026-03-07
+- Branch: main-idea
 - Scope: Resolve open questions from owner decisions
 - Files changed:
   - docs/03_solution_scope.md

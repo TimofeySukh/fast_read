@@ -1,28 +1,37 @@
 # MVP Plan
 
-## Milestones
-1. Implement welcome + required-name entry and immediate save.
-2. Implement calibration flow with +5 WPM every 2 seconds and stop control.
-3. Implement 6-text alternating-format test runner with hidden timing capture.
-4. Implement transition screens and completion actions.
-5. Implement pre-feedback familiarity checklist and final feedback box.
-6. Persist all study output into JSON.
+## Implementation Milestones
+1. Build welcome gate with required participant name and immediate persistence.
+2. Build calibration ramp from `pdf_start.pdf` (`+5 WPM / 2s`) with desktop/mobile stop controls.
+3. Build deterministic 6-text runner with locked format matrix and per-segment hidden timers.
+4. Build transition screens with progress text and explicit continue action.
+5. Build mandatory familiarity checklist before feedback.
+6. Build mandatory final feedback submission and end-of-session confirmation.
+7. Persist complete session JSON using schema in `docs/13_data_schema.md`.
 
-## Delivery Order
-1. Calibration and control logic.
-2. Segment runner and timers.
-3. Transition/progress screens.
-4. Final checklist + feedback + save pipeline.
+## Recommended Build Order
+1. Data model and session-state machine.
+2. Calibration engine and controls.
+3. Segment engine (`words` + `pdf`) and hidden timing.
+4. Transition UX and progress.
+5. Checklist + feedback.
+6. Export/save layer and validation.
 
-## Dependencies And Blockers
-- Final confirmation of exact format order for text 6.
-- Final naming/location for `PDF folder` and `start.pdf` in deployed environments.
+## Definition Of Done (MVP)
+- Full session can be completed on desktop and mobile.
+- All 12 reading segments are timed and saved.
+- Checklist + feedback are mandatory and persisted.
+- Output JSON validates against required fields.
+- No legacy fields like email remain.
 
-## Documentation And Git Rules
-- Documentation must stay in English.
-- All button labels must stay in English.
+## Documentation And Git Workflow
+- Docs are English-only.
+- UI buttons are English-only.
 - After every meaningful change:
-  - update the appropriate docs file(s),
-  - append a short entry to `docs/09_change_log.md`,
-  - create a git commit immediately.
-- Push to GitHub is manual (performed by project owner), not automatic.
+  - update relevant docs,
+  - append `docs/09_change_log.md`,
+  - commit locally immediately.
+- Push to GitHub is manual by project owner.
+- After each change, check whether `README.md` needs correction:
+  - only fix existing sections when needed,
+  - do not add new README sections unless requested by owner.

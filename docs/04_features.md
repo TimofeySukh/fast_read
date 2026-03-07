@@ -1,25 +1,59 @@
 # Features
 
-## P0
-- Required participant name before study start.
-- Calibration from `start.pdf` with automatic +5 WPM every 2 seconds.
-- Stop control for calibration on desktop (`Space`) and mobile (`STOP` button).
-- Hidden stopwatch timing for each reading segment.
-- 6-text scenario execution with predefined format order.
-- Transition screen between each segment with `Continue Test` button and next-format message.
-- Segment completion action (`I finished`).
-- Pre-feedback familiarity checklist with 6 work titles.
-- Final required free-text feedback box.
-- JSON result persistence.
+## P0 Functional Requirements
+- `F-01` Welcome gate:
+  - participant name is required,
+  - `Start` disabled until name is non-empty,
+  - participant name is persisted immediately.
+- `F-02` Calibration:
+  - source is `pdf_start.pdf`,
+  - one-word mode,
+  - `+5 WPM` every `2 seconds`,
+  - stop by `Space` (desktop) or `STOP` button (mobile),
+  - selected WPM persisted.
+- `F-03` Test runner:
+  - exactly 6 texts,
+  - exactly 2 segments per text,
+  - locked order matrix from scope doc.
+- `F-04` Segment completion:
+  - each segment ends only with explicit `I finished`.
+- `F-05` Hidden timing:
+  - stopwatch starts at segment display start,
+  - stopwatch stops at `I finished`,
+  - timer values saved and never displayed.
+- `F-06` Transition screens:
+  - shown between all segments,
+  - include progress + next-format message,
+  - include `Continue Test` (plus desktop `Space` shortcut).
+- `F-07` One-word playback:
+  - pace is WPM-based,
+  - words are split by whitespace and punctuation,
+  - no character-based stepping,
+  - no forced periodic breaks.
+- `F-08` Runtime controls:
+  - desktop `Space` pause/resume for one-word reading,
+  - mobile on-screen pause/resume equivalent.
+- `F-09` Familiarity checklist (mandatory before feedback):
+  - 6 listed works with checkboxes.
+- `F-10` Feedback:
+  - required free-text feedback field,
+  - no email collection.
+- `F-11` Persistence:
+  - save complete session as JSON.
 
-## P1
-- Input validation and safe recovery if participant interrupts.
-- Explicit progress text (`X of 6 completed`).
+## P1 Quality Requirements
+- `Q-01` Mobile and desktop parity for all required actions.
+- `Q-02` Clear progress status (`Text X of 6` and segment context).
+- `Q-03` Recoverable UX for accidental reload/interruption (at minimum save partial state with status flag).
 
-## P2
-- Analytics helpers for comparing format timings.
+## P2 Analysis Helpers
+- `A-01` Add summary helper for per-format timing comparison by participant.
+- `A-02` Add corpus-level aggregate export for offline analysis.
 
-## Acceptance Notes
-- Documentation language: English only.
-- UI button labels: English only.
-- Every product/process update must be logged in `docs/09_change_log.md`.
+## Acceptance Checklist
+- Docs are English-only.
+- UI button labels are English-only.
+- After every meaningful change:
+  - relevant docs are updated,
+  - `docs/09_change_log.md` is appended,
+  - local commit is created.
