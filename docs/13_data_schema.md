@@ -25,7 +25,7 @@ Target persistence format for one completed or partial session.
 - `status`: `in_progress` or `completed` or `aborted`.
 - `participant.name`: non-empty string.
 - `calibration.selectedWpm`: integer.
-- `segments`: array with 10 segment records for completed runs.
+- `segments`: array with 8 segment records for completed runs.
 - `feedback.text`: non-empty string for completed runs.
 
 ## Participant Object
@@ -73,7 +73,6 @@ Target persistence format for one completed or partial session.
   "jump_tolstoy": true,
   "frog_traveler_garshin": false,
   "myth_of_the_cave_plato": true,
-  "macintosh_presentation": false,
   "heart_article": true,
   "submittedAtUtc": "ISO-8601"
 }
@@ -105,8 +104,6 @@ For completed runs, `segments` must respect this exact order:
 6. `t3_pdf`
 7. `t4_pdf`
 8. `t4_words`
-9. `t5_words`
-10. `t5_pdf`
 
 ## Notes
 - No email field is allowed.

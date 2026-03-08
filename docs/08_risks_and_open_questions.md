@@ -16,12 +16,12 @@
 - None from product-owner side at this moment.
 
 ## Locked Decisions
-- Strict alternation across all 5 texts is final.
-- Text 6 order is `PDF -> words`.
+- Strict alternation across all 4 texts is final.
+- Text 4 order is `PDF -> words`.
 - Final feedback is mandatory.
 - No email field in session output.
 - Push to GitHub stays manual by owner.
 
 ## Assumptions
-- Corpus remains fixed to current six works for this phase.
+- Corpus remains fixed to current four works for this phase.
 - JSON remains the primary persistence output for MVP.

@@ -333,7 +333,7 @@ function saveComprehensionForPendingSegment() {
 
 function buildNextFormatText(previousSegment, nextSegment) {
   if (nextSegment.format === "pdf") {
-    if (nextSegment.textIndex === 5 && (!previousSegment || previousSegment.textIndex < 5)) {
+    if (nextSegment.textIndex === 4 && (!previousSegment || previousSegment.textIndex < 4)) {
       return "Теперь давайте отойдем от художественной литературы.";
     }
     return "Теперь будет текст в привычном вам страничном формате.";

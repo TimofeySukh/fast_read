@@ -8,7 +8,7 @@
 
 ## Study Assets
 - Calibration PDF: `pdf_start.pdf` in repository root.
-- Corpus folder: `pdf_folder/` with 5 predefined test PDFs.
+- Corpus folder: `pdf_folder/` with 4 predefined test PDFs.
 - Corpus is fixed for this study iteration.
 
 ## One-Word Processing Contract
