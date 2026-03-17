@@ -14,6 +14,7 @@
   - selected WPM persisted.
 - `F-03` Test runner:
   - exactly 4 texts,
+  - each text is split into part 1 and part 2,
   - exactly 2 segments per text,
   - locked order matrix from scope doc.
 - `F-04` Segment completion:

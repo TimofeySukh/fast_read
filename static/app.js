@@ -255,13 +255,14 @@ function toggleWordsPause() {
   }
 }
 
-async function getWordsForText(textId) {
-  if (state.wordsCache.has(textId)) {
-    return state.wordsCache.get(textId);
+async function getWordsForText(textId, partIndex) {
+  const cacheKey = `${textId}:${partIndex}`;
+  if (state.wordsCache.has(cacheKey)) {
+    return state.wordsCache.get(cacheKey);
   }
 
-  const payload = await fetchJson(`/api/text/${textId}/words`);
-  state.wordsCache.set(textId, payload.words);
+  const payload = await fetchJson(`/api/text/${textId}/words?part=${partIndex}`);
+  state.wordsCache.set(cacheKey, payload.words);
   return payload.words;
 }
 
@@ -279,6 +280,7 @@ function pushFinishedSegment() {
     segmentId: state.currentSegment.segmentId,
     textIndex: state.currentSegment.textIndex,
     textTitle: state.currentSegment.textTitle,
+    partIndex: state.currentSegment.partIndex,
     format: state.currentSegment.format,
     orderInText: state.currentSegment.orderInText,
     startedAtUtc: state.currentSegmentStartedAtUtc,
@@ -375,7 +377,7 @@ function presentTransition(previousSegment, nextSegment) {
 }
 
 async function startWordsSegment(segment) {
-  const words = await getWordsForText(segment.textId);
+  const words = await getWordsForText(segment.textId, segment.partIndex);
 
   state.activeWords = words;
   state.activeWordIndex = 0;
@@ -383,7 +385,8 @@ async function startWordsSegment(segment) {
   wordsPauseBtn.disabled = false;
   wordsPauseBtn.textContent = "Пауза";
 
-  wordsSegmentLabel.textContent = `Текст ${segment.textIndex} из ${totalTextCount()} • ${segment.textTitle}`;
+  wordsSegmentLabel.textContent =
+    `Текст ${segment.textIndex} из ${totalTextCount()} • ${segment.textTitle}, часть ${segment.partIndex}`;
   wordsSegmentFormat.textContent = "Режим по одному слову";
   wordsSegmentWpm.textContent = `${state.selectedWpm} слов/мин`;
   wordsCurrentWord.textContent = "Готово";
@@ -395,9 +398,10 @@ async function startWordsSegment(segment) {
 
 function startPdfSegment(segment) {
   const textInfo = findTextById(segment.textId);
-  pdfSegmentLabel.textContent = `Текст ${segment.textIndex} из ${totalTextCount()} • ${segment.textTitle}`;
+  pdfSegmentLabel.textContent =
+    `Текст ${segment.textIndex} из ${totalTextCount()} • ${segment.textTitle}, часть ${segment.partIndex}`;
   pdfSegmentFormat.textContent = "Режим PDF";
-  pdfViewerFrame.src = `${textInfo.pdfUrl}#view=FitH`;
+  pdfViewerFrame.src = `${textInfo.pdfUrl}?part=${segment.partIndex}#view=FitH`;
   showScreen("pdf");
 }
 

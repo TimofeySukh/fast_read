@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from flask import Flask, jsonify, render_template, request, send_from_directory
-from pypdf import PdfReader
+from pypdf import PdfReader, PdfWriter
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
@@ -67,6 +67,9 @@ TEXTS: list[dict[str, Any]] = [
 TEXT_MAP = {item["id"]: item for item in TEXTS}
 CHECKLIST_IDS = [item["checklistId"] for item in TEXTS]
 WORD_CACHE: dict[str, list[str]] = {}
+WORD_PART_CACHE: dict[tuple[str, int], list[str]] = {}
+PAGE_RANGE_CACHE: dict[str, tuple[tuple[int, int], tuple[int, int]]] = {}
+PARTS_DIR = DATA_DIR / "parts"
 
 
 def utc_now_iso() -> str:
@@ -118,16 +121,112 @@ def words_for_text_id(text_id: str) -> list[str]:
     return words
 
 
+def compute_part_page_ranges(source: Path) -> tuple[tuple[int, int], tuple[int, int]]:
+    cache_key = str(source)
+    cached = PAGE_RANGE_CACHE.get(cache_key)
+    if cached is not None:
+        return cached
+
+    with source.open("rb") as handle:
+        reader = PdfReader(handle)
+        total_pages = len(reader.pages)
+
+    if total_pages <= 1:
+        ranges = ((0, max(total_pages, 1)), (0, max(total_pages, 1)))
+    else:
+        midpoint = (total_pages + 1) // 2
+        ranges = ((0, midpoint), (midpoint, total_pages))
+
+    PAGE_RANGE_CACHE[cache_key] = ranges
+    return ranges
+
+
+def validate_part_index(part_index: int) -> int:
+    if part_index not in {1, 2}:
+        raise ValueError("part must be 1 or 2")
+    return part_index
+
+
+def extract_pdf_text_in_range(path: Path, start_page: int, end_page: int) -> str:
+    with path.open("rb") as handle:
+        reader = PdfReader(handle)
+        all_text: list[str] = []
+        safe_end = min(end_page, len(reader.pages))
+        safe_start = max(0, min(start_page, safe_end))
+        for page_index in range(safe_start, safe_end):
+            extracted = reader.pages[page_index].extract_text() or ""
+            if extracted:
+                all_text.append(extracted)
+    return normalize_text(" ".join(all_text))
+
+
+def words_for_text_part(text_id: str, part_index: int) -> list[str]:
+    part = validate_part_index(part_index)
+    cache_key = (text_id, part)
+    cached = WORD_PART_CACHE.get(cache_key)
+    if cached is not None:
+        return cached
+
+    source = required_file_for_text_id(text_id)
+    if not source.exists():
+        raise FileNotFoundError(f"Missing source PDF: {source}")
+
+    ranges = compute_part_page_ranges(source)
+    start_page, end_page = ranges[part - 1]
+    text = extract_pdf_text_in_range(source, start_page, end_page)
+    words = tokenize_words(text)
+    if not words:
+        raise ValueError(f"No extractable words in PDF part: {source.name} (part {part})")
+
+    WORD_PART_CACHE[cache_key] = words
+    return words
+
+
+def ensure_pdf_part_file(text_id: str, part_index: int) -> Path:
+    part = validate_part_index(part_index)
+    source = required_file_for_text_id(text_id)
+    if not source.exists():
+        raise FileNotFoundError(f"Missing source PDF: {source}")
+
+    output_path = PARTS_DIR / f"{text_id}_part{part}.pdf"
+    PARTS_DIR.mkdir(parents=True, exist_ok=True)
+    if output_path.exists() and output_path.stat().st_mtime >= source.stat().st_mtime:
+        return output_path
+
+    ranges = compute_part_page_ranges(source)
+    start_page, end_page = ranges[part - 1]
+
+    with source.open("rb") as handle:
+        reader = PdfReader(handle)
+        writer = PdfWriter()
+        safe_end = min(end_page, len(reader.pages))
+        safe_start = max(0, min(start_page, safe_end))
+        for page_index in range(safe_start, safe_end):
+            writer.add_page(reader.pages[page_index])
+
+        # Fallback for single-page or malformed range edge-cases.
+        if len(writer.pages) == 0 and len(reader.pages) > 0:
+            writer.add_page(reader.pages[0])
+
+        with output_path.open("wb") as output_handle:
+            writer.write(output_handle)
+
+    return output_path
+
+
 def build_segment_plan() -> list[dict[str, Any]]:
     segments: list[dict[str, Any]] = []
     for text_index, item in enumerate(TEXTS, start=1):
         for order_in_text, fmt in enumerate(item["order"], start=1):
+            part_index = order_in_text
             segments.append(
                 {
                     "segmentId": f"t{text_index}_{fmt}",
                     "textId": item["id"],
                     "textIndex": text_index,
                     "textTitle": item["title"],
+                    "partIndex": part_index,
+                    "partTitle": f"{item['title']} — часть {part_index}",
                     "textAuthor": item["author"],
                     "format": fmt,
                     "orderInText": order_in_text,
@@ -175,6 +274,7 @@ def validate_segments(segments: Any) -> tuple[bool, str]:
         for required_key in [
             "textIndex",
             "textTitle",
+            "partIndex",
             "format",
             "orderInText",
             "comprehensionScore",
@@ -184,6 +284,13 @@ def validate_segments(segments: Any) -> tuple[bool, str]:
         ]:
             if required_key not in actual:
                 return False, f"missing {required_key} in segment {actual_id}"
+
+        try:
+            part_index = int(actual.get("partIndex", 0))
+        except (TypeError, ValueError):
+            return False, f"partIndex must be integer in segment {actual_id}"
+        if part_index != int(expected["partIndex"]):
+            return False, f"partIndex mismatch in segment {actual_id}: expected {expected['partIndex']}"
 
         if str(actual["format"]) not in {"words", "pdf"}:
             return False, f"invalid format in segment {actual_id}"
@@ -313,9 +420,14 @@ def create_app() -> Flask:
         if text_id not in TEXT_MAP:
             return jsonify({"error": f"Unknown text id: {text_id}"}), 404
 
+        try:
+            part_index = validate_part_index(int(request.args.get("part", "1")))
+        except (TypeError, ValueError):
+            return jsonify({"error": "part must be 1 or 2"}), 400
+
         item = TEXT_MAP[text_id]
         try:
-            words = words_for_text_id(text_id)
+            words = words_for_text_part(text_id, part_index)
         except (FileNotFoundError, ValueError) as error:
             return jsonify({"error": str(error)}), 400
         except Exception:
@@ -324,6 +436,7 @@ def create_app() -> Flask:
         return jsonify(
             {
                 "textId": text_id,
+                "partIndex": part_index,
                 "title": item["title"],
                 "wordCount": len(words),
                 "words": words,
@@ -345,7 +458,19 @@ def create_app() -> Flask:
         if not source.exists():
             return jsonify({"error": f"Missing file: {source.name}"}), 404
 
-        return send_from_directory(source.parent, source.name, as_attachment=False)
+        part_raw = request.args.get("part")
+        if not part_raw:
+            return send_from_directory(source.parent, source.name, as_attachment=False)
+
+        try:
+            part_index = validate_part_index(int(part_raw))
+            part_pdf = ensure_pdf_part_file(text_id, part_index)
+        except (TypeError, ValueError):
+            return jsonify({"error": "part must be 1 or 2"}), 400
+        except FileNotFoundError as error:
+            return jsonify({"error": str(error)}), 404
+
+        return send_from_directory(part_pdf.parent, part_pdf.name, as_attachment=False)
 
     @app.post("/api/session/start")
     def start_session() -> tuple[Any, int] | Any:

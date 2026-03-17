@@ -56,6 +56,7 @@ Target persistence format for one completed or partial session.
   "segmentId": "t1_words",
   "textIndex": 1,
   "textTitle": "Jump",
+  "partIndex": 1,
   "format": "words",
   "orderInText": 1,
   "startedAtUtc": "ISO-8601",
@@ -104,6 +105,10 @@ For completed runs, `segments` must respect this exact order:
 6. `t3_pdf`
 7. `t4_pdf`
 8. `t4_words`
+
+Each segment ID maps to a logical text part:
+- `orderInText = 1` -> part 1,
+- `orderInText = 2` -> part 2.
 
 ## Notes
 - No email field is allowed.

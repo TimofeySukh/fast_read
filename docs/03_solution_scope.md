@@ -33,9 +33,10 @@ Replace the previous app behavior with a deterministic research protocol with a 
 - Post-confirm prepare state exists before first segment.
 
 ## Reading Segment Contract
-- Each of 4 texts is read twice:
-  - once in one-word mode,
-  - once in normal PDF mode.
+- Each of 4 texts is split into two logical parts:
+  - part 1 is shown in one format,
+  - part 2 is shown in the other format.
+- Full-text repetition across both formats is removed.
 - For every segment:
   - start hidden stopwatch when segment starts,
   - one-word segments stop automatically only at end-of-text,
@@ -44,10 +45,10 @@ Replace the previous app behavior with a deterministic research protocol with a 
 - Stopwatch is never shown to participant.
 
 ## Locked Text Order And Format Matrix
-1. Jump (Tolstoy): `words -> PDF`
-2. Frog Traveler (Garshin): `PDF -> words`
-3. Myth of the Cave (Plato): `words -> PDF`
-4. Heart Article: `PDF -> words`
+1. Jump (Tolstoy): `part 1 -> words`, `part 2 -> PDF`
+2. Frog Traveler (Garshin): `part 1 -> PDF`, `part 2 -> words`
+3. Myth of the Cave (Plato): `part 1 -> words`, `part 2 -> PDF`
+4. Heart Article: `part 1 -> PDF`, `part 2 -> words`
 
 This strict alternation is final for current study phase.
 

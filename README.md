@@ -35,6 +35,7 @@ gitGraph
 - Required participant name at start.
 - Calibration from `pdf_start.pdf` with manual WPM controls (`50..700`).
 - Exactly 4 texts and 8 measured segments in locked alternating order.
+- Each text is split into part 1 and part 2, then assigned to different formats to avoid full-text repetition.
 - One-word mode tokenization by whitespace and punctuation.
 - Hidden timing per segment (never shown to participant).
 - Mandatory familiarity checklist before mandatory free-text feedback.

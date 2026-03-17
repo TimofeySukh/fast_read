@@ -11,6 +11,32 @@ Use this file as the single mandatory log for project updates.
 - Follow-up needed:
 
 ## Entries
+- Date: 2026-03-17
+- Branch: main-idea-rus
+- Scope: Split each text into part 1/part 2 and remove full-text repetition across formats
+- Files changed:
+  - app.py
+  - static/app.js
+  - templates/index.html
+  - AGENT.md
+  - README.md
+  - docs/01_summary.md
+  - docs/03_solution_scope.md
+  - docs/04_features.md
+  - docs/05_user_flow.md
+  - docs/06_tech_stack_and_integrations.md
+  - docs/07_mvp_plan.md
+  - docs/09_change_log.md
+  - docs/12_screen_copy_and_controls.md
+  - docs/13_data_schema.md
+- Summary:
+  - Implemented runtime split of each source text into logical part 1 and part 2.
+  - Segment sequence now uses part assignment by order (part 1 then part 2) instead of repeating the full text in both formats.
+  - Added `partIndex` to persisted segment payload and backend validation.
+  - Added part-aware endpoints for words and PDF rendering (`?part=1|2`).
+- Follow-up needed:
+  - Manual QA to verify each of the 8 segments shows the intended part and format pairing.
+
 - Date: 2026-03-08
 - Branch: main-idea-rus
 - Scope: Remove Macintosh text from study protocol and switch to 4 texts / 8 segments

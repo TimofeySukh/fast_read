@@ -32,7 +32,7 @@ This is the screen-level contract for the research flow.
   - continue action (`Continue Test`, desktop `Space` shortcut allowed).
 
 ## S4 Reading Segment: One-Word Mode
-- Purpose: run one-word segment at selected fixed WPM.
+- Purpose: run one-word segment for the assigned logical text part at selected fixed WPM.
 - Required UI:
   - progress bar above the word display area (segment-local),
   - single token display,
@@ -45,7 +45,7 @@ This is the screen-level contract for the research flow.
   - progress bar is shown only in one-word study segments (not in calibration).
 
 ## S5 Reading Segment: PDF Mode
-- Purpose: run normal page-reading segment.
+- Purpose: run PDF-reading segment for the assigned logical text part.
 - Required UI:
   - rendered PDF pages,
   - progress marker,

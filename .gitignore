@@ -10,3 +10,4 @@ pdf_folder/
 # Runtime data
 /data/responses/*.json
 /data/sessions/*.json
+/data/parts/*.pdf

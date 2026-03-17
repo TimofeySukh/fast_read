@@ -28,6 +28,7 @@ Attach this file whenever assigning work in this project.
 
 ## Study-Critical Constraints
 - 4 texts, 8 measured segments, strict alternating format matrix.
+- Each text must be split into 2 logical parts; full-text repetition across formats is not allowed.
 - Hidden timers only; participant never sees stopwatch values.
 - Pre-feedback familiarity checklist is mandatory.
 - Final feedback is mandatory.

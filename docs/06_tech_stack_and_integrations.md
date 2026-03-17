@@ -9,6 +9,7 @@
 ## Study Assets
 - Calibration PDF: `pdf_start.pdf` in repository root.
 - Corpus folder: `pdf_folder/` with 4 predefined test PDFs.
+- Each corpus PDF is split into logical part 1 / part 2 at runtime for segment assignment.
 - Corpus is fixed for this study iteration.
 
 ## One-Word Processing Contract

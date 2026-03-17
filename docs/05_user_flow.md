@@ -14,10 +14,10 @@
 9. Selected WPM is persisted.
 10. Prepare screen appears before first text.
 11. Text sequence starts and follows locked alternation:
-   - text 1: words then PDF,
-   - text 2: PDF then words,
-   - text 3: words then PDF,
-   - text 4: PDF then words.
+   - text 1: part 1 in words, part 2 in PDF,
+   - text 2: part 1 in PDF, part 2 in words,
+   - text 3: part 1 in words, part 2 in PDF,
+   - text 4: part 1 in PDF, part 2 in words.
 12. For each segment:
    - hidden stopwatch starts on segment render,
    - participant reads,

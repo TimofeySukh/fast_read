@@ -3,7 +3,7 @@
 ## Implementation Milestones
 1. Build welcome gate with required participant name and immediate persistence.
 2. Build calibration ramp from `pdf_start.pdf` (`+5 WPM / 2s`) with desktop/mobile stop controls.
-3. Build deterministic 4-text runner with locked format matrix and per-segment hidden timers.
+3. Build deterministic 4-text runner with logical part 1 / part 2 split and locked format matrix.
 4. Build transition screens with progress text and explicit continue action.
 5. Build mandatory familiarity checklist before feedback.
 6. Build mandatory final feedback submission and end-of-session confirmation.
