@@ -363,3 +363,40 @@ Use this file as the single mandatory log for project updates.
   - Added agent handoff rule file.
 - Follow-up needed:
   - Confirm final order for text 4 format.
+
+- Date: 2026-03-31
+- Branch: main-idea-rus
+- Scope: Add bilingual session mode with English corpus assets and entry language selection
+- Files changed:
+  - app.py
+  - static/app.js
+  - static/styles.css
+  - templates/index.html
+  - requirements.txt
+  - .gitignore
+  - corpus/en/calibration.txt
+  - corpus/en/jump_part1.txt
+  - corpus/en/jump_part2.txt
+  - corpus/en/frog_traveler_part1.txt
+  - corpus/en/frog_traveler_part2.txt
+  - corpus/en/myth_of_the_cave_part1.txt
+  - corpus/en/myth_of_the_cave_part2.txt
+  - corpus/en/heart_article_part1.txt
+  - corpus/en/heart_article_part2.txt
+  - README.md
+  - docs/01_summary.md
+  - docs/03_solution_scope.md
+  - docs/04_features.md
+  - docs/05_user_flow.md
+  - docs/06_tech_stack_and_integrations.md
+  - docs/08_risks_and_open_questions.md
+  - docs/09_change_log.md
+  - docs/12_screen_copy_and_controls.md
+  - docs/13_data_schema.md
+- Summary:
+  - Added entry language selection and localized the full participant flow for Russian and English.
+  - Added tracked English corpus text assets for all 4 study texts plus an English calibration asset.
+  - Kept Russian mode on the existing PDF pipeline, while English mode now uses canonical text assets for one-word playback and runtime-generated PDFs for PDF mode.
+  - Persisted session language in JSON and updated docs/README to match the bilingual contract.
+- Follow-up needed:
+  - Manual browser QA on desktop and mobile for both languages, especially iframe PDF rendering and first-screen language UX.

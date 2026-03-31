@@ -2,99 +2,98 @@
 
 This is the screen-level contract for the research flow.
 
+## S0 Language Gate
+- Purpose: choose the session language before the protocol starts.
+- Required UI:
+  - short language prompt,
+  - `Russian` button,
+  - `English` button.
+- Action:
+  - on selection, load localized protocol/UI/assets and open the welcome screen.
+
 ## S1 Welcome
 - Purpose: collect participant identity and gate session start.
 - Required UI:
-  - study intro text,
+  - localized study intro text,
   - name input,
-  - `Start` button (disabled when name empty).
+  - localized `Start` button (disabled when name empty).
 - Action:
-  - on valid name + `Start`, persist name and open calibration.
+  - on valid name + `Start`, persist name/language and open calibration.
 
-## S2 Calibration (One-Word Ramp)
+## S2 Calibration
 - Purpose: choose comfortable WPM once.
 - Required UI:
   - one-word display area,
   - current WPM indicator,
-  - instruction to stop at comfortable speed,
-  - desktop hint (`Press Space to stop`),
-  - mobile button: `STOP`.
+  - quick-step controls (`±5/10/20/50/100`),
+  - direct numeric input,
+  - localized continue action.
 - Behavior:
-  - start from baseline speed,
-  - increase by `+5 WPM` every `2s`,
-  - stop on user action,
-  - persist selected WPM.
+  - playback starts immediately,
+  - speed changes update the loop immediately,
+  - selected WPM is persisted on continue.
+- Source:
+  - Russian mode uses `pdf_start.pdf`,
+  - English mode uses generated PDF/text from tracked English calibration asset.
 
-## S3 Pre-Test Prepare
-- Purpose: signal first test start after calibration.
+## S3 Pre-Text / Transition Screen
+- Purpose: move participant from calibration or one segment to the next.
 - Required UI:
-  - short prepare message,
-  - continue action (`Continue Test`, desktop `Space` shortcut allowed).
+  - localized progress message,
+  - localized next-format message,
+  - comprehension scale (`1..5`) for finished segments,
+  - localized `Continue` button.
+- Desktop shortcut:
+  - `Space` triggers continue.
 
 ## S4 Reading Segment: One-Word Mode
 - Purpose: run one-word segment for the assigned logical text part at selected fixed WPM.
 - Required UI:
-  - progress bar above the word display area (segment-local),
+  - progress bar above the word display area,
   - single token display,
-  - progress marker (text index / segment context),
-  - control hint under word area (space/button pause-resume).
+  - localized progress marker,
+  - localized pause/resume hint,
+  - localized pause/resume button.
 - Behavior:
   - tokenization splits by whitespace and punctuation,
   - no forced periodic breaks,
-  - hidden timer start on render, stop automatically at end-of-text.
+  - hidden timer starts on render and stops automatically at end-of-text,
   - progress bar is shown only in one-word study segments (not in calibration).
 
 ## S5 Reading Segment: PDF Mode
 - Purpose: run PDF-reading segment for the assigned logical text part.
 - Required UI:
   - rendered PDF pages,
-  - progress marker,
-  - `I finished` button.
+  - localized progress marker,
+  - localized `I finished` button.
 - Behavior:
-  - hidden timer start on render, stop on `I finished`.
+  - hidden timer starts on render and stops on `I finished`.
 
-## S6 Between-Segment Transition
-- Purpose: move participant from one segment/format to next.
-- Required UI:
-  - progress text (`Text X of 4 completed`),
-  - next-format text (`Next format: ...`),
-  - comprehension scale (`1..5`) for how well the previous segment was understood,
-  - `Continue Test` button.
-- Desktop shortcut:
-  - `Space` triggers continue.
-
-## S7 Familiarity Checklist (Mandatory)
+## S6 Familiarity Checklist (Mandatory)
 - Purpose: capture prior familiarity before feedback.
 - Required UI:
-  - prompt question about prior reading,
-  - four checkboxes:
-    - Jump (Tolstoy),
-    - Frog Traveler (Garshin),
-    - Myth of the Cave (Plato),
-    - Heart Article,
-  - `Continue` button.
+  - localized prompt question,
+  - four localized checkboxes,
+  - localized `Continue` button.
 
-## S8 Final Feedback (Mandatory)
+## S7 Final Feedback (Mandatory)
 - Purpose: capture qualitative participant feedback.
 - Required UI:
+  - localized prompt,
   - text area,
-  - `Submit` button.
+  - localized `Submit` button.
 - Validation:
   - non-empty feedback required.
 - Explicitly excluded:
   - no email field.
 
-## S9 Completion
+## S8 Completion
 - Purpose: close session after successful save.
 - Required UI:
-  - thank-you message,
-  - compact summary block with a few session metrics,
-  - optional close/restart action (implementation choice).
+  - localized thank-you message,
+  - compact summary block with a few session metrics.
 
-## Button Label Set (English)
-- `Start`
-- `STOP`
-- `Continue Test`
-- `I finished`
-- `Continue`
-- `Submit`
+## Button / Copy Rules
+- All participant-facing UI copy is localized by selected session language.
+- The same control roles must exist in both languages.
+- Study order and behavior must remain identical across languages.

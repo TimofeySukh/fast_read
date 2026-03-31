@@ -1,0 +1,21 @@
+Although the heart is able to work on its own, its activity is still regulated by external systems.
+
+The nervous system plays an important role. Sympathetic nerves strengthen the work of the heart: they increase the rate and force of contraction and speed up the conduction of excitation. The main mediator here is norepinephrine.
+
+Parasympathetic nerves, especially the vagus nerve, slow the rhythm and reduce the force of contraction. They also decrease the excitability of the myocardium. The main mediator in this case is acetylcholine.
+
+Humoral regulation, which means regulation through hormones and other substances in the blood, is also important. Adrenaline and norepinephrine increase cardiac activity by making cell membranes more permeable to calcium ions.
+
+Thyroid hormones, T3 and T4, increase the rate at which pacemaker cells generate action potentials and accelerate the intracellular circulation of calcium. Acetylcholine, by contrast, suppresses cardiac activity.
+
+Calcium ions raise the excitability of myocardial cells, while an excess of potassium can disturb the normal function of the heart.
+
+Reflex regulation also matters. Receptors in blood vessels send signals to the medulla oblongata. Baroreceptors respond to pressure, and chemoreceptors respond to the concentrations of oxygen and carbon dioxide. The brain then adjusts the work of the heart according to the needs of the body.
+
+Why does the heart contract continuously? Its uninterrupted work is connected to the constant cycle of impulse generation in the sinus node and the further spread of those impulses through the conduction system.
+
+This process does not stop as long as the organism remains alive, because the heart must keep pumping blood continuously in order to supply tissues with oxygen and nutrients.
+
+If the sinus node fails, the atrioventricular node can take over the pacemaker function, but in that case the rhythm becomes slower. In some situations an artificial cardiac pacemaker may be needed.
+
+So the work of the heart is a complex, coordinated process in which the automatism of the conduction system is supplemented by nervous and humoral regulation, allowing the heart to adapt to the needs of the body.

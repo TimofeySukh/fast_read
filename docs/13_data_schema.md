@@ -7,6 +7,7 @@ Target persistence format for one completed or partial session.
 {
   "schemaVersion": "1.0.0",
   "sessionId": "uuid",
+  "language": "ru_or_en",
   "status": "completed",
   "createdAtUtc": "2026-03-07T08:00:00Z",
   "updatedAtUtc": "2026-03-07T08:12:00Z",
@@ -22,8 +23,10 @@ Target persistence format for one completed or partial session.
 ## Required Fields
 - `schemaVersion`: string.
 - `sessionId`: stable unique ID.
+- `language`: `ru` or `en`.
 - `status`: `in_progress` or `completed` or `aborted`.
 - `participant.name`: non-empty string.
+- `participant.language`: `ru` or `en`.
 - `calibration.selectedWpm`: integer.
 - `segments`: array with 8 segment records for completed runs.
 - `feedback.text`: non-empty string for completed runs.
@@ -32,6 +35,7 @@ Target persistence format for one completed or partial session.
 ```json
 {
   "name": "string",
+  "language": "ru_or_en",
   "savedAtUtc": "ISO-8601"
 }
 ```
@@ -39,7 +43,7 @@ Target persistence format for one completed or partial session.
 ## Calibration Object
 ```json
 {
-  "sourcePdf": "pdf_start.pdf",
+  "sourcePdf": "pdf_start.pdf_or_calibration_en.pdf",
   "selectionMode": "manual",
   "minWpm": 50,
   "maxWpm": 700,
@@ -55,7 +59,7 @@ Target persistence format for one completed or partial session.
 {
   "segmentId": "t1_words",
   "textIndex": 1,
-  "textTitle": "Jump",
+  "textTitle": "The Dive",
   "partIndex": 1,
   "format": "words",
   "orderInText": 1,
@@ -111,5 +115,6 @@ Each segment ID maps to a logical text part:
 - `orderInText = 2` -> part 2.
 
 ## Notes
+- `textTitle` is localized to the session language.
 - No email field is allowed.
 - If session is interrupted, save partial data with `status: "aborted"` or `status: "in_progress"`.

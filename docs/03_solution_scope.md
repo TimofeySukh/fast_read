@@ -4,21 +4,26 @@
 Replace the previous app behavior with a deterministic research protocol with a fixed sequence, fixed corpus, and fixed data outputs.
 
 ## Input Assets
-- Calibration source file in repo root: `pdf_start.pdf`.
-- Study corpus folder: `pdf_folder/` with 4 predefined texts.
+- Russian calibration PDF in repo root: `pdf_start.pdf`.
+- English calibration text asset in `corpus/en/`, rendered to PDF at runtime.
+- Russian study corpus folder: `pdf_folder/` with 4 predefined PDFs.
+- English study corpus text assets in `corpus/en/`, rendered to PDFs at runtime.
 - No participant-side file upload is required in the research flow.
 
 ## Core Flow Contract
-1. Welcome screen with required participant name.
-2. Calibration playback from `pdf_start.pdf` with manual speed controls.
-3. 4-text test runner (2 reading segments per text).
-4. Familiarity checklist screen (mandatory, before feedback).
-5. Final feedback screen (mandatory text).
-6. Session completion/thank-you confirmation.
+1. Language selection screen (`Russian` or `English`).
+2. Welcome screen with required participant name.
+3. Calibration playback in one-word mode with manual speed controls.
+4. 4-text test runner (2 reading segments per text).
+5. Familiarity checklist screen (mandatory, before feedback).
+6. Final feedback screen (mandatory text).
+7. Session completion / thank-you confirmation.
 
 ## Calibration Contract
-- Source: `pdf_start.pdf`.
 - Mode: one-word display.
+- Source depends on selected language:
+  - Russian: `pdf_start.pdf`,
+  - English: generated calibration PDF from tracked English text asset.
 - Manual controls:
   - quick-step buttons: `-100`, `-50`, `-20`, `-10`, `-5`, `+5`, `+10`, `+20`, `+50`, `+100`,
   - direct numeric input.
@@ -45,9 +50,9 @@ Replace the previous app behavior with a deterministic research protocol with a 
 - Stopwatch is never shown to participant.
 
 ## Locked Text Order And Format Matrix
-1. Jump (Tolstoy): `part 1 -> words`, `part 2 -> PDF`
-2. Frog Traveler (Garshin): `part 1 -> PDF`, `part 2 -> words`
-3. Myth of the Cave (Plato): `part 1 -> words`, `part 2 -> PDF`
+1. Jump / The Dive (Tolstoy): `part 1 -> words`, `part 2 -> PDF`
+2. Frog Traveler / The Frog Went Travelling (Garshin): `part 1 -> PDF`, `part 2 -> words`
+3. Myth of the Cave / The Allegory of the Cave (Plato): `part 1 -> words`, `part 2 -> PDF`
 4. Heart Article: `part 1 -> PDF`, `part 2 -> words`
 
 This strict alternation is final for current study phase.
@@ -55,8 +60,8 @@ This strict alternation is final for current study phase.
 ## Transition Screens
 - Show between every segment and between texts.
 - Must contain:
-  - progress message (example: `Text 1 of 4 completed`),
-  - next format hint (example: `Next format: PDF` or `Next format: one word at a time`),
+  - progress message,
+  - next format hint,
   - comprehension scale `1..5` for the just-finished segment,
   - explicit continue action (`Continue` button).
 - Desktop continue shortcut: `Space`.
@@ -72,13 +77,12 @@ This strict alternation is final for current study phase.
 - Runtime control:
   - desktop `Space` can pause/resume one-word playback,
   - mobile has on-screen equivalent control.
+- Russian mode may extract words from source PDFs.
+- English mode must use tracked text assets directly, not PDF extraction, to reduce parsing regressions.
 
 ## Pre-Feedback Familiarity Screen (Mandatory)
-Display checklist question: whether participant has previously read each work:
-- Jump (Tolstoy)
-- Frog Traveler (Garshin)
-- Myth of the Cave (Plato)
-- Heart Article
+Display checklist question: whether participant has previously read each work.
+Checklist labels must match the selected session language.
 
 ## Final Feedback Screen (Mandatory)
 - Required free-text feedback field.
@@ -86,9 +90,10 @@ Display checklist question: whether participant has previously read each work:
 - On submit: persist full session JSON and show thank-you confirmation.
 
 ## Language And Copy Rules
-- Buttons/controls are English.
-- Study text content remains Russian-language corpus.
+- UI copy is localized from the participant's entry selection.
+- Reading assets are localized from the participant's entry selection.
 - Documentation remains English.
+- Study structure must stay identical across languages.
 
 ## Out Of Scope
 - Email collection.
@@ -97,6 +102,7 @@ Display checklist question: whether participant has previously read each work:
 - Auto-push to GitHub.
 
 ## Success Criteria
-- Participant can complete full protocol on desktop and mobile.
+- Participant can complete full protocol on desktop and mobile in both supported languages.
 - Every required field is present in JSON.
 - Format order and transitions are deterministic across sessions.
+- English mode must not depend on fragile PDF text extraction for one-word playback.

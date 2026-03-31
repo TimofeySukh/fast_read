@@ -1,7 +1,7 @@
 # fast_read
 
 `fast_read` is a controlled reading research app.
-It compares two formats on the same fixed Russian-language corpus:
+It compares two formats on the same fixed 4-text study corpus:
 - one-word-at-a-time playback,
 - normal PDF page reading.
 
@@ -10,7 +10,7 @@ This repository is primarily used to run a structured study protocol and collect
 ## Why Use It
 - Run a deterministic research flow (same order for every participant).
 - Measure hidden reading time per segment.
-- Collect calibration, familiarity checklist, and mandatory feedback in one JSON record.
+- Collect language, calibration, familiarity checklist, and mandatory feedback in one JSON record.
 - Compare `words` vs `pdf` format performance across the same 4 texts.
 
 ## Branch Graph
@@ -33,7 +33,9 @@ gitGraph
 
 ## Features (main-idea-rus)
 - Required participant name at start.
-- Calibration from `pdf_start.pdf` with manual WPM controls (`50..700`).
+- Language choice at entry (`Russian` or `English`).
+- Localized UI and reading assets for the entire session.
+- Calibration with manual WPM controls (`50..700`).
 - Exactly 4 texts and 8 measured segments in locked alternating order.
 - Each text is split into part 1 and part 2, then assigned to different formats to avoid full-text repetition.
 - One-word mode tokenization by whitespace and punctuation.

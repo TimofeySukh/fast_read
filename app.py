@@ -7,9 +7,14 @@ import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+from xml.sax.saxutils import escape
 
 from flask import Flask, jsonify, render_template, request, send_from_directory
 from pypdf import PdfReader, PdfWriter
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+from reportlab.lib.units import mm
+from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
@@ -17,12 +22,15 @@ SESSIONS_DIR = DATA_DIR / "sessions"
 
 CALIBRATION_FILE = BASE_DIR / "pdf_start.pdf"
 PDF_FOLDER = BASE_DIR / "pdf_folder"
+EN_CORPUS_DIR = BASE_DIR / "corpus" / "en"
 
 SCHEMA_VERSION = "1.0.0"
 BASE_WPM = 100
 CALIBRATION_STEP_WPM = 5
 CALIBRATION_MIN_WPM = 50
 CALIBRATION_MAX_WPM = 700
+DEFAULT_LANGUAGE = "ru"
+SUPPORTED_LANGUAGES = {"ru", "en"}
 
 WORD_PATTERN = re.compile(r"[^\W_]+(?:['’`-][^\W_]+)*", re.UNICODE)
 SESSION_FILENAME_ALLOWED = re.compile(r"[^0-9A-Za-zА-Яа-яЁё._() -]+", re.UNICODE)
@@ -30,52 +38,143 @@ SESSION_FILENAME_ALLOWED = re.compile(r"[^0-9A-Za-zА-Яа-яЁё._() -]+", re.U
 TEXTS: list[dict[str, Any]] = [
     {
         "id": "jump",
-        "title": "Прыжок",
-        "author": "Лев Толстой",
+        "titles": {
+            "ru": "Прыжок",
+            "en": "The Dive",
+        },
+        "authors": {
+            "ru": "Лев Толстой",
+            "en": "Leo Tolstoy",
+        },
         "filename": "прыжок.pdf",
         "order": ["words", "pdf"],
         "checklistId": "jump_tolstoy",
-        "checklistLabel": "Прыжок (Лев Толстой)",
+        "checklistLabels": {
+            "ru": "Прыжок (Лев Толстой)",
+            "en": "The Dive (Leo Tolstoy)",
+        },
+        "englishSource": "https://kids.azovlib.ru/index.php/2-uncategorised/933-tolstoj-lev-rasskazy-anglijskij",
     },
     {
         "id": "frog_traveler",
-        "title": "Лягушка-путешественница",
-        "author": "Гаршин",
+        "titles": {
+            "ru": "Лягушка-путешественница",
+            "en": "The Frog Went Travelling",
+        },
+        "authors": {
+            "ru": "Гаршин",
+            "en": "Garshin",
+        },
         "filename": "лягушка.pdf",
         "order": ["pdf", "words"],
         "checklistId": "frog_traveler_garshin",
-        "checklistLabel": "Лягушка-путешественница (Гаршин)",
+        "checklistLabels": {
+            "ru": "Лягушка-путешественница (Гаршин)",
+            "en": "The Frog Went Travelling (Garshin)",
+        },
+        "englishSource": "https://freebooksforkids.net/frog-went-travelling.html",
     },
     {
         "id": "myth_of_the_cave",
-        "title": "Миф о пещере",
-        "author": "Платон",
+        "titles": {
+            "ru": "Миф о пещере",
+            "en": "The Allegory of the Cave",
+        },
+        "authors": {
+            "ru": "Платон",
+            "en": "Plato",
+        },
         "filename": "миф_о_пещере.pdf",
         "order": ["words", "pdf"],
         "checklistId": "myth_of_the_cave_plato",
-        "checklistLabel": "Миф о пещере (Платон)",
+        "checklistLabels": {
+            "ru": "Миф о пещере (Платон)",
+            "en": "The Allegory of the Cave (Plato)",
+        },
+        "englishSource": "https://www.gutenberg.org/cache/epub/1497/pg1497.txt",
     },
     {
         "id": "heart_article",
-        "title": "Статья про сердце",
-        "author": "—",
+        "titles": {
+            "ru": "Статья про сердце",
+            "en": "Heart Article",
+        },
+        "authors": {
+            "ru": "—",
+            "en": "Translated for this study",
+        },
         "filename": "сердце.pdf",
         "order": ["pdf", "words"],
         "checklistId": "heart_article",
-        "checklistLabel": "Статья про сердце",
+        "checklistLabels": {
+            "ru": "Статья про сердце",
+            "en": "Heart Article",
+        },
+        "englishSource": None,
     },
 ]
 
 TEXT_MAP = {item["id"]: item for item in TEXTS}
 CHECKLIST_IDS = [item["checklistId"] for item in TEXTS]
-WORD_CACHE: dict[str, list[str]] = {}
-WORD_PART_CACHE: dict[tuple[str, int], list[str]] = {}
+TEXT_CACHE: dict[tuple[str, str, int], str] = {}
+WORD_CACHE: dict[tuple[str, str, int], list[str]] = {}
 PAGE_RANGE_CACHE: dict[str, tuple[tuple[int, int], tuple[int, int]]] = {}
 PARTS_DIR = DATA_DIR / "parts"
+GENERATED_PDF_DIR = DATA_DIR / "generated_pdfs"
+
+ENGLISH_TEXT_FILES: dict[str, dict[int, Path] | Path] = {
+    "calibration": EN_CORPUS_DIR / "calibration.txt",
+    "jump": {
+        1: EN_CORPUS_DIR / "jump_part1.txt",
+        2: EN_CORPUS_DIR / "jump_part2.txt",
+    },
+    "frog_traveler": {
+        1: EN_CORPUS_DIR / "frog_traveler_part1.txt",
+        2: EN_CORPUS_DIR / "frog_traveler_part2.txt",
+    },
+    "myth_of_the_cave": {
+        1: EN_CORPUS_DIR / "myth_of_the_cave_part1.txt",
+        2: EN_CORPUS_DIR / "myth_of_the_cave_part2.txt",
+    },
+    "heart_article": {
+        1: EN_CORPUS_DIR / "heart_article_part1.txt",
+        2: EN_CORPUS_DIR / "heart_article_part2.txt",
+    },
+}
 
 
 def utc_now_iso() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+
+def validate_language(language: str | None) -> str:
+    normalized = str(language or DEFAULT_LANGUAGE).strip().lower()
+    return normalized if normalized in SUPPORTED_LANGUAGES else DEFAULT_LANGUAGE
+
+
+def localized_value(mapping: dict[str, str], language: str) -> str:
+    return mapping.get(language) or mapping.get(DEFAULT_LANGUAGE) or next(iter(mapping.values()))
+
+
+def part_label(language: str, part_index: int) -> str:
+    if language == "en":
+        return f"part {part_index}"
+    return f"часть {part_index}"
+
+
+def title_for_text(text_id: str, language: str) -> str:
+    item = TEXT_MAP[text_id]
+    return localized_value(item["titles"], language)
+
+
+def author_for_text(text_id: str, language: str) -> str:
+    item = TEXT_MAP[text_id]
+    return localized_value(item["authors"], language)
+
+
+def checklist_label_for_text(text_id: str, language: str) -> str:
+    item = TEXT_MAP[text_id]
+    return localized_value(item["checklistLabels"], language)
 
 
 def normalize_text(text: str) -> str:
@@ -116,7 +215,7 @@ def tokenize_words(text: str) -> list[str]:
     return WORD_PATTERN.findall(text)
 
 
-def required_file_for_text_id(text_id: str) -> Path:
+def required_ru_file_for_text_id(text_id: str) -> Path:
     if text_id == "calibration":
         return CALIBRATION_FILE
     text = TEXT_MAP.get(text_id)
@@ -125,11 +224,58 @@ def required_file_for_text_id(text_id: str) -> Path:
     return PDF_FOLDER / text["filename"]
 
 
-def words_for_text_id(text_id: str) -> list[str]:
-    if text_id in WORD_CACHE:
-        return WORD_CACHE[text_id]
+def english_text_file_paths(text_id: str, part_index: int | None = None) -> list[Path]:
+    if text_id == "calibration":
+        path = ENGLISH_TEXT_FILES["calibration"]
+        assert isinstance(path, Path)
+        return [path]
 
-    source = required_file_for_text_id(text_id)
+    entry = ENGLISH_TEXT_FILES.get(text_id)
+    if not isinstance(entry, dict):
+        raise KeyError(f"Unknown English text id: {text_id}")
+
+    if part_index is None:
+        return [entry[1], entry[2]]
+
+    part = validate_part_index(part_index)
+    return [entry[part]]
+
+
+def load_english_text(text_id: str, part_index: int | None = None) -> str:
+    key = ("en", text_id, part_index or 0)
+    cached = TEXT_CACHE.get(key)
+    if cached is not None:
+        return cached
+
+    fragments: list[str] = []
+    for path in english_text_file_paths(text_id, part_index):
+        if not path.exists():
+            raise FileNotFoundError(f"Missing English text asset: {path}")
+        fragments.append(path.read_text(encoding="utf-8").strip())
+
+    text = "\n\n".join(fragment for fragment in fragments if fragment)
+    if not text:
+        raise ValueError(f"English text asset is empty for {text_id}")
+
+    TEXT_CACHE[key] = text
+    return text
+
+
+def words_for_text_id(text_id: str, language: str = DEFAULT_LANGUAGE) -> list[str]:
+    normalized_language = validate_language(language)
+    cache_key = (normalized_language, text_id, 0)
+    if cache_key in WORD_CACHE:
+        return WORD_CACHE[cache_key]
+
+    if normalized_language == "en":
+        text = load_english_text(text_id)
+        words = tokenize_words(text)
+        if not words:
+            raise ValueError(f"No extractable words in English text: {text_id}")
+        WORD_CACHE[cache_key] = words
+        return words
+
+    source = required_ru_file_for_text_id(text_id)
     if not source.exists():
         raise FileNotFoundError(f"Missing source PDF: {source}")
 
@@ -138,7 +284,7 @@ def words_for_text_id(text_id: str) -> list[str]:
     if not words:
         raise ValueError(f"No extractable words in PDF: {source.name}")
 
-    WORD_CACHE[text_id] = words
+    WORD_CACHE[cache_key] = words
     return words
 
 
@@ -183,12 +329,12 @@ def extract_pdf_text_in_range(path: Path, start_page: int, end_page: int) -> str
 
 def words_for_text_part(text_id: str, part_index: int) -> list[str]:
     part = validate_part_index(part_index)
-    cache_key = (text_id, part)
-    cached = WORD_PART_CACHE.get(cache_key)
+    cache_key = (DEFAULT_LANGUAGE, text_id, part)
+    cached = WORD_CACHE.get(cache_key)
     if cached is not None:
         return cached
 
-    source = required_file_for_text_id(text_id)
+    source = required_ru_file_for_text_id(text_id)
     if not source.exists():
         raise FileNotFoundError(f"Missing source PDF: {source}")
 
@@ -199,13 +345,34 @@ def words_for_text_part(text_id: str, part_index: int) -> list[str]:
     if not words:
         raise ValueError(f"No extractable words in PDF part: {source.name} (part {part})")
 
-    WORD_PART_CACHE[cache_key] = words
+    WORD_CACHE[cache_key] = words
+    return words
+
+
+def words_for_text_part_by_language(text_id: str, part_index: int, language: str = DEFAULT_LANGUAGE) -> list[str]:
+    normalized_language = validate_language(language)
+    part = validate_part_index(part_index)
+
+    if normalized_language == "ru":
+        return words_for_text_part(text_id, part)
+
+    cache_key = (normalized_language, text_id, part)
+    cached = WORD_CACHE.get(cache_key)
+    if cached is not None:
+        return cached
+
+    text = load_english_text(text_id, part)
+    words = tokenize_words(text)
+    if not words:
+        raise ValueError(f"No extractable words in English text part: {text_id} (part {part})")
+
+    WORD_CACHE[cache_key] = words
     return words
 
 
 def ensure_pdf_part_file(text_id: str, part_index: int) -> Path:
     part = validate_part_index(part_index)
-    source = required_file_for_text_id(text_id)
+    source = required_ru_file_for_text_id(text_id)
     if not source.exists():
         raise FileNotFoundError(f"Missing source PDF: {source}")
 
@@ -235,7 +402,81 @@ def ensure_pdf_part_file(text_id: str, part_index: int) -> Path:
     return output_path
 
 
-def build_segment_plan() -> list[dict[str, Any]]:
+def split_text_paragraphs(text: str) -> list[str]:
+    return [normalize_text(chunk) for chunk in re.split(r"\n\s*\n", text) if chunk.strip()]
+
+
+def build_text_pdf(output_path: Path, title: str, text: str) -> Path:
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    styles = getSampleStyleSheet()
+    title_style = ParagraphStyle(
+        "study_title",
+        parent=styles["Heading1"],
+        fontName="Helvetica-Bold",
+        fontSize=16,
+        leading=20,
+        spaceAfter=10,
+    )
+    body_style = ParagraphStyle(
+        "study_body",
+        parent=styles["BodyText"],
+        fontName="Helvetica",
+        fontSize=11,
+        leading=15,
+        spaceAfter=8,
+    )
+
+    story: list[Any] = [Paragraph(escape(title), title_style), Spacer(1, 3 * mm)]
+    for paragraph in split_text_paragraphs(text):
+        story.append(Paragraph(escape(paragraph), body_style))
+        story.append(Spacer(1, 2 * mm))
+
+    document = SimpleDocTemplate(
+        str(output_path),
+        pagesize=A4,
+        leftMargin=18 * mm,
+        rightMargin=18 * mm,
+        topMargin=18 * mm,
+        bottomMargin=18 * mm,
+        title=title,
+    )
+    document.build(story)
+    return output_path
+
+
+def generated_pdf_title(text_id: str, language: str, part_index: int | None = None) -> str:
+    if text_id == "calibration":
+        return "Calibration Text" if language == "en" else "Калибровка"
+
+    title = title_for_text(text_id, language)
+    if part_index is None:
+        return title
+    return f"{title} - Part {part_index}" if language == "en" else f"{title} - Часть {part_index}"
+
+
+def ensure_english_pdf(text_id: str, part_index: int | None = None) -> Path:
+    normalized_part = validate_part_index(part_index) if part_index is not None else None
+    source_paths = english_text_file_paths(text_id, normalized_part)
+
+    if text_id == "calibration":
+        output_name = "calibration_en.pdf"
+    elif normalized_part is None:
+        output_name = f"{text_id}_en.pdf"
+    else:
+        output_name = f"{text_id}_part{normalized_part}_en.pdf"
+
+    output_path = GENERATED_PDF_DIR / output_name
+    latest_source_mtime = max(path.stat().st_mtime for path in source_paths)
+    if output_path.exists() and output_path.stat().st_mtime >= latest_source_mtime:
+        return output_path
+
+    text = load_english_text(text_id, normalized_part)
+    title = generated_pdf_title(text_id, "en", normalized_part)
+    return build_text_pdf(output_path, title, text)
+
+
+def build_base_segment_plan() -> list[dict[str, Any]]:
     segments: list[dict[str, Any]] = []
     for text_index, item in enumerate(TEXTS, start=1):
         for order_in_text, fmt in enumerate(item["order"], start=1):
@@ -245,10 +486,7 @@ def build_segment_plan() -> list[dict[str, Any]]:
                     "segmentId": f"t{text_index}_{fmt}",
                     "textId": item["id"],
                     "textIndex": text_index,
-                    "textTitle": item["title"],
                     "partIndex": part_index,
-                    "partTitle": f"{item['title']} — часть {part_index}",
-                    "textAuthor": item["author"],
                     "format": fmt,
                     "orderInText": order_in_text,
                 }
@@ -256,8 +494,30 @@ def build_segment_plan() -> list[dict[str, Any]]:
     return segments
 
 
+def build_segment_plan(language: str = DEFAULT_LANGUAGE) -> list[dict[str, Any]]:
+    normalized_language = validate_language(language)
+    localized_segments: list[dict[str, Any]] = []
+
+    for segment in BASE_SEGMENT_PLAN:
+        title = title_for_text(segment["textId"], normalized_language)
+        localized_segments.append(
+            {
+                **segment,
+                "textTitle": title,
+                "partTitle": (
+                    f"{title} - Part {segment['partIndex']}"
+                    if normalized_language == "en"
+                    else f"{title} — часть {segment['partIndex']}"
+                ),
+                "textAuthor": author_for_text(segment["textId"], normalized_language),
+            }
+        )
+    return localized_segments
+
+
+BASE_SEGMENT_PLAN = build_base_segment_plan()
 SEGMENT_PLAN = build_segment_plan()
-EXPECTED_SEGMENT_IDS = [segment["segmentId"] for segment in SEGMENT_PLAN]
+EXPECTED_SEGMENT_IDS = [segment["segmentId"] for segment in BASE_SEGMENT_PLAN]
 
 
 def session_files() -> list[Path]:
@@ -330,7 +590,7 @@ def validate_segments(segments: Any) -> tuple[bool, str]:
     if len(segments) != len(EXPECTED_SEGMENT_IDS):
         return False, f"segments must contain {len(EXPECTED_SEGMENT_IDS)} records"
 
-    for index, expected in enumerate(SEGMENT_PLAN):
+    for index, expected in enumerate(BASE_SEGMENT_PLAN):
         actual = segments[index]
         if not isinstance(actual, dict):
             return False, f"segment #{index + 1} must be an object"
@@ -433,51 +693,60 @@ def create_app() -> Flask:
 
     @app.get("/api/protocol")
     def protocol() -> Any:
+        language = validate_language(request.args.get("lang"))
         texts = []
         for item in TEXTS:
             texts.append(
                 {
                     "id": item["id"],
-                    "title": item["title"],
-                    "author": item["author"],
+                    "title": localized_value(item["titles"], language),
+                    "author": localized_value(item["authors"], language),
                     "pdfUrl": f"/pdf/{item['id']}",
                     "order": item["order"],
                     "checklistId": item["checklistId"],
-                    "checklistLabel": item["checklistLabel"],
+                    "checklistLabel": localized_value(item["checklistLabels"], language),
+                    "englishSource": item["englishSource"],
                 }
             )
 
         return jsonify(
             {
                 "schemaVersion": SCHEMA_VERSION,
+                "language": language,
                 "calibration": {
-                    "sourceFile": CALIBRATION_FILE.name,
+                    "sourceFile": "calibration_en.pdf" if language == "en" else CALIBRATION_FILE.name,
                     "baseWpm": BASE_WPM,
                     "minWpm": CALIBRATION_MIN_WPM,
                     "maxWpm": CALIBRATION_MAX_WPM,
                     "stepWpm": CALIBRATION_STEP_WPM,
                 },
                 "texts": texts,
-                "segmentPlan": SEGMENT_PLAN,
+                "segmentPlan": build_segment_plan(language),
                 "familiarityItems": [
-                    {"id": item["checklistId"], "label": item["checklistLabel"]} for item in TEXTS
+                    {
+                        "id": item["checklistId"],
+                        "label": localized_value(item["checklistLabels"], language),
+                    }
+                    for item in TEXTS
                 ],
             }
         )
 
     @app.get("/api/calibration/words")
     def calibration_words() -> tuple[Any, int] | Any:
+        language = validate_language(request.args.get("lang"))
         try:
-            words = words_for_text_id("calibration")
+            words = words_for_text_id("calibration", language)
         except (FileNotFoundError, ValueError) as error:
             return jsonify({"error": str(error)}), 400
         except Exception:
-            return jsonify({"error": "Failed to parse calibration PDF"}), 400
+            return jsonify({"error": "Failed to load calibration text"}), 400
 
         return jsonify(
             {
                 "textId": "calibration",
-                "sourceFile": CALIBRATION_FILE.name,
+                "language": language,
+                "sourceFile": "calibration_en.pdf" if language == "en" else CALIBRATION_FILE.name,
                 "wordCount": len(words),
                 "words": words,
             }
@@ -487,25 +756,26 @@ def create_app() -> Flask:
     def text_words(text_id: str) -> tuple[Any, int] | Any:
         if text_id not in TEXT_MAP:
             return jsonify({"error": f"Unknown text id: {text_id}"}), 404
+        language = validate_language(request.args.get("lang"))
 
         try:
             part_index = validate_part_index(int(request.args.get("part", "1")))
         except (TypeError, ValueError):
             return jsonify({"error": "part must be 1 or 2"}), 400
 
-        item = TEXT_MAP[text_id]
         try:
-            words = words_for_text_part(text_id, part_index)
+            words = words_for_text_part_by_language(text_id, part_index, language)
         except (FileNotFoundError, ValueError) as error:
             return jsonify({"error": str(error)}), 400
         except Exception:
-            return jsonify({"error": "Failed to parse source PDF"}), 400
+            return jsonify({"error": "Failed to load source text"}), 400
 
         return jsonify(
             {
                 "textId": text_id,
+                "language": language,
                 "partIndex": part_index,
-                "title": item["title"],
+                "title": title_for_text(text_id, language),
                 "wordCount": len(words),
                 "words": words,
             }
@@ -513,6 +783,19 @@ def create_app() -> Flask:
 
     @app.get("/pdf/<text_id>")
     def serve_pdf(text_id: str) -> tuple[Any, int] | Any:
+        language = validate_language(request.args.get("lang"))
+
+        if language == "en":
+            part_raw = request.args.get("part")
+            try:
+                part_index = validate_part_index(int(part_raw)) if part_raw else None
+                english_pdf = ensure_english_pdf(text_id, part_index)
+            except (TypeError, ValueError):
+                return jsonify({"error": "part must be 1 or 2"}), 400
+            except (FileNotFoundError, KeyError) as error:
+                return jsonify({"error": str(error)}), 404
+            return send_from_directory(english_pdf.parent, english_pdf.name, as_attachment=False)
+
         if text_id == "calibration":
             if not CALIBRATION_FILE.exists():
                 return jsonify({"error": f"Missing file: {CALIBRATION_FILE.name}"}), 404
@@ -546,17 +829,20 @@ def create_app() -> Flask:
         participant_name = str(payload.get("participantName", "")).strip()
         if not participant_name:
             return jsonify({"error": "participantName is required"}), 400
+        language = validate_language(payload.get("language"))
 
         session_id = str(uuid.uuid4())
         now = utc_now_iso()
         record = {
             "schemaVersion": SCHEMA_VERSION,
             "sessionId": session_id,
+            "language": language,
             "status": "in_progress",
             "createdAtUtc": now,
             "updatedAtUtc": now,
             "participant": {
                 "name": participant_name,
+                "language": language,
                 "savedAtUtc": now,
             },
             "calibration": {},
@@ -605,8 +891,9 @@ def create_app() -> Flask:
             return jsonify({"error": "session not found"}), 404
 
         now = utc_now_iso()
+        record_language = validate_language(record.get("language"))
         record["calibration"] = {
-            "sourcePdf": CALIBRATION_FILE.name,
+            "sourcePdf": "calibration_en.pdf" if record_language == "en" else CALIBRATION_FILE.name,
             "selectionMode": "manual",
             "minWpm": CALIBRATION_MIN_WPM,
             "maxWpm": CALIBRATION_MAX_WPM,

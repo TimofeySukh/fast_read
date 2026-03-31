@@ -1,0 +1,17 @@
+The heart beats and pulsates because of automatism, the ability to generate electrical impulses on its own. Those impulses cause the heart muscle to contract. This property is built into the structure of the heart itself and does not require external nerve impulses in order to operate.
+
+The conduction system of the heart is responsible for generating these impulses. It is a network of specialized cells that act as natural pacemakers.
+
+The main pacemaker is the sinoatrial node, also called the sinus node. It is located in the wall of the right atrium. This is where the impulses arise that set the rhythm for the entire heart.
+
+The impulse then passes through the atrioventricular node, where there is a short delay of about two tenths of a second. This delay allows the atria to contract first and push blood into the ventricles.
+
+After that the impulse spreads through the bundle of His and its branches, and then through the Purkinje fibers. These structures deliver the signal to the ventricular muscle and trigger ventricular contraction.
+
+As a result, the heart contracts in a specific sequence: first the atria contract, and then the ventricles.
+
+The contraction of the heart muscle, or myocardium, is linked to changes in membrane potentials inside the cells. These changes happen because the concentrations of potassium and sodium ions shift on the two sides of the cell membrane.
+
+The proteins actin and myosin take part in contraction as the main contractile elements. Tropomyosin and troponin serve as regulatory proteins.
+
+Muscle contraction develops when myosin heads bind to actin filaments and bend. This movement pulls the thin and thick filaments past one another by using the energy of ATP.

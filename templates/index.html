@@ -9,34 +9,41 @@
   <body>
     <main class="app-shell">
       <header class="hero">
-        <p class="eyebrow">Исследование чтения</p>
-        <h1>Сессия исследования форматов</h1>
-        <p class="hero-note">Здесь сравниваются два формата чтения на 4 текстах.</p>
+        <p id="heroEyebrow" class="eyebrow">Reading Research</p>
+        <h1 id="heroTitle">Format Comparison Session</h1>
+        <p id="heroNote" class="hero-note">Select a language to begin.</p>
       </header>
 
       <p id="globalStatus" class="global-status" aria-live="polite"></p>
 
-      <section id="welcomeScreen" class="screen card">
-        <h2>Добро пожаловать</h2>
-        <p>
-          Спасибо, что решили принять участие в моем исследовании. Здесь будут 4 текста, и каждый из них вы увидите в двух форматах: в формате обычного текста и в формате по одному слову. Постарайтесь внимательно вчитываться в материалы, а в самом конце исследования оставьте свое мнение о чтении по словам.
-        </p>
+      <section id="languageScreen" class="screen card">
+        <h2 id="languageTitle">Choose language</h2>
+        <p id="languageNote" class="muted">Select the language for the interface and the reading materials.</p>
+        <div class="language-picker">
+          <button id="selectRuBtn" type="button" class="ghost">Русский</button>
+          <button id="selectEnBtn" type="button">English</button>
+        </div>
+      </section>
+
+      <section id="welcomeScreen" class="screen card hidden">
+        <h2 id="welcomeTitle">Welcome</h2>
+        <p id="welcomeBody"></p>
         <label class="field" for="participantNameInput">
-          <span>Представьтесь пожалуйста</span>
+          <span id="participantNameLabel">Please introduce yourself</span>
           <input id="participantNameInput" type="text" autocomplete="name" />
         </label>
         <div class="actions">
-          <button id="startSessionBtn" type="button" disabled>начать</button>
+          <button id="startSessionBtn" type="button" disabled>Start</button>
         </div>
       </section>
 
       <section id="calibrationScreen" class="screen card hidden" aria-live="polite">
-        <h2>Калибровка</h2>
-        <p class="muted">Скорость можно менять кнопками или вручную в поле. Подберите комфортный темп по тексту из стартового файла.</p>
+        <h2 id="calibrationTitle">Calibration</h2>
+        <p id="calibrationNote" class="muted"></p>
         <div class="badge-row">
-          <span class="badge"><strong id="calibrationWpmValue">100</strong> слов/мин</span>
+          <span class="badge"><strong id="calibrationWpmValue">100</strong> <span id="calibrationWpmUnit">words/min</span></span>
         </div>
-        <div id="calibrationWord" class="word-stage">Готово</div>
+        <div id="calibrationWord" class="word-stage">Ready</div>
         <div class="actions center-actions calibration-row">
           <button id="calibrationMinus100Btn" type="button" class="ghost">-100</button>
           <button id="calibrationMinus50Btn" type="button" class="ghost">-50</button>
@@ -50,90 +57,88 @@
           <button id="calibrationPlus100Btn" type="button" class="ghost">+100</button>
         </div>
         <label class="field" for="calibrationSpeedInput">
-          <span>Введите свою скорость (слов/мин)</span>
+          <span id="calibrationSpeedLabel">Enter your speed (words/min)</span>
           <input id="calibrationSpeedInput" type="number" min="50" max="700" step="1" value="100" />
         </label>
-        <p class="hint">Когда выберете комфортную скорость, нажмите <strong>Продолжить</strong>.</p>
+        <p id="calibrationHint" class="hint"></p>
         <div class="actions center-actions">
-          <button id="calibrationContinueBtn" type="button">Продолжить</button>
+          <button id="calibrationContinueBtn" type="button">Continue</button>
         </div>
       </section>
 
       <section id="transitionScreen" class="screen card hidden" aria-live="polite">
-        <h2 id="transitionTitle">Приготовьтесь</h2>
+        <h2 id="transitionTitle">Get ready</h2>
         <p id="transitionProgress" class="muted"></p>
         <p id="transitionNextFormat" class="transition-format"></p>
         <div id="comprehensionBlock" class="comprehension-block hidden">
-          <p class="comprehension-title">Насколько вы поняли только что прочитанный текст?</p>
-          <div id="comprehensionScale" class="comprehension-scale" role="radiogroup" aria-label="Оценка понимания от 1 до 5">
+          <p id="comprehensionTitle" class="comprehension-title"></p>
+          <div id="comprehensionScale" class="comprehension-scale" role="radiogroup" aria-label="Comprehension score from 1 to 5">
             <button type="button" class="comprehension-btn" data-score="1">1</button>
             <button type="button" class="comprehension-btn" data-score="2">2</button>
             <button type="button" class="comprehension-btn" data-score="3">3</button>
             <button type="button" class="comprehension-btn" data-score="4">4</button>
             <button type="button" class="comprehension-btn" data-score="5">5</button>
           </div>
-          <p id="comprehensionHint" class="hint">Выберите оценку от 1 до 5, затем нажмите «Продолжить».</p>
+          <p id="comprehensionHint" class="hint"></p>
         </div>
-        <p class="hint">Нажмите <kbd>Пробел</kbd> или кнопку <strong>Продолжить</strong>.</p>
+        <p id="transitionHint" class="hint"></p>
         <div class="actions">
-          <button id="transitionContinueBtn" type="button">Продолжить</button>
+          <button id="transitionContinueBtn" type="button">Continue</button>
         </div>
       </section>
 
       <section id="wordsScreen" class="screen card hidden" aria-live="polite">
         <div class="segment-meta">
-          <span id="wordsSegmentLabel">Текст 1 из 4</span>
-          <span id="wordsSegmentFormat">Режим по одному слову</span>
-          <span id="wordsSegmentWpm">100 слов/мин</span>
+          <span id="wordsSegmentLabel"></span>
+          <span id="wordsSegmentFormat"></span>
+          <span id="wordsSegmentWpm"></span>
         </div>
         <div class="words-progress-wrap" aria-hidden="true">
           <div id="wordsProgressBar" class="words-progress-bar"></div>
         </div>
         <p id="wordsProgressText" class="words-progress-text">0 / 0</p>
-        <div id="wordsCurrentWord" class="word-stage">Готово</div>
-        <p class="hint">
-          Нажмите <kbd>Пробел</kbd> (компьютер) или кнопку <strong>Пауза / Продолжить</strong> (телефон).
-        </p>
+        <div id="wordsCurrentWord" class="word-stage">Ready</div>
+        <p id="wordsHint" class="hint"></p>
         <div class="actions center-actions">
-          <button id="wordsPauseBtn" type="button" class="ghost">Пауза</button>
+          <button id="wordsPauseBtn" type="button" class="ghost">Pause</button>
         </div>
       </section>
 
       <section id="pdfScreen" class="screen card hidden" aria-live="polite">
         <div class="segment-meta">
-          <span id="pdfSegmentLabel">Текст 1 из 4</span>
-          <span id="pdfSegmentFormat">Режим PDF</span>
+          <span id="pdfSegmentLabel"></span>
+          <span id="pdfSegmentFormat"></span>
         </div>
         <iframe id="pdfViewerFrame" class="pdf-frame" title="PDF Reader"></iframe>
         <div class="actions end-actions">
-          <button id="pdfFinishBtn" type="button">Я закончил</button>
+          <button id="pdfFinishBtn" type="button">I finished</button>
         </div>
       </section>
 
       <section id="checklistScreen" class="screen card hidden">
-        <h2>Перед обратной связью</h2>
-        <p>Вы читали какие-то из этих произведений раньше?</p>
+        <h2 id="checklistTitle">Before feedback</h2>
+        <p id="checklistPrompt"></p>
         <form id="checklistForm" class="checklist"></form>
         <div class="actions">
-          <button id="checklistContinueBtn" type="button">Продолжить</button>
+          <button id="checklistContinueBtn" type="button">Continue</button>
         </div>
       </section>
 
       <section id="feedbackScreen" class="screen card hidden">
-        <h2>Что вы думаете о формате чтения?</h2>
-        <p>Было ли это удобнее или неудобнее? Были ли проблемы с пониманием текста в таком формате, или наоборот усваивалось лучше?</p>
+        <h2 id="feedbackTitle"></h2>
+        <p id="feedbackPrompt"></p>
         <label class="field" for="feedbackInput">
-          <span>Ваш комментарий</span>
+          <span id="feedbackLabel">Your comment</span>
           <textarea id="feedbackInput" rows="6" required></textarea>
         </label>
         <div class="actions">
-          <button id="submitFeedbackBtn" type="button">Отправить</button>
+          <button id="submitFeedbackBtn" type="button">Submit</button>
         </div>
       </section>
 
       <section id="thankYouScreen" class="screen card hidden">
-        <h2>Спасибо за ваше время!</h2>
-        <p class="muted">Короткий итог по этой сессии:</p>
+        <h2 id="thankYouTitle"></h2>
+        <p id="thankYouLead" class="muted"></p>
         <div id="thankYouSummary" class="session-summary"></div>
       </section>
     </main>

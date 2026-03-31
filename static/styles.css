@@ -120,6 +120,16 @@ h2 {
   flex-wrap: wrap;
 }
 
+.language-picker {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.language-picker button {
+  min-width: 140px;
+}
+
 .center-actions {
   justify-content: center;
 }
