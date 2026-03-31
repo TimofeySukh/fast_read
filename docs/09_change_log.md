@@ -13,6 +13,19 @@ Use this file as the single mandatory log for project updates.
 ## Entries
 - Date: 2026-03-31
 - Branch: main-idea-rus
+- Scope: Improve visibility of selected comprehension score on transition screen
+- Files changed:
+  - static/styles.css
+  - docs/12_screen_copy_and_controls.md
+  - docs/09_change_log.md
+- Summary:
+  - Strengthened the active visual state of the comprehension buttons with higher contrast, border emphasis, and glow.
+  - Added an explicit screen-contract note that the selected comprehension score must be visually obvious.
+- Follow-up needed:
+  - Quick browser check on dark theme to confirm the selected state is obvious on both desktop and mobile.
+
+- Date: 2026-03-31
+- Branch: main-idea-rus
 - Scope: Clean one-word extraction artifacts, add compact completion summary, and switch session files to readable names
 - Files changed:
   - app.py

@@ -42,6 +42,7 @@ This is the screen-level contract for the research flow.
   - localized progress message,
   - localized next-format message,
   - comprehension scale (`1..5`) for finished segments,
+  - clearly visible active state for the selected comprehension score,
   - localized `Continue` button.
 - Desktop shortcut:
   - `Space` triggers continue.

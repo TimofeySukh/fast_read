@@ -268,12 +268,24 @@ kbd {
 .comprehension-btn {
   min-width: 44px;
   padding: 8px 14px;
+  border: 1px solid var(--border);
+  background: rgba(13, 18, 22, 0.95);
+  color: var(--ink);
+  transition:
+    transform 120ms ease,
+    border-color 120ms ease,
+    box-shadow 120ms ease,
+    background 120ms ease;
 }
 
 .comprehension-btn.is-active {
-  border: 1px solid transparent;
-  background: linear-gradient(125deg, var(--accent), #15785f);
+  border-color: rgba(255, 255, 255, 0.88);
+  background: linear-gradient(125deg, #35d6ad, #1a8f72);
   color: #fff;
+  box-shadow:
+    0 0 0 3px rgba(53, 214, 173, 0.24),
+    0 10px 24px rgba(0, 0, 0, 0.28);
+  transform: translateY(-1px);
 }
 
 .segment-meta {
