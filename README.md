@@ -1,6 +1,7 @@
-# fast_read
+# Fast_read
 
 Read PDF text one word at a time with configurable speed (`WPM`) and built-in feedback capture.
+You can help the research by trying the live site here: [onewordtext.tech](https://onewordtext.tech/).
 
 ## Features
 
