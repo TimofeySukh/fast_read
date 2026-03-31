@@ -14,6 +14,11 @@
 
 ## One-Word Processing Contract
 - Extract text from PDF pages.
+- Clean extraction artifacts before playback:
+  - remove null-byte garbage,
+  - merge hard line-wrap hyphenation,
+  - normalize spaced compounds,
+  - drop page-number-only lines.
 - Normalize whitespace.
 - Tokenize by word boundaries including punctuation separation.
 - Drive rendering by WPM timing, not by character count.
@@ -30,6 +35,7 @@
 
 ## Output Storage
 - Save one session record in JSON.
+- Store session files under participant-readable filenames when available; keep `sessionId` as the stable record identifier.
 - Required payload groups:
   - participant metadata,
   - calibration result,

@@ -11,6 +11,26 @@ Use this file as the single mandatory log for project updates.
 - Follow-up needed:
 
 ## Entries
+- Date: 2026-03-31
+- Branch: main-idea-rus
+- Scope: Clean one-word extraction artifacts, add compact completion summary, and switch session files to readable names
+- Files changed:
+  - app.py
+  - static/app.js
+  - static/styles.css
+  - templates/index.html
+  - docs/04_features.md
+  - docs/05_user_flow.md
+  - docs/06_tech_stack_and_integrations.md
+  - docs/09_change_log.md
+  - docs/12_screen_copy_and_controls.md
+- Summary:
+  - Cleaned PDF extraction artifacts before one-word playback: null bytes, hard line-wrap hyphenation, spaced compounds, and page-number-only lines.
+  - Added a compact end-of-session summary block instead of showing only a bare thank-you message.
+  - Changed session file persistence to prefer participant-readable filenames while keeping `sessionId` as the stable backend identifier.
+- Follow-up needed:
+  - Verify on real study PDFs that one-word playback no longer shows split artifacts like `та ком`.
+
 - Date: 2026-03-17
 - Branch: main-idea-rus
 - Scope: Split each text into part 1/part 2 and remove full-text repetition across formats

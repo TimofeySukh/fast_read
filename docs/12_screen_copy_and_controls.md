@@ -88,6 +88,7 @@ This is the screen-level contract for the research flow.
 - Purpose: close session after successful save.
 - Required UI:
   - thank-you message,
+  - compact summary block with a few session metrics,
   - optional close/restart action (implementation choice).
 
 ## Button Label Set (English)

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import re
+import unicodedata
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
@@ -24,6 +25,7 @@ CALIBRATION_MIN_WPM = 50
 CALIBRATION_MAX_WPM = 700
 
 WORD_PATTERN = re.compile(r"[^\W_]+(?:['’`-][^\W_]+)*", re.UNICODE)
+SESSION_FILENAME_ALLOWED = re.compile(r"[^0-9A-Za-zА-Яа-яЁё._() -]+", re.UNICODE)
 
 TEXTS: list[dict[str, Any]] = [
     {
@@ -80,6 +82,25 @@ def normalize_text(text: str) -> str:
     return re.sub(r"\s+", " ", text).strip()
 
 
+def clean_extracted_text(text: str) -> str:
+    cleaned = text.replace("\x00", "").replace("\u00a0", " ")
+    # Remove hard line-wrap hyphenation artifacts like "отноше -\nнии" -> "отношении".
+    cleaned = re.sub(
+        r"(?<=[A-Za-zА-Яа-яЁё])\s*-\s*\n\s*(?=[A-Za-zА-Яа-яЁё])",
+        "",
+        cleaned,
+    )
+    # Normalize spaced compounds like "кто - то" -> "кто-то".
+    cleaned = re.sub(
+        r"(?<=[A-Za-zА-Яа-яЁё])\s*-\s*(?=[A-Za-zА-Яа-яЁё])",
+        "-",
+        cleaned,
+    )
+    # Drop page-number-only lines that leak into one-word playback.
+    cleaned = re.sub(r"(?m)^\s*\d+\s*$", " ", cleaned)
+    return cleaned
+
+
 def extract_pdf_text(path: Path) -> str:
     with path.open("rb") as handle:
         reader = PdfReader(handle)
@@ -87,7 +108,7 @@ def extract_pdf_text(path: Path) -> str:
         for page in reader.pages:
             extracted = page.extract_text() or ""
             if extracted:
-                all_text.append(extracted)
+                all_text.append(clean_extracted_text(extracted))
     return normalize_text(" ".join(all_text))
 
 
@@ -156,7 +177,7 @@ def extract_pdf_text_in_range(path: Path, start_page: int, end_page: int) -> str
         for page_index in range(safe_start, safe_end):
             extracted = reader.pages[page_index].extract_text() or ""
             if extracted:
-                all_text.append(extracted)
+                all_text.append(clean_extracted_text(extracted))
     return normalize_text(" ".join(all_text))
 
 
@@ -239,8 +260,52 @@ SEGMENT_PLAN = build_segment_plan()
 EXPECTED_SEGMENT_IDS = [segment["segmentId"] for segment in SEGMENT_PLAN]
 
 
+def session_files() -> list[Path]:
+    if not SESSIONS_DIR.exists():
+        return []
+    return sorted(SESSIONS_DIR.glob("*.json"))
+
+
 def session_path(session_id: str) -> Path:
-    return SESSIONS_DIR / f"{session_id}.json"
+    direct_path = SESSIONS_DIR / f"{session_id}.json"
+    if direct_path.exists():
+        return direct_path
+
+    for candidate in session_files():
+        try:
+            payload = json.loads(candidate.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        if str(payload.get("sessionId", "")).strip() == session_id:
+            return candidate
+
+    return direct_path
+
+
+def session_filename_stem(participant_name: str) -> str:
+    normalized = unicodedata.normalize("NFKC", participant_name).strip()
+    normalized = SESSION_FILENAME_ALLOWED.sub("", normalized)
+    normalized = re.sub(r"\s+", "_", normalized)
+    normalized = normalized.strip("._ ")
+    return normalized or "session"
+
+
+def unique_session_path(participant_name: str, session_id: str) -> Path:
+    base_stem = session_filename_stem(participant_name)
+    attempt = 0
+    while True:
+        suffix = "" if attempt == 0 else f"__{attempt + 1}"
+        candidate = SESSIONS_DIR / f"{base_stem}{suffix}.json"
+        if not candidate.exists():
+            return candidate
+        try:
+            payload = json.loads(candidate.read_text(encoding="utf-8"))
+        except Exception:
+            attempt += 1
+            continue
+        if str(payload.get("sessionId", "")).strip() == session_id:
+            return candidate
+        attempt += 1
 
 
 def load_session(session_id: str) -> dict[str, Any]:
@@ -253,6 +318,9 @@ def load_session(session_id: str) -> dict[str, Any]:
 def save_session(data: dict[str, Any]) -> None:
     SESSIONS_DIR.mkdir(parents=True, exist_ok=True)
     path = session_path(data["sessionId"])
+    if not path.exists():
+        participant_name = str((data.get("participant") or {}).get("name", "")).strip()
+        path = unique_session_path(participant_name, str(data["sessionId"]))
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
 
 

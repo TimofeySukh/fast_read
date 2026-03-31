@@ -300,6 +300,32 @@ kbd {
   font-weight: 600;
 }
 
+.session-summary {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.session-summary-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(12, 17, 21, 0.9);
+}
+
+.session-summary-label {
+  color: var(--ink-soft);
+  font-weight: 700;
+}
+
+.session-summary-value {
+  text-align: right;
+  font-weight: 800;
+}
+
 .summary-table {
   width: 100%;
   border-collapse: collapse;

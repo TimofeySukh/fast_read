@@ -36,7 +36,7 @@
 17. Participant enters mandatory feedback text.
 18. Participant submits.
 19. Full session record is saved as JSON.
-20. Thank-you confirmation is shown.
+20. Thank-you confirmation is shown with a short session summary (not full raw data).
 
 ## Device-Specific Interaction Rules
 - Desktop:

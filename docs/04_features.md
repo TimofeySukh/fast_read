@@ -31,6 +31,7 @@
   - include `Continue` (plus desktop `Space` shortcut).
 - `F-07` One-word playback:
   - pace is WPM-based,
+  - extracted PDF text must be cleaned from page-number / null-byte / line-wrap artifacts before tokenization,
   - words are split by whitespace and punctuation,
   - no character-based stepping,
   - no forced periodic breaks,
@@ -45,7 +46,11 @@
   - required free-text feedback field,
   - no email collection.
 - `F-11` Persistence:
-  - save complete session as JSON.
+  - save complete session as JSON,
+  - use participant-readable filenames for session files instead of opaque random filenames when possible.
+- `F-12` Completion summary:
+  - show a compact end-of-session result block,
+  - do not dump the full raw dataset on screen.
 
 ## P1 Quality Requirements
 - `Q-01` Mobile and desktop parity for all required actions.

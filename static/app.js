@@ -80,6 +80,7 @@ const checklistContinueBtn = document.getElementById("checklistContinueBtn");
 
 const feedbackInput = document.getElementById("feedbackInput");
 const submitFeedbackBtn = document.getElementById("submitFeedbackBtn");
+const thankYouSummary = document.getElementById("thankYouSummary");
 
 function setGlobalStatus(message, isError = false) {
   globalStatus.textContent = message;
@@ -469,6 +470,56 @@ function collectChecklistAnswers() {
   state.familiarityChecklist = payload;
 }
 
+function formatDurationSummary(seconds) {
+  const totalSeconds = Math.max(0, Math.round(seconds));
+  const minutes = Math.floor(totalSeconds / 60);
+  const restSeconds = totalSeconds % 60;
+  if (minutes === 0) {
+    return `${restSeconds} сек`;
+  }
+  return `${minutes} мин ${restSeconds} сек`;
+}
+
+function renderThankYouSummary() {
+  if (!thankYouSummary) {
+    return;
+  }
+
+  const segmentsCompleted = state.segmentResults.length;
+  const totalSeconds = state.segmentResults.reduce((sum, segment) => sum + Number(segment.durationSeconds || 0), 0);
+  const comprehensionScores = state.segmentResults
+    .map((segment) => Number(segment.comprehensionScore || 0))
+    .filter((score) => score > 0);
+  const averageComprehension = comprehensionScores.length
+    ? (comprehensionScores.reduce((sum, score) => sum + score, 0) / comprehensionScores.length).toFixed(1)
+    : "—";
+
+  const summaryItems = [
+    { label: "Участник", value: state.participantName || "—" },
+    { label: "Скорость", value: `${state.selectedWpm} слов/мин` },
+    { label: "Сегменты", value: `${segmentsCompleted} / ${state.protocol.segmentPlan.length}` },
+    { label: "Среднее понимание", value: averageComprehension === "—" ? averageComprehension : `${averageComprehension} / 5` },
+    { label: "Время чтения", value: formatDurationSummary(totalSeconds) },
+  ];
+
+  thankYouSummary.innerHTML = "";
+  for (const item of summaryItems) {
+    const row = document.createElement("div");
+    row.className = "session-summary-item";
+
+    const label = document.createElement("span");
+    label.className = "session-summary-label";
+    label.textContent = item.label;
+
+    const value = document.createElement("span");
+    value.className = "session-summary-value";
+    value.textContent = item.value;
+
+    row.append(label, value);
+    thankYouSummary.appendChild(row);
+  }
+}
+
 async function submitFeedback() {
   if (state.busy) {
     return;
@@ -503,6 +554,7 @@ async function submitFeedback() {
     });
 
     setGlobalStatus("");
+    renderThankYouSummary();
     showScreen("thankYou");
   } catch (error) {
     setGlobalStatus(error.message || "Не удалось сохранить результаты.", true);
