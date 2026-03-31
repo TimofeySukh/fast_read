@@ -13,6 +13,19 @@ Use this file as the single mandatory log for project updates.
 ## Entries
 - Date: 2026-03-31
 - Branch: main-idea-rus
+- Scope: Update README project naming and add live study link
+- Files changed:
+  - README.md
+  - docs/09_change_log.md
+- Summary:
+  - Changed the displayed project name in README from `fast_read` to `Fast_read`.
+  - Clarified in README that the study supports both Russian and English participant flows.
+  - Added the live study link and explicit call to help the research at `https://onewordtext.tech/`.
+- Follow-up needed:
+  - None.
+
+- Date: 2026-03-31
+- Branch: main-idea-rus
 - Scope: Improve visibility of selected comprehension score on transition screen
 - Files changed:
   - static/styles.css

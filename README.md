@@ -1,14 +1,16 @@
-# fast_read
+# Fast_read
 
-`fast_read` is a controlled reading research app.
-It compares two formats on the same fixed 4-text study corpus:
+`Fast_read` is a bilingual controlled reading research app.
+It runs the same fixed 4-text study protocol in Russian and English and compares two formats:
 - one-word-at-a-time playback,
 - normal PDF page reading.
 
 This repository is primarily used to run a structured study protocol and collect session data.
+You can help the research by taking part here: [onewordtext.tech](https://onewordtext.tech/).
 
 ## Why Use It
 - Run a deterministic research flow (same order for every participant).
+- Run the study in either Russian or English with localized UI and reading assets.
 - Measure hidden reading time per segment.
 - Collect language, calibration, familiarity checklist, and mandatory feedback in one JSON record.
 - Compare `words` vs `pdf` format performance across the same 4 texts.
