@@ -1,0 +1,105 @@
+name: Deploy research report to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "site/**"
+      - ".github/workflows/deploy-pages.yml"
+      - "README.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Validate and package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Validate publication artifacts
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          import re
+          from pathlib import Path
+
+          root = Path("site")
+          html_path = root / "index.html"
+          data_path = root / "data" / "analysis-results.json"
+          pdf_path = root / "output" / "pdf" / "onewordtext-pilot-study.pdf"
+
+          for path in (html_path, data_path, pdf_path):
+              if not path.is_file() or path.stat().st_size == 0:
+                  raise SystemExit(f"Missing or empty publication artifact: {path}")
+
+          html = html_path.read_text(encoding="utf-8")
+          if '<html lang="en">' not in html:
+              raise SystemExit("The publication page must declare English as its language")
+
+          for relative_link in (
+              "data/analysis-results.json",
+              "output/pdf/onewordtext-pilot-study.pdf",
+          ):
+              if relative_link not in html:
+                  raise SystemExit(f"Missing page link: {relative_link}")
+
+          report = json.loads(data_path.read_text(encoding="utf-8"))
+          headline = report["headline"]
+          expected = {
+              "participants": 4,
+              "medianPdfWpm": 200.1,
+              "medianWordsWpm": 95.2,
+              "medianPdfToWordsSpeedRatio": 1.81,
+          }
+          for key, value in expected.items():
+              if headline.get(key) != value:
+                  raise SystemExit(
+                      f"Unexpected headline value for {key}: {headline.get(key)!r}"
+                  )
+
+          labels = [row.get("participant", "") for row in report["participants"]]
+          if labels != ["P1", "P2", "P3", "P4"]:
+              raise SystemExit(f"Unexpected participant labels: {labels}")
+
+          serialized = json.dumps(report, ensure_ascii=False)
+          for private_key in ("nickname", "email", "sessionId"):
+              if re.search(rf'"{private_key}"\s*:', serialized):
+                  raise SystemExit(f"Private field found in publication data: {private_key}")
+
+          if not pdf_path.read_bytes().startswith(b"%PDF-"):
+              raise SystemExit("The report artifact is not a valid PDF file")
+
+          print("Publication validation passed")
+          PY
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

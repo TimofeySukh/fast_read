@@ -1,0 +1,415 @@
+{
+  "study": {
+    "title": "One-word RSVP versus ordinary PDF reading",
+    "analysisDate": "2026-07-12",
+    "language": "ru",
+    "sourceSessionFiles": 16,
+    "sourceBundleSha256": "7b45956eb070d1dc146a9f923303d9c17b2693a9a18938c91df0617d647181da"
+  },
+  "inclusion": {
+    "allSessions": 16,
+    "primaryCompletedCurrentProtocol": 4,
+    "excludedIncomplete": 10,
+    "excludedCompletedLegacyProtocol": 2,
+    "legacyResponseFilesNotPooled": 7
+  },
+  "wordCounts": {
+    "1": {
+      "1": 338,
+      "2": 175
+    },
+    "2": {
+      "1": 745,
+      "2": 566
+    },
+    "3": {
+      "1": 629,
+      "2": 161
+    },
+    "4": {
+      "1": 416,
+      "2": 35
+    }
+  },
+  "headline": {
+    "participants": 4,
+    "medianPdfWpm": 200.1,
+    "medianWordsWpm": 95.2,
+    "medianPdfToWordsSpeedRatio": 1.81,
+    "bootstrap95CiMedianSpeedRatio": [
+      0.51,
+      9.32
+    ],
+    "pdfFasterParticipants": 3,
+    "wordsFasterParticipants": 1,
+    "speedSignTestTwoSidedP": 0.625,
+    "meanPdfComprehension": 4.44,
+    "meanWordsComprehension": 3.56,
+    "meanPairedComprehensionDifference": 0.88,
+    "pdfHigherComprehensionParticipants": 3,
+    "wordsHigherComprehensionParticipants": 1,
+    "comprehensionSignTestTwoSidedP": 0.625
+  },
+  "dataQuality": {
+    "recoveredMissingPartIndexSegments": 16,
+    "recoveryRule": "partIndex = orderInText, as defined by the protocol contract",
+    "extremePdfSegmentsOver1000Wpm": 2,
+    "participantsWithExtremePdfSegment": 1,
+    "extremeThresholdWpm": 1000
+  },
+  "participants": [
+    {
+      "participant": "P1",
+      "selectedWpm": 100,
+      "formats": {
+        "words": {
+          "wordCount": 1568,
+          "durationSeconds": 1890.03,
+          "effectiveWpm": 49.8,
+          "meanComprehension": 2.75
+        },
+        "pdf": {
+          "wordCount": 1497,
+          "durationSeconds": 1032.06,
+          "effectiveWpm": 87.0,
+          "meanComprehension": 4.25
+        }
+      },
+      "pdfToWordsSpeedRatio": 1.75,
+      "pdfMinusWordsWpm": 37.2,
+      "segments": [
+        {
+          "segment": "t1_words",
+          "format": "words",
+          "wordCount": 338,
+          "durationSeconds": 311.16,
+          "effectiveWpm": 65.2,
+          "comprehension": 3
+        },
+        {
+          "segment": "t1_pdf",
+          "format": "pdf",
+          "wordCount": 175,
+          "durationSeconds": 162.18,
+          "effectiveWpm": 64.7,
+          "comprehension": 5
+        },
+        {
+          "segment": "t2_pdf",
+          "format": "pdf",
+          "wordCount": 745,
+          "durationSeconds": 420.87,
+          "effectiveWpm": 106.2,
+          "comprehension": 5
+        },
+        {
+          "segment": "t2_words",
+          "format": "words",
+          "wordCount": 566,
+          "durationSeconds": 803.58,
+          "effectiveWpm": 42.3,
+          "comprehension": 4
+        },
+        {
+          "segment": "t3_words",
+          "format": "words",
+          "wordCount": 629,
+          "durationSeconds": 499.03,
+          "effectiveWpm": 75.6,
+          "comprehension": 1
+        },
+        {
+          "segment": "t3_pdf",
+          "format": "pdf",
+          "wordCount": 161,
+          "durationSeconds": 285.38,
+          "effectiveWpm": 33.8,
+          "comprehension": 3
+        },
+        {
+          "segment": "t4_pdf",
+          "format": "pdf",
+          "wordCount": 416,
+          "durationSeconds": 163.63,
+          "effectiveWpm": 152.5,
+          "comprehension": 4
+        },
+        {
+          "segment": "t4_words",
+          "format": "words",
+          "wordCount": 35,
+          "durationSeconds": 276.26,
+          "effectiveWpm": 7.6,
+          "comprehension": 3
+        }
+      ]
+    },
+    {
+      "participant": "P2",
+      "selectedWpm": 170,
+      "formats": {
+        "words": {
+          "wordCount": 1568,
+          "durationSeconds": 1111.46,
+          "effectiveWpm": 84.6,
+          "meanComprehension": 3.5
+        },
+        "pdf": {
+          "wordCount": 1497,
+          "durationSeconds": 113.87,
+          "effectiveWpm": 788.8,
+          "meanComprehension": 4.5
+        }
+      },
+      "pdfToWordsSpeedRatio": 9.32,
+      "pdfMinusWordsWpm": 704.2,
+      "segments": [
+        {
+          "segment": "t1_words",
+          "format": "words",
+          "wordCount": 338,
+          "durationSeconds": 183.31,
+          "effectiveWpm": 110.6,
+          "comprehension": 5
+        },
+        {
+          "segment": "t1_pdf",
+          "format": "pdf",
+          "wordCount": 175,
+          "durationSeconds": 5.2,
+          "effectiveWpm": 2019.2,
+          "comprehension": 5
+        },
+        {
+          "segment": "t2_pdf",
+          "format": "pdf",
+          "wordCount": 745,
+          "durationSeconds": 28.73,
+          "effectiveWpm": 1555.9,
+          "comprehension": 5
+        },
+        {
+          "segment": "t2_words",
+          "format": "words",
+          "wordCount": 566,
+          "durationSeconds": 476.08,
+          "effectiveWpm": 71.3,
+          "comprehension": 5
+        },
+        {
+          "segment": "t3_words",
+          "format": "words",
+          "wordCount": 629,
+          "durationSeconds": 291.04,
+          "effectiveWpm": 129.7,
+          "comprehension": 1
+        },
+        {
+          "segment": "t3_pdf",
+          "format": "pdf",
+          "wordCount": 161,
+          "durationSeconds": 44.78,
+          "effectiveWpm": 215.7,
+          "comprehension": 3
+        },
+        {
+          "segment": "t4_pdf",
+          "format": "pdf",
+          "wordCount": 416,
+          "durationSeconds": 35.16,
+          "effectiveWpm": 709.9,
+          "comprehension": 5
+        },
+        {
+          "segment": "t4_words",
+          "format": "words",
+          "wordCount": 35,
+          "durationSeconds": 161.03,
+          "effectiveWpm": 13.0,
+          "comprehension": 3
+        }
+      ]
+    },
+    {
+      "participant": "P3",
+      "selectedWpm": 420,
+      "formats": {
+        "words": {
+          "wordCount": 1568,
+          "durationSeconds": 239.05,
+          "effectiveWpm": 393.6,
+          "meanComprehension": 5.0
+        },
+        "pdf": {
+          "wordCount": 1497,
+          "durationSeconds": 443.33,
+          "effectiveWpm": 202.6,
+          "meanComprehension": 4.5
+        }
+      },
+      "pdfToWordsSpeedRatio": 0.51,
+      "pdfMinusWordsWpm": -191.0,
+      "segments": [
+        {
+          "segment": "t1_words",
+          "format": "words",
+          "wordCount": 338,
+          "durationSeconds": 50.96,
+          "effectiveWpm": 398.0,
+          "comprehension": 5
+        },
+        {
+          "segment": "t1_pdf",
+          "format": "pdf",
+          "wordCount": 175,
+          "durationSeconds": 49.26,
+          "effectiveWpm": 213.2,
+          "comprehension": 5
+        },
+        {
+          "segment": "t2_pdf",
+          "format": "pdf",
+          "wordCount": 745,
+          "durationSeconds": 193.25,
+          "effectiveWpm": 231.3,
+          "comprehension": 5
+        },
+        {
+          "segment": "t2_words",
+          "format": "words",
+          "wordCount": 566,
+          "durationSeconds": 85.92,
+          "effectiveWpm": 395.3,
+          "comprehension": 5
+        },
+        {
+          "segment": "t3_words",
+          "format": "words",
+          "wordCount": 629,
+          "durationSeconds": 96.67,
+          "effectiveWpm": 390.4,
+          "comprehension": 5
+        },
+        {
+          "segment": "t3_pdf",
+          "format": "pdf",
+          "wordCount": 161,
+          "durationSeconds": 68.45,
+          "effectiveWpm": 141.1,
+          "comprehension": 4
+        },
+        {
+          "segment": "t4_pdf",
+          "format": "pdf",
+          "wordCount": 416,
+          "durationSeconds": 132.37,
+          "effectiveWpm": 188.6,
+          "comprehension": 4
+        },
+        {
+          "segment": "t4_words",
+          "format": "words",
+          "wordCount": 35,
+          "durationSeconds": 5.5,
+          "effectiveWpm": 381.8,
+          "comprehension": 5
+        }
+      ]
+    },
+    {
+      "participant": "P4",
+      "selectedWpm": 110,
+      "formats": {
+        "words": {
+          "wordCount": 1568,
+          "durationSeconds": 889.63,
+          "effectiveWpm": 105.8,
+          "meanComprehension": 3.0
+        },
+        "pdf": {
+          "wordCount": 1497,
+          "durationSeconds": 454.59,
+          "effectiveWpm": 197.6,
+          "meanComprehension": 4.5
+        }
+      },
+      "pdfToWordsSpeedRatio": 1.87,
+      "pdfMinusWordsWpm": 91.8,
+      "segments": [
+        {
+          "segment": "t1_words",
+          "format": "words",
+          "wordCount": 338,
+          "durationSeconds": 188.96,
+          "effectiveWpm": 107.3,
+          "comprehension": 1
+        },
+        {
+          "segment": "t1_pdf",
+          "format": "pdf",
+          "wordCount": 175,
+          "durationSeconds": 71.44,
+          "effectiveWpm": 147.0,
+          "comprehension": 5
+        },
+        {
+          "segment": "t2_pdf",
+          "format": "pdf",
+          "wordCount": 745,
+          "durationSeconds": 91.88,
+          "effectiveWpm": 486.5,
+          "comprehension": 5
+        },
+        {
+          "segment": "t2_words",
+          "format": "words",
+          "wordCount": 566,
+          "durationSeconds": 318.74,
+          "effectiveWpm": 106.5,
+          "comprehension": 4
+        },
+        {
+          "segment": "t3_words",
+          "format": "words",
+          "wordCount": 629,
+          "durationSeconds": 361.61,
+          "effectiveWpm": 104.4,
+          "comprehension": 3
+        },
+        {
+          "segment": "t3_pdf",
+          "format": "pdf",
+          "wordCount": 161,
+          "durationSeconds": 76.94,
+          "effectiveWpm": 125.6,
+          "comprehension": 4
+        },
+        {
+          "segment": "t4_pdf",
+          "format": "pdf",
+          "wordCount": 416,
+          "durationSeconds": 214.33,
+          "effectiveWpm": 116.5,
+          "comprehension": 4
+        },
+        {
+          "segment": "t4_words",
+          "format": "words",
+          "wordCount": 35,
+          "durationSeconds": 20.32,
+          "effectiveWpm": 103.3,
+          "comprehension": 4
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "Only four sessions match the current completed protocol.",
+    "Format assignment, text halves, and order were fixed rather than randomized.",
+    "RSVP pace was selected during calibration; PDF reading was self-paced.",
+    "Observed RSVP duration includes pauses and therefore measures the full interaction, not only presentation time.",
+    "Comprehension was a self-rating from 1 to 5, not an objective recall test.",
+    "Several PDF segment speeds are implausibly high for careful reading, indicating possible skimming or early completion clicks.",
+    "The sample is a convenience sample and cannot support population-level causal inference."
+  ]
+}
